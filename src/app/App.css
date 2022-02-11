@@ -1,0 +1,8 @@
+.left-nav-bar {
+  min-width: 260px;
+  margin-right: 1rem !important;
+}
+
+.App {
+  min-height: 100vh;
+}
