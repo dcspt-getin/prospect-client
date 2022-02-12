@@ -11,7 +11,7 @@ export default () => {
 
   return (
     <Dashboard>
-      <div class="p-4">
+      <div className="p-4">
         <Header size="huge" as="h1">
           {t("ABOUT_TITLE")}
         </Header>

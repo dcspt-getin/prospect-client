@@ -11,11 +11,11 @@ export default () => {
 
   return (
     <Dashboard>
-      <div class="p-4">
+      <div className="p-4">
         <Header size="huge" as="h1">
-          {t("HOME_TITLE")}
+          {t("Inicio")}
         </Header>
-        <HTMLContent html={t("HOME_CONTENT")} />
+        <HTMLContent html={t("Algum conteudo aqui")} />
       </div>
     </Dashboard>
   );

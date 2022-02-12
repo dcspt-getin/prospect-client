@@ -6,16 +6,12 @@ import { useHistory } from "react-router-dom";
 
 import { logOutUser } from "store/auth/actions";
 import styled from "styled-components";
-import LanguageSelector from "./LanguageSelector";
+// import LanguageSelector from "./LanguageSelector";
 import useTranslations from "src/hooks/useTranslations";
 
 export default () => {
-  const [state, setState] = React.useState({ activeItem: "home" });
-  // const _handleItemClick = (e, { name }) => setState({ activeItem: name });
-
   const history = useHistory();
   const dispatch = useDispatch();
-  const { activeItem } = state;
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   const _onLogout = () => dispatch(logOutUser());
   const [t] = useTranslations("header");
@@ -24,38 +20,33 @@ export default () => {
     <MyMenu size="large">
       <Menu.Menu position="left">
         <Menu.Item
-          name={t("MENU_TITLE_ABOUT")}
-          active={activeItem === "About"}
-          onClick={() => history.push("/about")}
-        />
-        <Menu.Item
-          name={t("MENU_TITLE_CONTACTS")}
-          active={activeItem === "Contacts"}
-          onClick={() => history.push("/contacts")}
+          name={t("Inicio")}
+          active={history.location === "/"}
+          onClick={() => history.push("/")}
         />
       </Menu.Menu>
 
       <Menu.Menu position="right">
         {isAuthenticated && (
           <Menu.Item
-            name={t("MENU_TITLE_PROFILE")}
-            active={activeItem === "Profile"}
-            onClick={() => history.push("/profile")}
+            name={t("Questionário")}
+            active={history.location === "/questionario"}
+            onClick={() => history.push("/questionario")}
           />
         )}
         <Menu.Item>
           {!isAuthenticated && (
             <Button primary onClick={() => history.push("/login")}>
-              {t("LOGIN_TITLE")}
+              {t("Entrar")}
             </Button>
           )}
           {isAuthenticated && (
             <Button primary onClick={_onLogout}>
-              {t("LOGOUT_TITLE")}
+              {t("Sair")}
             </Button>
           )}
         </Menu.Item>
-        <LanguageSelector />
+        {/* <LanguageSelector /> */}
       </Menu.Menu>
     </MyMenu>
   );

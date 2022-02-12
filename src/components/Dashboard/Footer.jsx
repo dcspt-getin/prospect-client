@@ -14,22 +14,10 @@ export default () => {
     <Grid columns={2} padded="horizontally">
       <Grid.Column>
         <Container textAlign="justified" style={{ fontSize: 12 }}>
-          <div
-            dangerouslySetInnerHTML={{ __html: t("PLATAFORM_DESCRIPTION") }}
-          />
+          <div dangerouslySetInnerHTML={{ __html: t("Copyright 2022") }} />
         </Container>
       </Grid.Column>
-      <Grid.Column>
-        <Image src={FctLogo} style={{ width: 175, display: "inline-block" }} />
-        <Image
-          src={Financiaments}
-          style={{
-            width: "calc(100% - 175px)",
-            display: "inline-block",
-            border: "1px solid #ccc",
-          }}
-        />
-      </Grid.Column>
+      <Grid.Column></Grid.Column>
     </Grid>
   );
 };

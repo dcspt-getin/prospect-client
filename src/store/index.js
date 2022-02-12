@@ -7,6 +7,7 @@ import { verifyCurrentToken, logOutUser } from "./auth/actions";
 
 import authReducer from "./auth/reducer";
 import appReducer from "./app/reducer";
+import questionsReducer from "./questions/reducer";
 import {
   getAppConfigurations,
   getAppTranslations,
@@ -18,6 +19,7 @@ export default function initStore() {
   const rootReducer = combineReducers({
     auth: authReducer,
     app: appReducer,
+    questions: questionsReducer,
   });
 
   const store = createStore(rootReducer, middlewares);

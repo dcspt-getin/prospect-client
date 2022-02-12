@@ -4,22 +4,22 @@ import { Header } from "semantic-ui-react";
 
 import Dashboard from "components/Dashboard";
 import useTranslations from "hooks/useTranslations";
+import HTMLContent from "components/HTMLContent";
+import useQuestions from "hooks/useQuestions";
 
 export default () => {
-  const [t] = useTranslations("termsAndConditions");
+  const [t] = useTranslations("profile");
+  const [questions] = useQuestions();
+
+  console.log({ questions });
 
   return (
     <Dashboard>
       <div className="p-4">
         <Header size="huge" as="h1">
-          {t("Termos e Condições")}
+          {t("Questionario")}
         </Header>
-
-        <div
-          dangerouslySetInnerHTML={{
-            __html: t("conteudo"),
-          }}
-        />
+        <HTMLContent html={t("aaa")} />
       </div>
     </Dashboard>
   );

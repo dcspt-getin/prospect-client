@@ -8,7 +8,9 @@ import Register from "routes/Register";
 import Home from "routes/Home";
 import About from "routes/About";
 import Contacts from "routes/Contacts";
+import Profile from "routes/Profile";
 import TriggerError from "components/TriggerError";
+import TermsAndConditions from "routes/TermsAndConditions";
 
 import PrivateRoute from "./PrivateRoute";
 
@@ -42,12 +44,15 @@ export default () => {
       <Route path="/contacts">
         <Contacts />
       </Route>
+      <Route path="/terms-conditions">
+        <TermsAndConditions />
+      </Route>
+      <PrivateRoute path="/questionario">
+        <Profile />
+      </PrivateRoute>
       <Route path="/">
         <Home />
       </Route>
-      <PrivateRoute path="/private">
-        <span>this is private</span>
-      </PrivateRoute>
     </Switch>
   );
 };
