@@ -13,6 +13,22 @@ export default () => {
 
   console.log({ questions });
 
+  const _renderQuestion = (q) => {
+    switch (q.question_type) {
+      case "SHORT_ANSWER":
+        break;
+
+      case "PAIRWISE_COMBINATIONS":
+        break;
+
+      case "SELECT":
+        break;
+
+      default:
+        return "";
+    }
+  };
+
   return (
     <Dashboard>
       <div className="p-4">
@@ -20,6 +36,7 @@ export default () => {
           {t("Questionario")}
         </Header>
         <HTMLContent html={t("aaa")} />
+        {questions.map((question) => _renderQuestion(question))}
       </div>
     </Dashboard>
   );
