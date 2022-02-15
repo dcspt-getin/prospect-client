@@ -5,12 +5,11 @@ import styled from "styled-components";
 
 import Dashboard from "components/Dashboard";
 import useTranslations from "hooks/useTranslations";
-import HTMLContent from "components/HTMLContent";
 import useQuestions from "hooks/useQuestions";
 
 import MultipleChoice from "./questions/MultipleChoice";
 import ShortAnswer from "./questions/ShortAnswer";
-import PairwiseCombinations from "./questions/PairwiseCombinations";
+import PairwiseCombinations from "./questions/PairwiseCombinations/index";
 
 export default () => {
   const [t] = useTranslations("profile");
