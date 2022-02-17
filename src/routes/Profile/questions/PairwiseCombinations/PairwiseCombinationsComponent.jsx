@@ -42,43 +42,45 @@ export default ({ question }) => {
 
   return (
     <Wrapper>
-      <Grid>
+      <Grid verticalAlign="middle">
         <Grid.Row>
           <Grid.Column width={16}>
             <Header size="medium">{question.title}</Header>
           </Grid.Column>
         </Grid.Row>
         <Grid.Row stretched>
-          <Grid.Column width={5}>
+          <Grid.Column mobile={16} tablet={5} computer={5}>
             <QuestionOptionTitle>
               {currentIteration?.option1?.title}
             </QuestionOptionTitle>
           </Grid.Column>
-          <Grid.Column width={6}>
+          <Grid.Column mobile={16} tablet={6} computer={6}>
             <Balance />
           </Grid.Column>
-          <Grid.Column width={5}>
+          <Grid.Column mobile={16} tablet={5} computer={5}>
             <QuestionOptionTitle>
               {currentIteration?.option2?.title}
             </QuestionOptionTitle>
           </Grid.Column>
         </Grid.Row>
         <Grid.Row>
-          <Grid.Column width={8}>
+          <Grid.Column mobile={16} tablet={8} computer={8}>
             comparação {iteration + 1} de {optionsValues.length}
           </Grid.Column>
-          <Grid.Column width={8}>
-            <Button
-              disabled={iteration === 0}
-              onClick={() => setIteration(iteration - 1)}
-            >
-              anterior
-            </Button>
+          <Grid.Column floated="right" mobile={16} tablet={8} computer={8}>
             <Button
               disabled={iteration + 1 === optionsValues.length}
               onClick={_onClickNextIteration}
+              floated="right"
             >
               Seguinte
+            </Button>
+            <Button
+              disabled={iteration === 0}
+              onClick={() => setIteration(iteration - 1)}
+              floated="right"
+            >
+              Anterior
             </Button>
           </Grid.Column>
         </Grid.Row>

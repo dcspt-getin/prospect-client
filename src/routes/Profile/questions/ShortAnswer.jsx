@@ -3,7 +3,7 @@ import React from "react";
 import { Grid, Header, Input } from "semantic-ui-react";
 import styled from "styled-components";
 
-export default ({ question }) => {
+export default ({ question, onChange }) => {
   return (
     <Wrapper>
       <Grid>
@@ -14,7 +14,7 @@ export default ({ question }) => {
         </Grid.Row>
         <Grid.Row>
           <Grid.Column width={16}>
-            <Input fluid placeholder="Value" />
+            <Input fluid placeholder="Value" onChange={onChange} />
           </Grid.Column>
         </Grid.Row>
       </Grid>

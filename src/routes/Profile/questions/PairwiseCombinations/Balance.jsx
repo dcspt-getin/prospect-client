@@ -45,21 +45,22 @@ export default (props) => {
         </Grid.Row>
         <Grid.Row>
           <Grid.Column width={16}>
-            <Slider
-              value={value}
-              color="blue"
-              settings={{
-                start: 0,
-                min: 0,
-                max: 6,
-                step: 1,
-                onChange: (_val) => {
-                  setValue(_val);
-                  if (props.onChange)
-                    props.onChange(_convertValueFromSlider(_val));
-                },
-              }}
-            />
+            <SliderContainer>
+              <Slider
+                value={value}
+                settings={{
+                  start: 0,
+                  min: 0,
+                  max: 6,
+                  step: 1,
+                  onChange: (_val) => {
+                    setValue(_val);
+                    if (props.onChange)
+                      props.onChange(_convertValueFromSlider(_val));
+                  },
+                }}
+              />
+            </SliderContainer>
           </Grid.Column>
         </Grid.Row>
       </Grid>
@@ -108,5 +109,13 @@ const BalanceContainer = styled.div`
     border-right: 2rem solid transparent;
     border-bottom: 2rem solid maroon;
     margin: auto;
+  }
+`;
+
+const SliderContainer = styled.div`
+  .semantic_ui_range_inner {
+    div:nth-child(2) {
+      background-color: transparent !important;
+    }
   }
 `;
