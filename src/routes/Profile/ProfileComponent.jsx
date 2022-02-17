@@ -22,7 +22,9 @@ export default () => {
   const currentQuestion =
     questions.length > 0 && questions[currentQuestionIndex];
 
-  const _onChangeQuestion = (value) => {};
+  const _onChangeQuestion = (value) => {
+    console.log({ value });
+  };
 
   const _renderQuestion = (q) => {
     if (!q) return "";
