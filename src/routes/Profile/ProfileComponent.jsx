@@ -31,7 +31,13 @@ export default () => {
 
     switch (q.question_type) {
       case "SHORT_ANSWER":
-        return <ShortAnswer question={q} onChange={_onChangeQuestion} />;
+        return (
+          <ShortAnswer
+            defaultValue={q.default_value}
+            question={q}
+            onChange={_onChangeQuestion}
+          />
+        );
 
       case "PAIRWISE_COMBINATIONS":
         return (

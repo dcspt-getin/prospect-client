@@ -9,7 +9,7 @@ const INPUT_TYPES = {
   TEXT: "text",
 };
 
-export default ({ question, value, onChange }) => {
+export default ({ question, defaultValue, value, onChange }) => {
   const _onChange = (val) => {
     if (+question.value_min && +val < +question.value_min) {
       val = question.value_min;
@@ -20,36 +20,49 @@ export default ({ question, value, onChange }) => {
 
     onChange(val);
   };
-  const _renderInput = (type) => {
-    if (type === "SLIDER") {
-      return (
-        <Slider
-          value={value}
-          color="blue"
-          settings={{
-            start: 0,
-            min: +question.value_min,
-            max: +question.value_max,
-            step: 1,
-            onChange: (_val) => {
-              _onChange(_val);
-            },
-          }}
-        />
-      );
-    }
+  const inputVal = value || defaultValue;
 
-    return (
+  const _renderInput = (type) => {
+    const _inputField = (
       <Input
         fluid
-        value={value}
+        value={inputVal}
         min={+question.value_min}
         max={+question.value_max}
         type={INPUT_TYPES[type]}
-        placeholder="Value"
+        placeholder="Valor"
         onChange={(e) => _onChange(e.target.value)}
       />
     );
+
+    if (type === "SLIDER") {
+      return (
+        <Grid>
+          <Grid.Row>
+            <Grid.Column width={2}>{_inputField}</Grid.Column>
+            <Grid.Column width={14}>
+              <SliderContainer>
+                <Slider
+                  value={inputVal}
+                  color="blue"
+                  settings={{
+                    start: 0,
+                    min: +question.value_min,
+                    max: +question.value_max,
+                    step: 1,
+                    onChange: (_val) => {
+                      _onChange(_val);
+                    },
+                  }}
+                />
+              </SliderContainer>
+            </Grid.Column>
+          </Grid.Row>
+        </Grid>
+      );
+    }
+
+    return _inputField;
   };
 
   return (
@@ -71,3 +84,7 @@ export default ({ question, value, onChange }) => {
 };
 
 const Wrapper = styled.div``;
+
+const SliderContainer = styled.div`
+  margin-top: 10px;
+`;
