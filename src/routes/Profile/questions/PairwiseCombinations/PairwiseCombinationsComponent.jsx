@@ -1,20 +1,22 @@
 /* eslint-disable import/no-anonymous-default-export */
 import React from "react";
-import { Grid, Header, Button, Icon } from "semantic-ui-react";
+import { Grid, Button } from "semantic-ui-react";
 import styled from "styled-components";
+
+import QuestionInfo from "../common/QuestionInfo";
 import Balance from "./Balance";
 
-export default ({ question }) => {
+export default ({ question, value, onChange }) => {
   const { options } = question;
 
-  const [optionsValues, setOptionsValues] = React.useState({});
+  const [optionsMatrix, setOptionsMatrix] = React.useState({});
   const [iteration, setIteration] = React.useState(0);
 
   React.useEffect(() => {
     if (options.length < 2) return;
 
     const sortedOptions = options.sort((a, b) => a.row_order - b.row_order);
-    const optionsMatix = sortedOptions.reduce((acc, curr) => {
+    const _optionsMatix = sortedOptions.reduce((acc, curr) => {
       return [
         ...acc,
         ...sortedOptions
@@ -22,32 +24,39 @@ export default ({ question }) => {
           .map((o) => ({
             option1: curr,
             option2: o,
-            value: null,
           })),
       ];
     }, []);
 
-    console.log({ optionsMatix });
-
-    setOptionsValues(optionsMatix);
+    setOptionsMatrix(_optionsMatix);
   }, [options]);
 
-  const currentIteration = optionsValues[iteration];
+  const currentIteration = optionsMatrix[iteration];
   const _onClickNextIteration = () => {
-    if (iteration + 1 === optionsValues.length) return;
+    if (iteration + 1 === optionsMatrix.length) return;
     setIteration(iteration + 1);
+  };
+  const _onIterationValueChange = (val) => {
+    onChange([
+      ...(value || []).filter(
+        (v) =>
+          v.option1 !== currentIteration.option1.id ||
+          v.option2 !== currentIteration.option2.id
+      ),
+      {
+        option1: currentIteration.option1.id,
+        option2: currentIteration.option2.id,
+        value: val,
+      },
+    ]);
   };
 
   if (!currentIteration) return "";
 
   return (
     <Wrapper>
+      <QuestionInfo question={question} />
       <Grid verticalAlign="middle">
-        <Grid.Row>
-          <Grid.Column width={16}>
-            <Header size="medium">{question.title}</Header>
-          </Grid.Column>
-        </Grid.Row>
         <Grid.Row stretched>
           <Grid.Column mobile={16} tablet={5} computer={5}>
             <QuestionOptionTitle>
@@ -55,7 +64,17 @@ export default ({ question }) => {
             </QuestionOptionTitle>
           </Grid.Column>
           <Grid.Column mobile={16} tablet={6} computer={6}>
-            <Balance />
+            <Balance
+              value={
+                value &&
+                value.find(
+                  (v) =>
+                    v.option1 === currentIteration?.option1?.id &&
+                    v.option2 === currentIteration?.option2?.id
+                )?.value
+              }
+              onChange={_onIterationValueChange}
+            />
           </Grid.Column>
           <Grid.Column mobile={16} tablet={5} computer={5}>
             <QuestionOptionTitle>
@@ -65,11 +84,11 @@ export default ({ question }) => {
         </Grid.Row>
         <Grid.Row>
           <Grid.Column mobile={16} tablet={8} computer={8}>
-            comparação {iteration + 1} de {optionsValues.length}
+            comparação {iteration + 1} de {optionsMatrix.length}
           </Grid.Column>
           <Grid.Column floated="right" mobile={16} tablet={8} computer={8}>
             <Button
-              disabled={iteration + 1 === optionsValues.length}
+              disabled={iteration + 1 === optionsMatrix.length}
               onClick={_onClickNextIteration}
               floated="right"
             >

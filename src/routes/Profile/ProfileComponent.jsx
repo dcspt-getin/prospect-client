@@ -6,6 +6,7 @@ import styled from "styled-components";
 import Dashboard from "components/Dashboard";
 import useTranslations from "hooks/useTranslations";
 import useQuestions from "hooks/useQuestions";
+import useUserProfile from "hooks/useUserProfile";
 
 import MultipleChoice from "./questions/MultipleChoice";
 import ShortAnswer from "./questions/ShortAnswer";
@@ -14,16 +15,18 @@ import PairwiseCombinations from "./questions/PairwiseCombinations/index";
 export default () => {
   const [t] = useTranslations("profile");
   const [questions] = useQuestions();
+  const [userProfile, updateUserProfile] = useUserProfile();
 
   const [currentQuestionIndex, setCurrentQuestionIndex] = React.useState(0);
-
-  console.log({ questions });
 
   const currentQuestion =
     questions.length > 0 && questions[currentQuestionIndex];
 
-  const _onChangeQuestion = (value) => {
-    console.log({ value });
+  const _onChangeQuestion = (question) => (value) => {
+    updateUserProfile({
+      ...userProfile,
+      [question.id]: value,
+    });
   };
 
   const _renderQuestion = (q) => {
@@ -33,19 +36,29 @@ export default () => {
       case "SHORT_ANSWER":
         return (
           <ShortAnswer
-            defaultValue={q.default_value}
             question={q}
-            onChange={_onChangeQuestion}
+            value={userProfile[q.id]}
+            onChange={_onChangeQuestion(q)}
           />
         );
 
       case "PAIRWISE_COMBINATIONS":
         return (
-          <PairwiseCombinations question={q} onChange={_onChangeQuestion} />
+          <PairwiseCombinations
+            question={q}
+            value={userProfile[q.id]}
+            onChange={_onChangeQuestion(q)}
+          />
         );
 
       case "MULTIPLE_CHOICE":
-        return <MultipleChoice question={q} onChange={_onChangeQuestion} />;
+        return (
+          <MultipleChoice
+            question={q}
+            value={userProfile[q.id]}
+            onChange={_onChangeQuestion(q)}
+          />
+        );
 
       default:
         return "";

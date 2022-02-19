@@ -1,15 +1,16 @@
 /* eslint-disable import/no-anonymous-default-export */
 import React from "react";
-import { Grid, Header, Input } from "semantic-ui-react";
+import { Grid, Header, Input, Image } from "semantic-ui-react";
 import styled from "styled-components";
 import { Slider } from "react-semantic-ui-range";
+import QuestionInfo from "./common/QuestionInfo";
 
 const INPUT_TYPES = {
   NUMBER: "number",
   TEXT: "text",
 };
 
-export default ({ question, defaultValue, value, onChange }) => {
+export default ({ question, value, onChange }) => {
   const _onChange = (val) => {
     if (+question.value_min && +val < +question.value_min) {
       val = question.value_min;
@@ -20,7 +21,7 @@ export default ({ question, defaultValue, value, onChange }) => {
 
     onChange(val);
   };
-  const inputVal = value || defaultValue;
+  const inputVal = value === undefined ? question.default_value : value;
 
   const _renderInput = (type) => {
     const _inputField = (
@@ -29,7 +30,7 @@ export default ({ question, defaultValue, value, onChange }) => {
         value={inputVal}
         min={+question.value_min}
         max={+question.value_max}
-        type={INPUT_TYPES[type]}
+        type={INPUT_TYPES[type] || INPUT_TYPES.NUMBER}
         placeholder="Valor"
         onChange={(e) => _onChange(e.target.value)}
       />
@@ -39,8 +40,10 @@ export default ({ question, defaultValue, value, onChange }) => {
       return (
         <Grid>
           <Grid.Row>
-            <Grid.Column width={2}>{_inputField}</Grid.Column>
-            <Grid.Column width={14}>
+            <Grid.Column mobile={6} tablet={4} computer={2}>
+              {_inputField}
+            </Grid.Column>
+            <Grid.Column mobile={10} tablet={12} computer={14}>
               <SliderContainer>
                 <Slider
                   value={inputVal}
@@ -67,12 +70,8 @@ export default ({ question, defaultValue, value, onChange }) => {
 
   return (
     <Wrapper>
+      <QuestionInfo question={question} />
       <Grid>
-        <Grid.Row>
-          <Grid.Column width={16}>
-            <Header size="medium">{question.title}</Header>
-          </Grid.Column>
-        </Grid.Row>
         <Grid.Row>
           <Grid.Column width={16}>
             {_renderInput(question.input_type)}
