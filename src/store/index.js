@@ -8,18 +8,21 @@ import { verifyCurrentToken, logOutUser } from "./auth/actions";
 import authReducer from "./auth/reducer";
 import appReducer from "./app/reducer";
 import questionsReducer from "./questions/reducer";
+import profilesReducer from "./profiles/reducer";
 import {
   getAppConfigurations,
   getAppTranslations,
   setAppLoaded,
   setCurrentTranslation,
 } from "./app/actions";
+import { getUserProfiles } from "./profiles/actions";
 
 export default function initStore() {
   const rootReducer = combineReducers({
     auth: authReducer,
     app: appReducer,
     questions: questionsReducer,
+    profiles: profilesReducer,
   });
 
   const store = createStore(rootReducer, middlewares);
@@ -46,6 +49,7 @@ export default function initStore() {
 
     axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
     store.dispatch(verifyCurrentToken(token));
+    store.dispatch(getUserProfiles());
   }
 
   registerStore(store);

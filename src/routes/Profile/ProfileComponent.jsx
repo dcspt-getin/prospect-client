@@ -72,14 +72,15 @@ export default () => {
       </PageHeader>
       <Grid verticalAlign="middle">
         <ActionsRow>
-          <Grid.Column mobile={16} tablet={8} computer={8}>
+          <Grid.Column mobile={16} tablet={6} computer={8}>
             questão {currentQuestionIndex + 1} de {questions.length}
           </Grid.Column>
-          <Grid.Column floated="right" mobile={16} tablet={8} computer={8}>
+          <Grid.Column floated="right" mobile={16} tablet={10} computer={8}>
             <Button
               disabled={currentQuestionIndex + 1 === questions.length}
               onClick={() => setCurrentQuestionIndex(currentQuestionIndex + 1)}
               floated="right"
+              style={{ margin: "5px" }}
             >
               Pergunta Seguinte
             </Button>
@@ -87,6 +88,7 @@ export default () => {
               disabled={currentQuestionIndex === 0}
               onClick={() => setCurrentQuestionIndex(currentQuestionIndex - 1)}
               floated="right"
+              style={{ margin: "5px" }}
             >
               Pergunta Anterior
             </Button>

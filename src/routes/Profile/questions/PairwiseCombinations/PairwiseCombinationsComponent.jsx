@@ -20,7 +20,14 @@ export default ({ question, value, onChange }) => {
       return [
         ...acc,
         ...sortedOptions
-          .filter((o) => o.id !== curr.id)
+          .filter(
+            (o) =>
+              !acc.find(
+                (_o) =>
+                  (_o.option1.id === curr.id && _o.option2.id === o.id) ||
+                  (_o.option2.id === curr.id && _o.option1.id === o.id)
+              ) && curr.id !== o.id
+          )
           .map((o) => ({
             option1: curr,
             option2: o,
@@ -58,12 +65,12 @@ export default ({ question, value, onChange }) => {
       <QuestionInfo question={question} />
       <Grid verticalAlign="middle">
         <Grid.Row stretched>
-          <Grid.Column mobile={16} tablet={5} computer={5}>
+          <Grid.Column mobile={2} tablet={5} computer={5}>
             <QuestionOptionTitle>
               {currentIteration?.option1?.title}
             </QuestionOptionTitle>
           </Grid.Column>
-          <Grid.Column mobile={16} tablet={6} computer={6}>
+          <Grid.Column mobile={12} tablet={6} computer={6}>
             <Balance
               value={
                 value &&
@@ -76,7 +83,7 @@ export default ({ question, value, onChange }) => {
               onChange={_onIterationValueChange}
             />
           </Grid.Column>
-          <Grid.Column mobile={16} tablet={5} computer={5}>
+          <Grid.Column mobile={2} tablet={5} computer={5}>
             <QuestionOptionTitle>
               {currentIteration?.option2?.title}
             </QuestionOptionTitle>
