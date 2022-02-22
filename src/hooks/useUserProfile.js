@@ -2,6 +2,7 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useDebouncedCallback } from "use-debounce";
+import isEqual from "lodash/isEqual";
 import {
   // createNewUrbanShapesProfile,
   updateUserProfile,
@@ -13,19 +14,18 @@ export default () => {
   const activeProfile = useSelector(getActiveProfile);
   const isLoading = useSelector((state) => state.profiles.isLoading);
 
+  const [activeProfileData, setActiveProfileData] = React.useState(
+    activeProfile?.profile_data || {}
+  );
+
   React.useEffect(() => {
     if (isLoading) return;
 
-    console.log({ activeProfile });
-    // should create a new one
-    if (!activeProfile) {
-      // dispatch(
-      //   createNewUrbanShapesProfile({
-      //     calibrations: [],
-      //   })
-      // );
-    }
-  }, []);
+    const newProfileData = activeProfile?.profile_data || {};
+    if (isEqual(newProfileData, activeProfileData)) return;
+
+    setActiveProfileData(newProfileData);
+  }, [isLoading, activeProfile?.profile_data]);
 
   const _debouncedUpdateProfile = useDebouncedCallback(
     // function
@@ -40,16 +40,10 @@ export default () => {
     500
   );
 
-  // const _updateProfileData = (update) => {
-  //   return dispatch(
-  //     updateUserProfile(activeProfile.id, {
+  const _updateProfile = (update) => {
+    setActiveProfileData({ ...activeProfileData, ...update });
+    _debouncedUpdateProfile(update);
+  };
 
-  //     })
-  //   );
-  // };
-
-  return [activeProfile && activeProfile.profile_data, _debouncedUpdateProfile];
-  // const [profileData, _updateProfileData] = React.useState({});
-
-  // return [profileData, _updateProfileData];
+  return [activeProfileData, _updateProfile];
 };

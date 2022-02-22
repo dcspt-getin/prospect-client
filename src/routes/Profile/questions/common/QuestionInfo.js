@@ -1,6 +1,7 @@
 /* eslint-disable import/no-anonymous-default-export */
 import React from "react";
 import { Grid, Header, Image } from "semantic-ui-react";
+import HTMLContent from "src/components/HTMLContent";
 import styled from "styled-components";
 
 export default ({ question }) => {
@@ -32,6 +33,13 @@ export default ({ question }) => {
         <Grid.Row style={{ paddingBottom: 0 }}>
           <Grid.Column width={16}>
             <p>{question.description}</p>
+          </Grid.Column>
+        </Grid.Row>
+      )}
+      {question.description_html && (
+        <Grid.Row style={{ paddingBottom: 0 }}>
+          <Grid.Column width={16}>
+            <HTMLContent html={question.description_html} />
           </Grid.Column>
         </Grid.Row>
       )}
