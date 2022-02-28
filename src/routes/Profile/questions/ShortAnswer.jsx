@@ -50,9 +50,9 @@ export default ({ question, value, onChange }) => {
                   color="blue"
                   settings={{
                     start: 0,
-                    min: +question.value_min,
-                    max: +question.value_max,
-                    step: 1,
+                    min: parseFloat(question.value_min || 0),
+                    max: parseFloat(question.value_max || 10),
+                    step: parseFloat(question.value_interval || 1),
                     onChange: (_val) => {
                       _onChange(_val);
                     },

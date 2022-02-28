@@ -1,6 +1,7 @@
 import axios from "axios";
 
 import { API_BASE_URL } from "config";
+import { getUserProfiles } from "store/profiles/actions";
 import {
   AUTHENTICATE_USER,
   LOGOUT_USER,
@@ -77,6 +78,8 @@ export const getCurrentUser = () => async (dispatch) => {
       type: SET_CURRENT_USER,
       payload: data,
     });
+
+    dispatch(getUserProfiles());
 
     return true;
   } catch (err) {

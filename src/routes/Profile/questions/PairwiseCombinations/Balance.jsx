@@ -6,6 +6,7 @@ import { Grid } from "semantic-ui-react";
 
 const _convertValueFromSlider = (value) => value - 3;
 const _convertValueToSlider = (value) => value + 3;
+const _convertValueToSliderLabel = (value) => (value > 0 ? value : value * -1);
 
 export default (props) => {
   const [value, setValue] = React.useState(
@@ -35,7 +36,9 @@ export default (props) => {
                     style={{
                       left: `${left}%`,
                     }}
-                  ></div>
+                  >
+                    {_convertValueToSliderLabel(_convertValueFromSlider(value))}
+                  </div>
                   <div id="bar"></div>
                 </div>
                 <div id="base"></div>
@@ -48,6 +51,7 @@ export default (props) => {
             <SliderContainer>
               <Slider
                 value={value}
+                discrete
                 settings={{
                   start: 0,
                   min: 0,
@@ -86,6 +90,12 @@ const BalanceContainer = styled.div`
     bottom: 9px;
     border-radius: 50%;
     transform: translate(-50%, 0);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 18px;
+    font-weight: 600;
   }
   #bar {
     border: 0.2rem solid maroon;

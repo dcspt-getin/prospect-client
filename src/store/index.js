@@ -15,7 +15,6 @@ import {
   setAppLoaded,
   setCurrentTranslation,
 } from "./app/actions";
-import { getUserProfiles } from "./profiles/actions";
 
 export default function initStore() {
   const rootReducer = combineReducers({
@@ -49,7 +48,6 @@ export default function initStore() {
 
     axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
     store.dispatch(verifyCurrentToken(token));
-    store.dispatch(getUserProfiles());
   }
 
   registerStore(store);

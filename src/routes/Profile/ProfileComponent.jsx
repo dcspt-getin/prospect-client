@@ -28,6 +28,23 @@ export default () => {
       [question.id]: value,
     });
   };
+  const _hasValidAnswer = () => {
+    const value = userProfile[currentQuestion?.id];
+
+    if (!value) return !!currentQuestion?.default_value;
+
+    if (currentQuestion?.question_type === "PAIRWISE_COMBINATIONS") {
+      return Array.isArray(value) && value.every((v) => v.value !== undefined);
+    }
+    return !!userProfile[currentQuestion?.id];
+  };
+  const _nextQuestion = () => {
+    setCurrentQuestionIndex(currentQuestionIndex + 1);
+
+    if (currentQuestion?.default_value && !userProfile[currentQuestion.id]) {
+      _onChangeQuestion(currentQuestion)(currentQuestion.default_value);
+    }
+  };
 
   const _renderQuestion = (q) => {
     if (!q) return "";
@@ -77,8 +94,11 @@ export default () => {
           </Grid.Column>
           <Grid.Column floated="right" mobile={16} tablet={10} computer={8}>
             <Button
-              disabled={currentQuestionIndex + 1 === questions.length}
-              onClick={() => setCurrentQuestionIndex(currentQuestionIndex + 1)}
+              disabled={
+                currentQuestionIndex + 1 === questions.length ||
+                !_hasValidAnswer()
+              }
+              onClick={_nextQuestion}
               floated="right"
               style={{ margin: "5px" }}
             >
