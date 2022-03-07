@@ -11,7 +11,8 @@
       "store": ["src/store"],
       "styles": ["src/styles"],
       "utils": ["src/utils"],
-      "config": ["src/config"]
+      "config": ["src/config"],
+      "helpers": ["src/helpers"]
     }
   }
 }

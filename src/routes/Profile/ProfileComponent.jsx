@@ -2,11 +2,15 @@
 import React from "react";
 import { Header, Grid, Button, Segment } from "semantic-ui-react";
 import styled from "styled-components";
+import { useSelector } from "react-redux";
 
 import Dashboard from "components/Dashboard";
 import useTranslations from "hooks/useTranslations";
 import useQuestions from "hooks/useQuestions";
 import useUserProfile from "hooks/useUserProfile";
+import configurations from "helpers/configurations/index";
+import questionTypes from "helpers/questions/questionTypes";
+import { getAppConfiguration } from "store/app/selectors";
 
 import MultipleChoice from "./questions/MultipleChoice";
 import ShortAnswer from "./questions/ShortAnswer";
@@ -16,6 +20,11 @@ export default () => {
   const [t] = useTranslations("profile");
   const [questions] = useQuestions();
   const [userProfile, updateUserProfile] = useUserProfile();
+  const showPreviousQuestionButton = useSelector(
+    (state) =>
+      getAppConfiguration(state, configurations.SHOW_PREVIOUS_QUESTION) ===
+      "true"
+  );
 
   const [currentQuestionIndex, setCurrentQuestionIndex] = React.useState(0);
 
@@ -33,7 +42,9 @@ export default () => {
 
     if (!value) return !!currentQuestion?.default_value;
 
-    if (currentQuestion?.question_type === "PAIRWISE_COMBINATIONS") {
+    if (
+      currentQuestion?.question_type === questionTypes.PAIRWISE_COMBINATIONS
+    ) {
       return Array.isArray(value) && value.every((v) => v.value !== undefined);
     }
     return !!userProfile[currentQuestion?.id];
@@ -50,7 +61,7 @@ export default () => {
     if (!q) return "";
 
     switch (q.question_type) {
-      case "SHORT_ANSWER":
+      case questionTypes.SHORT_ANSWER:
         return (
           <ShortAnswer
             question={q}
@@ -59,7 +70,7 @@ export default () => {
           />
         );
 
-      case "PAIRWISE_COMBINATIONS":
+      case questionTypes.PAIRWISE_COMBINATIONS:
         return (
           <PairwiseCombinations
             question={q}
@@ -68,7 +79,7 @@ export default () => {
           />
         );
 
-      case "MULTIPLE_CHOICE":
+      case questionTypes.MULTIPLE_CHOICE:
         return (
           <MultipleChoice
             question={q}
@@ -104,14 +115,18 @@ export default () => {
             >
               Pergunta Seguinte
             </Button>
-            <Button
-              disabled={currentQuestionIndex === 0}
-              onClick={() => setCurrentQuestionIndex(currentQuestionIndex - 1)}
-              floated="right"
-              style={{ margin: "5px" }}
-            >
-              Pergunta Anterior
-            </Button>
+            {showPreviousQuestionButton && (
+              <Button
+                disabled={currentQuestionIndex === 0}
+                onClick={() =>
+                  setCurrentQuestionIndex(currentQuestionIndex - 1)
+                }
+                floated="right"
+                style={{ margin: "5px" }}
+              >
+                Pergunta Anterior
+              </Button>
+            )}
           </Grid.Column>
         </ActionsRow>
       </Grid>

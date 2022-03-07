@@ -1,0 +1,2 @@
+export const QUESTION_ACTIVE = "ACTIVE";
+export const QUESTION_NOT_ACTIVE = "NOT_ACTIVE";

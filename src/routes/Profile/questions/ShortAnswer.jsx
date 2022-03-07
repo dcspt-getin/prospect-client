@@ -28,8 +28,9 @@ export default ({ question, value, onChange }) => {
       <Input
         fluid
         value={inputVal}
-        min={+question.value_min}
-        max={+question.value_max}
+        min={parseFloat(question.value_min)}
+        max={parseFloat(question.value_max)}
+        step={parseFloat(question.value_interval)}
         type={INPUT_TYPES[type] || INPUT_TYPES.NUMBER}
         placeholder="Valor"
         onChange={(e) => _onChange(e.target.value)}
