@@ -11,9 +11,12 @@ export default function appReducer(state = initialState, action) {
     case SET_QUESTIONS:
       const { payload } = action;
 
+      // should not show questions with parent id
+      const questions = payload.filter((q) => !q.parent_question);
+
       return {
         ...state,
-        data: normalizeArray(payload, "id"),
+        data: normalizeArray(questions, "id"),
       };
     default:
       return state;

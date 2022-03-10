@@ -39,8 +39,12 @@ export default () => {
   };
   const _hasValidAnswer = () => {
     const value = userProfile[currentQuestion?.id];
+    const hasChildren = currentQuestion?.children?.length > 0;
+    const childrenHaveValue = () =>
+      currentQuestion?.children?.every((child) => !!userProfile[child.id]);
 
     if (!value) return !!currentQuestion?.default_value;
+    if (hasChildren) return childrenHaveValue();
 
     if (
       currentQuestion?.question_type === questionTypes.PAIRWISE_COMBINATIONS
@@ -98,6 +102,27 @@ export default () => {
       <PageHeader size="huge" as="h1">
         {t("Questionario")}
       </PageHeader>
+      <Segment>
+        <Grid verticalAlign="middle">
+          <Grid.Row>
+            <Grid.Column width={16}>
+              <QuestionContainer>
+                {_renderQuestion(currentQuestion)}
+
+                {currentQuestion &&
+                  currentQuestion.children.length > 0 &&
+                  userProfile[currentQuestion.id] && (
+                    <>
+                      {currentQuestion.children.map((child) =>
+                        _renderQuestion(child)
+                      )}
+                    </>
+                  )}
+              </QuestionContainer>
+            </Grid.Column>
+          </Grid.Row>
+        </Grid>
+      </Segment>
       <Grid verticalAlign="middle">
         <ActionsRow>
           <Grid.Column mobile={16} tablet={6} computer={8}>
@@ -130,17 +155,6 @@ export default () => {
           </Grid.Column>
         </ActionsRow>
       </Grid>
-      <Segment>
-        <Grid verticalAlign="middle">
-          <Grid.Row>
-            <Grid.Column width={16}>
-              <QuestionContainer>
-                {_renderQuestion(currentQuestion)}
-              </QuestionContainer>
-            </Grid.Column>
-          </Grid.Row>
-        </Grid>
-      </Segment>
     </Dashboard>
   );
 };
@@ -152,13 +166,13 @@ const QuestionContainer = styled.div`
 
 const ActionsRow = styled(Grid.Row)`
   &&&& {
-    padding-top: 3rem;
+    padding-top: 1.5rem;
   }
 `;
 
 const PageHeader = styled(Header)`
   &&&& {
-    margin-bottom: 1rem;
+    margin-bottom: 2rem;
     margin-top: 1rem;
   }
 `;

@@ -20,6 +20,25 @@ export default ({ question }) => {
       </Grid.Row>
     );
   };
+  const _getDescription = (desc) => {
+    const { parent_question } = question;
+
+    if (parent_question) {
+      const parentKeys = Object.keys(parent_question);
+      let result = desc;
+
+      parentKeys.forEach((key) => {
+        result = result.replace(
+          `{parent_question.${key}}`,
+          parent_question[key]
+        );
+      });
+
+      return result;
+    }
+
+    return desc;
+  };
 
   return (
     <Grid>
@@ -32,14 +51,14 @@ export default ({ question }) => {
       {question.description && (
         <Grid.Row style={{ paddingBottom: 0 }}>
           <Grid.Column width={16}>
-            <p>{question.description}</p>
+            <p>{_getDescription(question.description)}</p>
           </Grid.Column>
         </Grid.Row>
       )}
       {question.description_html && (
         <Grid.Row style={{ paddingBottom: 0 }}>
           <Grid.Column width={16}>
-            <HTMLContent html={question.description_html} />
+            <HTMLContent html={_getDescription(question.description_html)} />
           </Grid.Column>
         </Grid.Row>
       )}

@@ -27,6 +27,16 @@ export default ({ question, value, onChange }) => {
     const _inputField = (
       <Input
         fluid
+        label={
+          question.input_label && question.input_label.content
+            ? { basic: true, content: question.input_label.content }
+            : null
+        }
+        labelPosition={
+          question.input_label &&
+          question.input_label.content &&
+          question.input_label.position
+        }
         value={inputVal}
         min={parseFloat(question.value_min)}
         max={parseFloat(question.value_max)}
@@ -41,10 +51,10 @@ export default ({ question, value, onChange }) => {
       return (
         <Grid>
           <Grid.Row>
-            <Grid.Column mobile={6} tablet={4} computer={2}>
+            <Grid.Column mobile={6} tablet={6} computer={4}>
               {_inputField}
             </Grid.Column>
-            <Grid.Column mobile={10} tablet={12} computer={14}>
+            <Grid.Column mobile={10} tablet={10} computer={12}>
               <SliderContainer>
                 <Slider
                   value={inputVal}
@@ -52,7 +62,7 @@ export default ({ question, value, onChange }) => {
                   settings={{
                     start: 0,
                     min: parseFloat(question.value_min || 0),
-                    max: parseFloat(question.value_max || 10),
+                    max: parseFloat(question.value_max || 100),
                     step: parseFloat(question.value_interval || 1),
                     onChange: (_val) => {
                       _onChange(_val);
@@ -74,7 +84,7 @@ export default ({ question, value, onChange }) => {
       <QuestionInfo question={question} />
       <Grid>
         <Grid.Row>
-          <Grid.Column width={16}>
+          <Grid.Column width={parseInt(question.input_size) || 16}>
             {_renderInput(question.input_type)}
           </Grid.Column>
         </Grid.Row>
