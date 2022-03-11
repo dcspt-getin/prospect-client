@@ -3,6 +3,7 @@ import React from "react";
 import styled from "styled-components";
 import { Slider } from "react-semantic-ui-range";
 import { Grid } from "semantic-ui-react";
+import { Slider as MuiSlider } from "material-ui-slider";
 
 const _convertValueFromSlider = (value) => value - 3;
 const _convertValueToSlider = (value) => value + 3;
@@ -23,48 +24,72 @@ export default (props) => {
   const x = Math.max(-maxAngle, Math.min(maxAngle, angle)) - 5;
   const left = (value * 100) / 6;
 
+  const _onSliderChange = (_val) => {
+    setValue(_val);
+    if (props.onChange) props.onChange(_convertValueFromSlider(_val));
+  };
+
   return (
     <Wrapper>
       <Grid>
-        <Grid.Row>
+        <Grid.Row only="tablet computer">
           <Grid.Column width={16}>
-            <BalanceContainer>
-              <div id="roberval">
-                <div id="balance" style={{ transform: `rotate(${x}deg)` }}>
-                  <div
-                    id="ball"
-                    style={{
-                      left: `${left}%`,
-                    }}
-                  >
-                    {_convertValueToSliderLabel(_convertValueFromSlider(value))}
+            <Grid.Row>
+              <Grid.Column width={16}>
+                <BalanceContainer>
+                  <div id="roberval">
+                    <div id="balance" style={{ transform: `rotate(${x}deg)` }}>
+                      <div
+                        id="ball"
+                        style={{
+                          left: `${left}%`,
+                        }}
+                      >
+                        {_convertValueToSliderLabel(
+                          _convertValueFromSlider(value)
+                        )}
+                      </div>
+                      <div id="bar"></div>
+                    </div>
+                    <div id="base"></div>
                   </div>
-                  <div id="bar"></div>
-                </div>
-                <div id="base"></div>
-              </div>
-            </BalanceContainer>
+                </BalanceContainer>
+              </Grid.Column>
+            </Grid.Row>
+            <Grid.Row>
+              <Grid.Column width={16}>
+                <SliderContainer>
+                  <Slider
+                    value={value}
+                    discrete
+                    settings={{
+                      start: 0,
+                      min: 0,
+                      max: 6,
+                      step: 1,
+                      onChange: _onSliderChange,
+                    }}
+                  />
+                </SliderContainer>
+              </Grid.Column>
+            </Grid.Row>
           </Grid.Column>
         </Grid.Row>
-        <Grid.Row>
-          <Grid.Column width={16}>
-            <SliderContainer>
-              <Slider
-                value={value}
-                discrete
-                settings={{
-                  start: 0,
-                  min: 0,
-                  max: 6,
-                  step: 1,
-                  onChange: (_val) => {
-                    setValue(_val);
-                    if (props.onChange)
-                      props.onChange(_convertValueFromSlider(_val));
-                  },
-                }}
-              />
-            </SliderContainer>
+        <Grid.Row only="mobile">
+          <Grid.Column width={16} style={{ height: 200 }}>
+            <MuiSlider
+              direction="vertical"
+              color="#2185d0"
+              value={value}
+              min={0}
+              max={6}
+              step={1}
+              onChangeComplete={_onSliderChange}
+            />
+            {/* 
+            Sample vertical slider:
+              - https://codesandbox.io/s/material-demo-60upy?fontsize=14&hidenavigation=1&theme=dark&file=/src/App.js:1395-1419
+            */}
           </Grid.Column>
         </Grid.Row>
       </Grid>
@@ -123,6 +148,8 @@ const BalanceContainer = styled.div`
 `;
 
 const SliderContainer = styled.div`
+  margin-top: 10px;
+
   .semantic_ui_range_inner {
     div:nth-child(2) {
       background-color: transparent !important;

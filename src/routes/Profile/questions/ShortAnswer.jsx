@@ -84,7 +84,15 @@ export default ({ question, value, onChange }) => {
       <QuestionInfo question={question} />
       <Grid>
         <Grid.Row>
-          <Grid.Column width={parseInt(question.input_size) || 16}>
+          <Grid.Column
+            mobile={
+              question.input_size ? parseInt(question.input_size) + 3 : 16
+            }
+            tablet={
+              question.input_size ? parseInt(question.input_size) + 1 : 16
+            }
+            computer={parseInt(question.input_size) || 16}
+          >
             {_renderInput(question.input_type)}
           </Grid.Column>
         </Grid.Row>

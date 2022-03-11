@@ -91,7 +91,7 @@ export default ({ question, value, onChange }) => {
     <Wrapper>
       <QuestionInfo question={question} />
       <Grid verticalAlign="middle">
-        <Grid.Row stretched>
+        <Grid.Row stretched only="tablet computer large">
           <Grid.Column mobile={2} tablet={5} computer={5}>
             <QuestionOptionTitle>
               {currentIteration?.option1?.title}
@@ -109,7 +109,39 @@ export default ({ question, value, onChange }) => {
             </QuestionOptionTitle>
           </Grid.Column>
         </Grid.Row>
-        <Grid.Row>
+        <Grid.Row stretched only="mobile">
+          <Grid.Column mobile={13}>
+            <Grid style={{ height: 200 }}>
+              <Grid.Row>
+                <Grid.Column width={16}>
+                  <QuestionOptionTitle style={{ justifyContent: "right" }}>
+                    {currentIteration?.option1?.title}
+                  </QuestionOptionTitle>
+                </Grid.Column>
+              </Grid.Row>
+              <Grid.Row>
+                <Grid.Column width={16}>
+                  <QuestionOptionTitle
+                    style={{
+                      height: "100%",
+                      alignItems: "end",
+                      justifyContent: "right",
+                    }}
+                  >
+                    {currentIteration?.option2?.title}
+                  </QuestionOptionTitle>
+                </Grid.Column>
+              </Grid.Row>
+            </Grid>
+          </Grid.Column>
+          <Grid.Column mobile={3}>
+            <Balance
+              value={currentIteratonValue}
+              onChange={_onIterationValueChange}
+            />
+          </Grid.Column>
+        </Grid.Row>
+        <Grid.Row only="tablet computer large">
           <Grid.Column mobile={16} tablet={8} computer={8}>
             comparação {iteration + 1} de {optionsMatrix.length}
           </Grid.Column>
@@ -134,6 +166,31 @@ export default ({ question, value, onChange }) => {
             </Button>
           </Grid.Column>
         </Grid.Row>
+        <Grid.Row only="mobile">
+          <CenteredColumn width={16}>
+            comparação {iteration + 1} de {optionsMatrix.length}
+          </CenteredColumn>
+          <CenteredColumn width={16}>
+            <div>
+              <Button
+                // disabled={iteration + 1 === optionsMatrix.length}
+                onClick={_onClickNextIteration}
+              >
+                Seguinte
+              </Button>
+              <Button
+                // disabled={iteration === 0}
+                onClick={() =>
+                  setIteration(
+                    iteration === 0 ? optionsMatrix.length - 1 : iteration - 1
+                  )
+                }
+              >
+                Anterior
+              </Button>
+            </div>
+          </CenteredColumn>
+        </Grid.Row>
       </Grid>
     </Wrapper>
   );
@@ -145,4 +202,12 @@ const QuestionOptionTitle = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+`;
+
+const CenteredColumn = styled(Grid.Column)`
+  &&&& {
+    display: flex;
+    align-items: center;
+    padding: 10px 0;
+  }
 `;
