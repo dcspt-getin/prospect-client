@@ -3,8 +3,11 @@ import React from "react";
 import { Grid, Button } from "semantic-ui-react";
 import styled from "styled-components";
 
+import configurations from "helpers/configurations/index";
 import QuestionInfo from "../common/QuestionInfo";
 import Balance from "./Balance";
+import { getAppConfiguration } from "store/app/selectors";
+import { useSelector } from "react-redux";
 
 const shuffleArray = (array) =>
   array
@@ -16,7 +19,14 @@ export default ({ question, value, onChange }) => {
   const { options } = question;
 
   const [optionsMatrix, setOptionsMatrix] = React.useState([]);
-  const [iteration, setIteration] = React.useState(0);
+  const [iteration, setIteration] = React.useState(null);
+  const allowUserRepeatQuestion = useSelector(
+    (state) =>
+      getAppConfiguration(
+        state,
+        configurations.ALLOW_USER_REPEAT_BALANCE_QUESTION
+      ) === "true"
+  );
 
   React.useEffect(() => {
     if (options.length < 2) return;
@@ -53,6 +63,17 @@ export default ({ question, value, onChange }) => {
     setOptionsMatrix(shuffleArray(_optionsMatix));
   }, [options]);
 
+  React.useEffect(() => {
+    const allInterationsDone =
+      value && value.every((v) => v.value !== undefined);
+
+    if (allInterationsDone && iteration === null) {
+      setIteration(-1);
+    } else if (iteration === null) {
+      setIteration(0);
+    }
+  }, [value]);
+
   const currentIteration = optionsMatrix[iteration];
   const currentIteratonValue =
     Array.isArray(value) &&
@@ -79,12 +100,32 @@ export default ({ question, value, onChange }) => {
     if (currentIteratonValue === undefined) _onIterationValueChange(0);
 
     if (iteration + 1 === optionsMatrix.length) {
-      setIteration(0);
+      setIteration(-1);
       return;
     }
     setIteration(iteration + 1);
   };
 
+  if (iteration === -1)
+    return (
+      <>
+        <QuestionInfo question={question} />
+        <Grid>
+          <Grid.Row>
+            <Grid.Column width={16}>Completo!</Grid.Column>
+          </Grid.Row>
+          {allowUserRepeatQuestion && (
+            <Grid.Row>
+              <Grid.Column width={16}>
+                <Button onClick={() => setIteration(0)} floated="left">
+                  Voltar a Preencher
+                </Button>
+              </Grid.Column>
+            </Grid.Row>
+          )}
+        </Grid>
+      </>
+    );
   if (!currentIteration) return "";
 
   return (
@@ -154,7 +195,7 @@ export default ({ question, value, onChange }) => {
               Seguinte
             </Button>
             <Button
-              // disabled={iteration === 0}
+              disabled={iteration === 0}
               onClick={() =>
                 setIteration(
                   iteration === 0 ? optionsMatrix.length - 1 : iteration - 1
@@ -173,13 +214,7 @@ export default ({ question, value, onChange }) => {
           <CenteredColumn width={16}>
             <div>
               <Button
-                // disabled={iteration + 1 === optionsMatrix.length}
-                onClick={_onClickNextIteration}
-              >
-                Seguinte
-              </Button>
-              <Button
-                // disabled={iteration === 0}
+                disabled={iteration === 0}
                 onClick={() =>
                   setIteration(
                     iteration === 0 ? optionsMatrix.length - 1 : iteration - 1
@@ -187,6 +222,12 @@ export default ({ question, value, onChange }) => {
                 }
               >
                 Anterior
+              </Button>
+              <Button
+                // disabled={iteration + 1 === optionsMatrix.length}
+                onClick={_onClickNextIteration}
+              >
+                Seguinte
               </Button>
             </div>
           </CenteredColumn>
