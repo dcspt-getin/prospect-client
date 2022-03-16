@@ -7,6 +7,8 @@ import QuestionInfo from "./common/QuestionInfo";
 export default ({ question, value, onChange }) => {
   const { multiple_selection_type: selectionType, options } = question;
 
+  const sortedOptions = options.sort((a, b) => a.row_order - b.row_order);
+
   const _inputTypeMapper = {
     SELECT: (
       <>
@@ -14,7 +16,7 @@ export default ({ question, value, onChange }) => {
           fluid
           selection
           placeholder="Select"
-          options={options.map((o) => ({ value: o.id, text: o.title }))}
+          options={sortedOptions.map((o) => ({ value: o.id, text: o.title }))}
           value={value}
           onChange={(e, { value }) => onChange(value)}
         />
@@ -22,7 +24,7 @@ export default ({ question, value, onChange }) => {
     ),
     RADIO: (
       <RadioOptions>
-        {options.map((o) => (
+        {sortedOptions.map((o) => (
           <Form.Field key={o.id}>
             <Radio
               label={o.title}

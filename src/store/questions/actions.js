@@ -5,7 +5,9 @@ import { SET_QUESTIONS } from "./types";
 
 export const fetchQuestions = () => async (dispatch) => {
   try {
-    const { data } = await axios.get(`${API_BASE_URL}/questions/`);
+    const { data } = await axios.get(`${API_BASE_URL}/questions/`, {
+      params: { limit: 1000 },
+    });
 
     dispatch({
       type: SET_QUESTIONS,

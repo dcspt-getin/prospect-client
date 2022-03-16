@@ -51,14 +51,18 @@ export default ({ question }) => {
       {question.description && (
         <Grid.Row style={{ paddingBottom: 0 }}>
           <Grid.Column width={16}>
-            <p>{_getDescription(question.description)}</p>
+            <Description>
+              <p>{_getDescription(question.description)}</p>
+            </Description>
           </Grid.Column>
         </Grid.Row>
       )}
       {question.description_html && (
         <Grid.Row style={{ paddingBottom: 0 }}>
           <Grid.Column width={16}>
-            <HTMLContent html={_getDescription(question.description_html)} />
+            <Description>
+              <HTMLContent html={_getDescription(question.description_html)} />
+            </Description>
           </Grid.Column>
         </Grid.Row>
       )}
@@ -67,3 +71,18 @@ export default ({ question }) => {
 };
 
 const ImageContainer = styled.div``;
+
+const Description = styled.div`
+  table {
+    width: 90%;
+    border: 1px solid #333;
+    border-collapse: collapse;
+    margin: auto;
+
+    th,
+    td {
+      border: 1px solid #333;
+      padding: 6px;
+    }
+  }
+`;

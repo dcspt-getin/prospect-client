@@ -1,6 +1,7 @@
 /* eslint-disable import/no-anonymous-default-export */
 
 export default {
+  ONLY_QUESTION_INFO: "ONLY_QUESTION_INFO",
   PAIRWISE_COMBINATIONS: "PAIRWISE_COMBINATIONS",
   SHORT_ANSWER: "SHORT_ANSWER",
   MULTIPLE_CHOICE: "MULTIPLE_CHOICE",

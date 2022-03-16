@@ -15,6 +15,7 @@ import { getAppConfiguration } from "store/app/selectors";
 import MultipleChoice from "./questions/MultipleChoice";
 import ShortAnswer from "./questions/ShortAnswer";
 import PairwiseCombinations from "./questions/PairwiseCombinations/index";
+import QuestionInfo from "./questions/common/QuestionInfo";
 
 export default () => {
   const [t] = useTranslations("profile");
@@ -43,6 +44,8 @@ export default () => {
     const childrenHaveValue = () =>
       currentQuestion?.children?.every((child) => !!userProfile[child.id]);
 
+    if (currentQuestion.question_type === questionTypes.ONLY_QUESTION_INFO)
+      return true;
     if (!value) return !!currentQuestion?.default_value;
     if (hasChildren) return childrenHaveValue();
 
@@ -65,6 +68,8 @@ export default () => {
     if (!q) return "";
 
     switch (q.question_type) {
+      case questionTypes.ONLY_QUESTION_INFO:
+        return <QuestionInfo question={q} />;
       case questionTypes.SHORT_ANSWER:
         return (
           <ShortAnswer
