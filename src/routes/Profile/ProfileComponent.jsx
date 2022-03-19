@@ -11,15 +11,30 @@ import useUserProfile from "hooks/useUserProfile";
 import configurations from "helpers/configurations/index";
 import questionTypes from "helpers/questions/questionTypes";
 import { getAppConfiguration } from "store/app/selectors";
+import { is, pipe, isEmpty, not, both, has, propEq, or } from "ramda";
 
 import MultipleChoice from "./questions/MultipleChoice";
 import ShortAnswer from "./questions/ShortAnswer";
 import PairwiseCombinations from "./questions/PairwiseCombinations/index";
 import QuestionInfo from "./questions/common/QuestionInfo";
+import ContinueProfileAlert from "./ContinueProfileAlert";
+
+// Auxiliary functions
+const isArray = is(Array);
+const isNotEmpty = pipe(isEmpty, not);
+const hasChildren = both(isArray, isNotEmpty);
+const questionFilled = (questionId) => has(questionId);
+const isInfoQuestion = propEq(
+  "question_type",
+  questionTypes.ONLY_QUESTION_INFO
+);
+const isQuestionFilledOrisOnlyInfo = (userProfile, question) =>
+  or(questionFilled(question.id)(userProfile), isInfoQuestion(question));
 
 export default () => {
   const [t] = useTranslations("profile");
   const [questions] = useQuestions();
+  const [showAlert, setShowAlert] = React.useState(false);
   const [userProfile, updateUserProfile] = useUserProfile();
   const showPreviousQuestionButton = useSelector(
     (state) =>
@@ -28,11 +43,22 @@ export default () => {
   );
 
   const [currentQuestionIndex, setCurrentQuestionIndex] = React.useState(0);
-
   const currentQuestion =
     questions.length > 0 && questions[currentQuestionIndex];
+  const currentQuestionRef = React.useRef(currentQuestion);
 
-  const _onChangeQuestion = (question) => (value) => {
+  currentQuestionRef.current = currentQuestion;
+  const userProfileKeys = Object.keys(userProfile);
+
+  React.useEffect(() => {
+    if (showAlert === "reseted") return;
+
+    setShowAlert(userProfileKeys.length > 0);
+  }, [userProfileKeys, currentQuestionIndex, showAlert]);
+
+  const _onChangeQuestion = (value, question) => {
+    if (!question) question = currentQuestionRef.current;
+
     updateUserProfile({
       ...userProfile,
       [question.id]: value,
@@ -40,14 +66,12 @@ export default () => {
   };
   const _hasValidAnswer = () => {
     const value = userProfile[currentQuestion?.id];
-    const hasChildren = currentQuestion?.children?.length > 0;
     const childrenHaveValue = () =>
       currentQuestion?.children?.every((child) => !!userProfile[child.id]);
 
-    if (currentQuestion.question_type === questionTypes.ONLY_QUESTION_INFO)
-      return true;
+    if (hasChildren(currentQuestion.children)) return childrenHaveValue();
+    if (isInfoQuestion(currentQuestion)) return true;
     if (!value) return !!currentQuestion?.default_value;
-    if (hasChildren) return childrenHaveValue();
 
     if (
       currentQuestion?.question_type === questionTypes.PAIRWISE_COMBINATIONS
@@ -60,8 +84,16 @@ export default () => {
     setCurrentQuestionIndex(currentQuestionIndex + 1);
 
     if (currentQuestion?.default_value && !userProfile[currentQuestion.id]) {
-      _onChangeQuestion(currentQuestion)(currentQuestion.default_value);
+      _onChangeQuestion(currentQuestion, currentQuestion.default_value);
     }
+  };
+  const _onContinueProfile = () => {
+    setShowAlert("reseted");
+
+    const anseredQuestions = questions.filter((q) =>
+      questionFilled(q.id)(userProfile)
+    );
+    setCurrentQuestionIndex(anseredQuestions.length);
   };
 
   const _renderQuestion = (q) => {
@@ -75,7 +107,7 @@ export default () => {
           <ShortAnswer
             question={q}
             value={userProfile[q.id]}
-            onChange={_onChangeQuestion(q)}
+            onChange={_onChangeQuestion}
           />
         );
 
@@ -84,7 +116,7 @@ export default () => {
           <PairwiseCombinations
             question={q}
             value={userProfile[q.id]}
-            onChange={_onChangeQuestion(q)}
+            onChange={_onChangeQuestion}
           />
         );
 
@@ -93,7 +125,7 @@ export default () => {
           <MultipleChoice
             question={q}
             value={userProfile[q.id]}
-            onChange={_onChangeQuestion(q)}
+            onChange={_onChangeQuestion}
           />
         );
 
@@ -101,12 +133,8 @@ export default () => {
         return "";
     }
   };
-
-  return (
-    <Dashboard>
-      <PageHeader size="huge" as="h1">
-        {t("Questionario")}
-      </PageHeader>
+  const _renderProfileQuestions = () => (
+    <>
       <Segment>
         <Grid verticalAlign="middle">
           <Grid.Row>
@@ -115,8 +143,11 @@ export default () => {
                 {_renderQuestion(currentQuestion)}
 
                 {currentQuestion &&
-                  currentQuestion.children.length > 0 &&
-                  userProfile[currentQuestion.id] && (
+                  hasChildren(currentQuestion.children) &&
+                  isQuestionFilledOrisOnlyInfo(
+                    userProfile,
+                    currentQuestion
+                  ) && (
                     <>
                       {currentQuestion.children.map((child) =>
                         _renderQuestion(child)
@@ -130,10 +161,7 @@ export default () => {
       </Segment>
       <Grid verticalAlign="middle">
         <ActionsRow>
-          <Grid.Column mobile={16} tablet={6} computer={8}>
-            questão {currentQuestionIndex + 1} de {questions.length}
-          </Grid.Column>
-          <Grid.Column floated="right" mobile={16} tablet={10} computer={8}>
+          <Grid.Column floated="right" width={16}>
             <Button
               disabled={
                 currentQuestionIndex + 1 === questions.length ||
@@ -143,7 +171,7 @@ export default () => {
               floated="right"
               style={{ margin: "5px" }}
             >
-              Pergunta Seguinte
+              Seguinte
             </Button>
             {showPreviousQuestionButton && (
               <Button
@@ -154,12 +182,28 @@ export default () => {
                 floated="right"
                 style={{ margin: "5px" }}
               >
-                Pergunta Anterior
+                Anterior
               </Button>
             )}
           </Grid.Column>
         </ActionsRow>
       </Grid>
+    </>
+  );
+
+  return (
+    <Dashboard>
+      <PageHeader size="huge" as="h1">
+        {t("Questionario")}
+      </PageHeader>
+      {showAlert === true ? (
+        <ContinueProfileAlert
+          onClickContinue={_onContinueProfile}
+          onClickReset={() => setShowAlert("reseted")}
+        />
+      ) : (
+        _renderProfileQuestions()
+      )}
     </Dashboard>
   );
 };

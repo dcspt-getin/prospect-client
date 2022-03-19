@@ -18,6 +18,9 @@ const shuffleArray = (array) =>
 export default ({ question, value, onChange }) => {
   const { options } = question;
 
+  const questionRef = React.useRef(question);
+
+  questionRef.current = question;
   const [optionsMatrix, setOptionsMatrix] = React.useState([]);
   const [iteration, setIteration] = React.useState(null);
   const allowUserRepeatQuestion = useSelector(
@@ -57,22 +60,27 @@ export default ({ question, value, onChange }) => {
         _optionsMatix.map((o) => ({
           option1: o.option1.id,
           option2: o.option2.id,
-        }))
+        })),
+        questionRef.current
       );
     }
     setOptionsMatrix(shuffleArray(_optionsMatix));
-  }, [options]);
+  }, [options, question]);
+
+  React.useEffect(() => {
+    setIteration(null);
+  }, [question]);
 
   React.useEffect(() => {
     const allInterationsDone =
-      value && value.every((v) => v.value !== undefined);
+      value && value.every((v) => v.value !== undefined && v.value !== null);
 
     if (allInterationsDone && iteration === null) {
       setIteration(-1);
-    } else if (iteration === null) {
+    } else if (iteration === null || !allInterationsDone) {
       setIteration(0);
     }
-  }, [value]);
+  }, [value, iteration]);
 
   const currentIteration = optionsMatrix[iteration];
   const currentIteratonValue =
@@ -83,18 +91,21 @@ export default ({ question, value, onChange }) => {
         v.option2 === currentIteration?.option2?.id
     )?.value;
   const _onIterationValueChange = (val) => {
-    onChange([
-      ...(value || []).filter(
-        (v) =>
-          v.option1 !== currentIteration.option1.id ||
-          v.option2 !== currentIteration.option2.id
-      ),
-      {
-        option1: currentIteration.option1.id,
-        option2: currentIteration.option2.id,
-        value: val,
-      },
-    ]);
+    onChange(
+      [
+        ...(value || []).filter(
+          (v) =>
+            v.option1 !== currentIteration.option1.id ||
+            v.option2 !== currentIteration.option2.id
+        ),
+        {
+          option1: currentIteration.option1.id,
+          option2: currentIteration.option2.id,
+          value: val,
+        },
+      ],
+      questionRef.current
+    );
   };
   const _onClickNextIteration = () => {
     if (currentIteratonValue === undefined) _onIterationValueChange(0);

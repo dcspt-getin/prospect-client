@@ -44,7 +44,7 @@ export default ({ question }) => {
     <Grid>
       <Grid.Row>
         <Grid.Column width={16}>
-          <Header size="medium">{question.title}</Header>
+          <Title size="medium">{question.title}</Title>
         </Grid.Column>
       </Grid.Row>
       {_renderDescriptionImage(question)}
@@ -71,6 +71,12 @@ export default ({ question }) => {
 };
 
 const ImageContainer = styled.div``;
+
+const Title = styled(Header)`
+  &&& {
+    margin-top: -20px;
+  }
+`;
 
 const Description = styled.div`
   table {

@@ -11,15 +11,25 @@ const INPUT_TYPES = {
 };
 
 export default ({ question, value, onChange }) => {
+  const questionRef = React.useRef(question);
+
+  questionRef.current = question;
+
   const _onChange = (val) => {
-    if (+question.value_min && +val < +question.value_min) {
-      val = question.value_min;
+    if (
+      +questionRef.current.value_min &&
+      +val < +questionRef.current.value_min
+    ) {
+      val = questionRef.current.value_min;
     }
-    if (+question.value_max && +val > +question.value_max) {
+    if (
+      +questionRef.current.value_max &&
+      +val > +questionRef.current.value_max
+    ) {
       val = question.value_max;
     }
 
-    onChange(val);
+    onChange(val, questionRef.current);
   };
   const inputVal = value === undefined ? question.default_value : value;
 
@@ -43,7 +53,7 @@ export default ({ question, value, onChange }) => {
         step={parseFloat(question.value_interval)}
         type={INPUT_TYPES[type] || INPUT_TYPES.NUMBER}
         placeholder="Valor"
-        onChange={(e) => _onChange(e.target.value)}
+        onChange={(e) => _onChange(e.target.value, questionRef.current)}
       />
     );
 

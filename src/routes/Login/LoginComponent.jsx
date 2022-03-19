@@ -11,7 +11,7 @@ export default () => {
   const history = useHistory();
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
 
-  if (isAuthenticated) history.push("/");
+  if (isAuthenticated) history.push("/questionario");
 
   return (
     <Dashboard hideLeftMenu>

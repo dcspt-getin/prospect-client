@@ -6,6 +6,9 @@ import QuestionInfo from "./common/QuestionInfo";
 
 export default ({ question, value, onChange }) => {
   const { multiple_selection_type: selectionType, options } = question;
+  const questionRef = React.useRef(question);
+
+  questionRef.current = question;
 
   const sortedOptions = options.sort((a, b) => a.row_order - b.row_order);
 
@@ -18,7 +21,7 @@ export default ({ question, value, onChange }) => {
           placeholder="Select"
           options={sortedOptions.map((o) => ({ value: o.id, text: o.title }))}
           value={value}
-          onChange={(e, { value }) => onChange(value)}
+          onChange={(e, { value }) => onChange(value, questionRef.current)}
         />
       </>
     ),
@@ -31,7 +34,7 @@ export default ({ question, value, onChange }) => {
               name={`radio-group-${question.id}`}
               value={o.id}
               checked={value === o.id}
-              onChange={(e, { value }) => onChange(value)}
+              onChange={(e, { value }) => onChange(value, questionRef.current)}
             />
           </Form.Field>
         ))}

@@ -38,12 +38,6 @@ export default () => {
       <Route path="/register">
         <Register />
       </Route>
-      <Route path="/about">
-        <About />
-      </Route>
-      <Route path="/contacts">
-        <Contacts />
-      </Route>
       <Route path="/terms-conditions">
         <TermsAndConditions />
       </Route>
@@ -51,7 +45,7 @@ export default () => {
         <Profile />
       </PrivateRoute>
       <Route path="/">
-        <Home />
+        <Login />
       </Route>
     </Switch>
   );
