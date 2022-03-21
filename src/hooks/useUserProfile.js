@@ -15,7 +15,7 @@ export default () => {
   const isLoading = useSelector((state) => state.profiles.isLoading);
 
   const [activeProfileData, setActiveProfileData] = React.useState(
-    activeProfile?.profile_data || {}
+    activeProfile?.profile_data
   );
 
   React.useEffect(() => {
@@ -45,5 +45,5 @@ export default () => {
     _debouncedUpdateProfile(update);
   };
 
-  return [activeProfileData, _updateProfile];
+  return [activeProfileData, _updateProfile, isLoading];
 };

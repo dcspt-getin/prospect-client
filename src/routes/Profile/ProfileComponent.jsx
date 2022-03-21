@@ -48,40 +48,38 @@ export default () => {
   const currentQuestionRef = React.useRef(currentQuestion);
 
   currentQuestionRef.current = currentQuestion;
-  const userProfileKeys = Object.keys(userProfile);
+  const userProfileKeys = userProfile && Object.keys(userProfile);
+  const alreadyFilled = userProfile && userProfileKeys.length > 0;
 
   React.useEffect(() => {
-    if (showAlert === "reseted") return;
-    if (currentQuestionIndex > 0) return;
+    if (!userProfile) return;
+    if (!questions || questions.length === 0) return;
 
-    setShowAlert(userProfileKeys.length > 0);
-  }, [userProfileKeys, currentQuestionIndex, showAlert]);
+    setShowAlert(alreadyFilled);
+  }, [!userProfile]);
 
   const _onChangeQuestion = (value, question) => {
     if (!question) question = currentQuestionRef.current;
-
-    console.log({ value, question });
 
     updateUserProfile({
       ...userProfile,
       [question.id]: value,
     });
   };
-  const _hasValidAnswer = () => {
-    const value = userProfile[currentQuestion?.id];
+  const _hasValidAnswer = (q) => {
+    const value = userProfile[q?.id];
     const childrenHaveValue = () =>
-      currentQuestion?.children?.every((child) => !!userProfile[child.id]);
+      q?.children?.every((child) => !!userProfile[child.id]);
 
-    if (hasChildren(currentQuestion.children)) return childrenHaveValue();
-    if (isInfoQuestion(currentQuestion)) return true;
-    if (!value) return !!currentQuestion?.default_value;
+    if (hasChildren(q?.children)) return childrenHaveValue();
+    if (isInfoQuestion(q)) return true;
+    if (!value) return !!q?.default_value;
 
-    if (
-      currentQuestion?.question_type === questionTypes.PAIRWISE_COMBINATIONS
-    ) {
+    if (q?.question_type === questionTypes.PAIRWISE_COMBINATIONS) {
       return Array.isArray(value) && value.every((v) => v.value !== undefined);
     }
-    return !!userProfile[currentQuestion?.id];
+
+    return !!userProfile[q?.id];
   };
   const _nextQuestion = () => {
     setCurrentQuestionIndex(currentQuestionIndex + 1);
@@ -93,10 +91,13 @@ export default () => {
   const _onContinueProfile = () => {
     setShowAlert("reseted");
 
-    const anseredQuestions = questions.filter((q) =>
-      questionFilled(q.id)(userProfile)
+    const anseredQuestions = questions.filter(
+      (q) => questionFilled(q.id)(userProfile) && _hasValidAnswer(q)
     );
-    setCurrentQuestionIndex(anseredQuestions.length);
+
+    let next = anseredQuestions.length;
+    if (next === questions.length) next = next - 1;
+    setCurrentQuestionIndex(next);
   };
 
   const _renderQuestion = (q) => {
@@ -168,7 +169,7 @@ export default () => {
             <Button
               disabled={
                 currentQuestionIndex + 1 === questions.length ||
-                !_hasValidAnswer()
+                !_hasValidAnswer(currentQuestion)
               }
               onClick={_nextQuestion}
               floated="right"
@@ -199,13 +200,17 @@ export default () => {
       <PageHeader size="huge" as="h1">
         {t("Questionario")}
       </PageHeader>
-      {showAlert === true ? (
-        <ContinueProfileAlert
-          onClickContinue={_onContinueProfile}
-          onClickReset={() => setShowAlert("reseted")}
-        />
-      ) : (
-        _renderProfileQuestions()
+      {userProfile && (
+        <>
+          {showAlert === true ? (
+            <ContinueProfileAlert
+              onClickContinue={_onContinueProfile}
+              onClickReset={() => setShowAlert("reseted")}
+            />
+          ) : (
+            _renderProfileQuestions()
+          )}
+        </>
       )}
     </Dashboard>
   );
