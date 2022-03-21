@@ -52,12 +52,15 @@ export default () => {
 
   React.useEffect(() => {
     if (showAlert === "reseted") return;
+    if (currentQuestionIndex > 0) return;
 
     setShowAlert(userProfileKeys.length > 0);
   }, [userProfileKeys, currentQuestionIndex, showAlert]);
 
   const _onChangeQuestion = (value, question) => {
     if (!question) question = currentQuestionRef.current;
+
+    console.log({ value, question });
 
     updateUserProfile({
       ...userProfile,
@@ -84,7 +87,7 @@ export default () => {
     setCurrentQuestionIndex(currentQuestionIndex + 1);
 
     if (currentQuestion?.default_value && !userProfile[currentQuestion.id]) {
-      _onChangeQuestion(currentQuestion, currentQuestion.default_value);
+      _onChangeQuestion(currentQuestion.default_value, currentQuestion);
     }
   };
   const _onContinueProfile = () => {

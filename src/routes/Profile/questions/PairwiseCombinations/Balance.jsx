@@ -3,7 +3,7 @@ import React from "react";
 import styled from "styled-components";
 import { Slider } from "react-semantic-ui-range";
 import { Grid } from "semantic-ui-react";
-import { Slider as MuiSlider } from "material-ui-slider";
+import MuiSlider from "@material-ui/core/Slider";
 
 const _convertValueFromSlider = (value) => value - 3;
 const _convertValueToSlider = (value) => value + 3;
@@ -28,6 +28,25 @@ export default (props) => {
     setValue(_val);
     if (props.onChange) props.onChange(_convertValueFromSlider(_val));
   };
+  const _onBalanceClick = (e) => {
+    // console.log({ e });
+
+    const {
+      target: { clientWidth },
+      screenX,
+    } = e;
+
+    const parcel = Math.round(clientWidth / 6);
+    let val = Math.round((screenX * -1) / parcel - 0.5);
+
+    if (val > 6) val = 6;
+    if (val < 0) val = 0;
+
+    val = 6 - val;
+
+    // console.log({ val, clientWidth, screenX });
+    // setValue(val);
+  };
 
   return (
     <Wrapper>
@@ -49,7 +68,7 @@ export default (props) => {
                           _convertValueFromSlider(value)
                         )}
                       </div>
-                      <div id="bar"></div>
+                      <div id="bar" onClick={_onBalanceClick}></div>
                     </div>
                     <div id="base"></div>
                   </div>
@@ -62,6 +81,12 @@ export default (props) => {
                   <Slider
                     value={value}
                     discrete
+                    style={{
+                      track: { backgroundColor: "#2184d061" },
+                      thumb: {
+                        backgroundColor: "#2185d0",
+                      },
+                    }}
                     settings={{
                       start: 0,
                       min: 0,
@@ -77,14 +102,18 @@ export default (props) => {
         </Grid.Row>
         <Grid.Row only="mobile">
           <Grid.Column width={16} style={{ height: 200 }}>
-            <MuiSlider
-              direction="vertical"
-              color="#2185d0"
+            <VerticalSlider
+              orientation="vertical"
+              color="primary"
               value={value}
               min={0}
               max={6}
               step={1}
-              onChangeComplete={_onSliderChange}
+              onChange={(e, val) => _onSliderChange(val)}
+              valueLabelDisplay="on"
+              valueLabelFormat={(v) =>
+                _convertValueToSliderLabel(_convertValueFromSlider(v))
+              }
             />
             {/* 
             Sample vertical slider:
@@ -112,7 +141,7 @@ const BalanceContainer = styled.div`
     background: maroon;
     position: absolute;
     left: 0;
-    bottom: 9px;
+    bottom: 11px;
     border-radius: 50%;
     transform: translate(-50%, 0);
     display: flex;
@@ -125,9 +154,10 @@ const BalanceContainer = styled.div`
   #bar {
     border: 0.2rem solid maroon;
     background: maroon;
-    height: 8px;
+    height: 10px;
     margin-bottom: 1px;
     border-radius: 3px;
+    cursor: pointer;
   }
   #roberval {
     width: 100%;
@@ -153,6 +183,24 @@ const SliderContainer = styled.div`
   .semantic_ui_range_inner {
     div:nth-child(2) {
       background-color: transparent !important;
+    }
+  }
+`;
+
+const VerticalSlider = styled(MuiSlider)`
+  &&& {
+    .MuiSlider-track {
+      display: none;
+    }
+
+    .MuiSlider-thumb > span {
+      transform: rotate(90deg);
+      margin-left: 16px;
+      margin-top: 8px;
+
+      > span > span {
+        transform: rotate(-45deg);
+      }
     }
   }
 `;

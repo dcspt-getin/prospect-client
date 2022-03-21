@@ -65,11 +65,11 @@ export default ({ question, value, onChange }) => {
       );
     }
     setOptionsMatrix(shuffleArray(_optionsMatix));
-  }, [options, question]);
+  }, [options, question?.id]);
 
   React.useEffect(() => {
     setIteration(null);
-  }, [question]);
+  }, [question?.id]);
 
   React.useEffect(() => {
     const allInterationsDone =
@@ -77,7 +77,7 @@ export default ({ question, value, onChange }) => {
 
     if (allInterationsDone && iteration === null) {
       setIteration(-1);
-    } else if (iteration === null || !allInterationsDone) {
+    } else if (iteration === null) {
       setIteration(0);
     }
   }, [value, iteration]);
@@ -162,7 +162,7 @@ export default ({ question, value, onChange }) => {
           </Grid.Column>
         </Grid.Row>
         <Grid.Row stretched only="mobile">
-          <Grid.Column mobile={13}>
+          <Grid.Column mobile={12}>
             <Grid style={{ height: 200 }}>
               <Grid.Row>
                 <Grid.Column width={16}>
@@ -186,7 +186,7 @@ export default ({ question, value, onChange }) => {
               </Grid.Row>
             </Grid>
           </Grid.Column>
-          <Grid.Column mobile={3}>
+          <Grid.Column mobile={4}>
             <Balance
               value={currentIteratonValue}
               onChange={_onIterationValueChange}

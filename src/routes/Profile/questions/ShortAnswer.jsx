@@ -99,7 +99,7 @@ export default ({ question, value, onChange }) => {
               question.input_size ? parseInt(question.input_size) + 3 : 16
             }
             tablet={
-              question.input_size ? parseInt(question.input_size) + 1 : 16
+              question.input_size ? parseInt(question.input_size) + 2 : 16
             }
             computer={parseInt(question.input_size) || 16}
           >
