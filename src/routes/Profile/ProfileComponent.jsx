@@ -54,9 +54,10 @@ export default () => {
   React.useEffect(() => {
     if (!userProfile) return;
     if (!questions || questions.length === 0) return;
+    if ([true, "reseted"].includes(showAlert)) return;
 
     setShowAlert(alreadyFilled);
-  }, [!userProfile]);
+  }, [userProfile, questions?.length]);
 
   const _onChangeQuestion = (value, question) => {
     if (!question) question = currentQuestionRef.current;
@@ -200,7 +201,7 @@ export default () => {
       <PageHeader size="huge" as="h1">
         {t("Questionario")}
       </PageHeader>
-      {userProfile && (
+      {userProfile && questions && questions.length > 0 && (
         <>
           {showAlert === true ? (
             <ContinueProfileAlert

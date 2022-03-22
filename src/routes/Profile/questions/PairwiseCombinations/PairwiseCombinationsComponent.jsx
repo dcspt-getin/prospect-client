@@ -91,27 +91,59 @@ export default ({ question, value, onChange }) => {
         v.option2 === currentIteration?.option2?.id
     )?.value;
   const _onIterationValueChange = (val) => {
-    onChange(
-      [
-        ...(value || []).filter(
-          (v) =>
-            v.option1 !== currentIteration.option1.id ||
-            v.option2 !== currentIteration.option2.id
-        ),
-        {
-          option1: currentIteration.option1.id,
-          option2: currentIteration.option2.id,
-          value: val,
-        },
-      ],
-      questionRef.current
-    );
+    const _newValue = [
+      ...(value || []).filter(
+        (v) =>
+          v.option1 !== currentIteration.option1.id ||
+          v.option2 !== currentIteration.option2.id
+      ),
+      {
+        option1: currentIteration.option1.id,
+        option2: currentIteration.option2.id,
+        value: val,
+      },
+    ];
+
+    onChange(_newValue, questionRef.current);
   };
   const _onClickNextIteration = () => {
     if (currentIteratonValue === undefined) _onIterationValueChange(0);
 
     if (iteration + 1 === optionsMatrix.length) {
       setIteration(-1);
+
+      let matrix = options.reduce((acc, curr) => {
+        return {
+          ...acc,
+          [curr.id]: options.reduce((accOpt, o) => {
+            const v = value.find(
+              (vf) =>
+                (vf.option1 === curr.id && vf.option2 === o.id) ||
+                (vf.option2 === curr.id && vf.option1 === o.id)
+            );
+
+            if (!v) return { ...accOpt, [o.id]: [1, 1] };
+
+            let a = 1;
+            let b = 1;
+
+            if (v.value !== 0) {
+              const _value = v.value < 0 ? v.value - 1 : v.value + 1;
+
+              a =
+                _value < 0 ? _value * -1 : parseFloat((1 / _value).toFixed(2));
+              b =
+                _value > 0
+                  ? _value
+                  : parseFloat((1 / (_value * -1)).toFixed(2));
+            }
+
+            return { ...accOpt, [o.id]: [a, b] };
+          }, {}),
+        };
+      }, {});
+
+      console.log({ matrix });
       return;
     }
     setIteration(iteration + 1);
@@ -123,7 +155,12 @@ export default ({ question, value, onChange }) => {
         <QuestionInfo question={question} />
         <Grid>
           <Grid.Row>
-            <Grid.Column width={16}>Completo!</Grid.Column>
+            <Grid.Column width={16}>
+              <br />
+              <b>
+                Terminou esta escolha par-a-par, passe para a questão seguinte
+              </b>
+            </Grid.Column>
           </Grid.Row>
           {allowUserRepeatQuestion && (
             <Grid.Row>
