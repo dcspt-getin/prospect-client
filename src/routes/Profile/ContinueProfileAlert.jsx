@@ -14,8 +14,8 @@ export default ({ onClickContinue, onClickReset }) => {
       <Grid>
         <Grid.Row>
           <Grid.Column width={16}>
-            <Button onClick={onClickContinue}>Continuar</Button>
             <Button onClick={onClickReset}>Voltar ao Inicio</Button>
+            <Button onClick={onClickContinue}>Continuar</Button>
           </Grid.Column>
         </Grid.Row>
       </Grid>
