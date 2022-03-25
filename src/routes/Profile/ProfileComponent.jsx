@@ -11,7 +11,7 @@ import useUserProfile from "hooks/useUserProfile";
 import configurations from "helpers/configurations/index";
 import questionTypes from "helpers/questions/questionTypes";
 import { getAppConfiguration } from "store/app/selectors";
-import { is, pipe, isEmpty, not, both, has, propEq, or } from "ramda";
+import { is, pipe, isEmpty, not, both, has, propEq, or, prop } from "ramda";
 
 import MultipleChoice from "./questions/MultipleChoice";
 import ShortAnswer from "./questions/ShortAnswer";
@@ -23,6 +23,7 @@ import ContinueProfileAlert from "./ContinueProfileAlert";
 const isArray = is(Array);
 const isNotEmpty = pipe(isEmpty, not);
 const hasChildren = both(isArray, isNotEmpty);
+const isParentQuestion = pipe(prop("parent_question"), not);
 const questionFilled = (questionId) => has(questionId);
 const isInfoQuestion = propEq(
   "question_type",
@@ -34,7 +35,7 @@ const isQuestionFilledOrisOnlyInfo = (userProfile, question) =>
 export default () => {
   const [t] = useTranslations("profile");
   const [questions] = useQuestions();
-  const [showAlert, setShowAlert] = React.useState(false);
+  const [showAlert, setShowAlert] = React.useState(null);
   const [userProfile, updateUserProfile] = useUserProfile();
   const showPreviousQuestionButton = useSelector(
     (state) =>
@@ -50,14 +51,20 @@ export default () => {
   currentQuestionRef.current = currentQuestion;
   const userProfileKeys = userProfile && Object.keys(userProfile);
   const alreadyFilled = userProfile && userProfileKeys.length > 0;
+  const showActionsButtons =
+    !isInfoQuestion(currentQuestion) || hasChildren(currentQuestion);
 
   React.useEffect(() => {
-    if (!userProfile) return;
-    if (!questions || questions.length === 0) return;
-    if ([true, "reseted"].includes(showAlert)) return;
+    const _verifyAlert = () => {
+      if (!userProfile) return;
+      if (!questions || questions.length === 0) return;
+      if (showAlert !== null) return;
 
-    setShowAlert(alreadyFilled);
-  }, [userProfile, questions?.length]);
+      setShowAlert(alreadyFilled);
+    };
+
+    _verifyAlert();
+  }, [questions, userProfile, showAlert, alreadyFilled]);
 
   const _onChangeQuestion = (value, question) => {
     if (!question) question = currentQuestionRef.current;
@@ -70,7 +77,9 @@ export default () => {
   const _hasValidAnswer = (q) => {
     const value = userProfile[q?.id];
     const childrenHaveValue = () =>
-      q?.children?.every((child) => !!userProfile[child.id]);
+      q?.children?.every(
+        (child) => !!userProfile[child.id] || isInfoQuestion(child)
+      );
 
     if (hasChildren(q?.children)) return childrenHaveValue();
     if (isInfoQuestion(q)) return true;
@@ -90,7 +99,7 @@ export default () => {
     }
   };
   const _onContinueProfile = () => {
-    setShowAlert("reseted");
+    setShowAlert(false);
 
     const anseredQuestions = questions.filter(
       (q) => questionFilled(q.id)(userProfile) && _hasValidAnswer(q)
@@ -106,7 +115,20 @@ export default () => {
 
     switch (q.question_type) {
       case questionTypes.ONLY_QUESTION_INFO:
-        return <QuestionInfo question={q} />;
+        return (
+          <>
+            <QuestionInfo question={q} />
+            {isParentQuestion(q) && !hasChildren(q) && (
+              <Grid>
+                <Grid.Column width={16}>
+                  <Button onClick={_nextQuestion} floated="left">
+                    Clique para continuar
+                  </Button>
+                </Grid.Column>
+              </Grid>
+            )}
+          </>
+        );
       case questionTypes.SHORT_ANSWER:
         return (
           <ShortAnswer
@@ -164,35 +186,37 @@ export default () => {
           </Grid.Row>
         </Grid>
       </Segment>
-      <Grid verticalAlign="middle">
-        <ActionsRow>
-          <Grid.Column floated="right" width={16}>
-            <Button
-              disabled={
-                currentQuestionIndex + 1 === questions.length ||
-                !_hasValidAnswer(currentQuestion)
-              }
-              onClick={_nextQuestion}
-              floated="right"
-              style={{ margin: "5px" }}
-            >
-              Seguinte
-            </Button>
-            {showPreviousQuestionButton && (
+      {showActionsButtons && (
+        <Grid verticalAlign="middle">
+          <ActionsRow>
+            <Grid.Column floated="right" width={16}>
               <Button
-                disabled={currentQuestionIndex === 0}
-                onClick={() =>
-                  setCurrentQuestionIndex(currentQuestionIndex - 1)
+                disabled={
+                  currentQuestionIndex + 1 === questions.length ||
+                  !_hasValidAnswer(currentQuestion)
                 }
+                onClick={_nextQuestion}
                 floated="right"
                 style={{ margin: "5px" }}
               >
-                Anterior
+                Seguinte
               </Button>
-            )}
-          </Grid.Column>
-        </ActionsRow>
-      </Grid>
+              {showPreviousQuestionButton && (
+                <Button
+                  disabled={currentQuestionIndex === 0}
+                  onClick={() =>
+                    setCurrentQuestionIndex(currentQuestionIndex - 1)
+                  }
+                  floated="right"
+                  style={{ margin: "5px" }}
+                >
+                  Anterior
+                </Button>
+              )}
+            </Grid.Column>
+          </ActionsRow>
+        </Grid>
+      )}
     </>
   );
 
@@ -201,18 +225,21 @@ export default () => {
       <PageHeader size="huge" as="h1">
         {t("Questionario")}
       </PageHeader>
-      {userProfile && questions && questions.length > 0 && (
-        <>
-          {showAlert === true ? (
-            <ContinueProfileAlert
-              onClickContinue={_onContinueProfile}
-              onClickReset={() => setShowAlert("reseted")}
-            />
-          ) : (
-            _renderProfileQuestions()
-          )}
-        </>
-      )}
+      {userProfile &&
+        questions &&
+        questions.length > 0 &&
+        showAlert !== null && (
+          <>
+            {showAlert === true ? (
+              <ContinueProfileAlert
+                onClickContinue={_onContinueProfile}
+                onClickReset={() => setShowAlert(false)}
+              />
+            ) : (
+              _renderProfileQuestions()
+            )}
+          </>
+        )}
     </Dashboard>
   );
 };

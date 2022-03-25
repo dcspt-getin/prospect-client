@@ -61,10 +61,10 @@ export default ({ question, value, onChange }) => {
       return (
         <Grid>
           <Grid.Row>
-            <Grid.Column mobile={6} tablet={6} computer={4}>
+            <Grid.Column mobile={8} tablet={6} computer={4}>
               {_inputField}
             </Grid.Column>
-            <Grid.Column mobile={10} tablet={10} computer={12}>
+            <Grid.Column mobile={8} tablet={10} computer={12}>
               <SliderContainer>
                 <Slider
                   value={inputVal}

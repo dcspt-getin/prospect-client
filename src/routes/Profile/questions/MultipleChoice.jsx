@@ -1,7 +1,7 @@
 /* eslint-disable import/no-anonymous-default-export */
 import React from "react";
 import styled from "styled-components";
-import { Grid, Header, Dropdown, Form, Radio } from "semantic-ui-react";
+import { Grid, Dropdown, Form, Radio, Checkbox } from "semantic-ui-react";
 import QuestionInfo from "./common/QuestionInfo";
 
 export default ({ question, value, onChange }) => {
@@ -40,6 +40,28 @@ export default ({ question, value, onChange }) => {
         ))}
       </RadioOptions>
     ),
+    MULTIPLE_VALUES: (
+      <CheckboxOptions>
+        {sortedOptions.map((o) => (
+          <Form.Field key={o.id}>
+            <Checkbox
+              label={o.title}
+              // name={`checkbox-group-${question.id}`}
+              value={o.id}
+              checked={(Array.isArray(value) ? value : []).includes(o.id)}
+              onChange={() =>
+                onChange(
+                  (Array.isArray(value) ? value : []).includes(o.id)
+                    ? value.filter((v) => v !== o.id)
+                    : [...value, o.id],
+                  questionRef.current
+                )
+              }
+            />
+          </Form.Field>
+        ))}
+      </CheckboxOptions>
+    ),
   };
 
   return (
@@ -59,6 +81,14 @@ export default ({ question, value, onChange }) => {
 const Wrapper = styled.div``;
 
 const RadioOptions = styled.div`
+  padding-left: 20px;
+
+  > div {
+    margin-bottom: 10px;
+  }
+`;
+
+const CheckboxOptions = styled.div`
   padding-left: 20px;
 
   > div {
