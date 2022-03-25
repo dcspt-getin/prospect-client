@@ -24,7 +24,7 @@ export default (options, value) => {
           b = _value > 0 ? _value : parseFloat((1 / (_value * -1)).toFixed(2));
         }
 
-        const _val = v.option1 === curr.id ? a : b;
+        const _val = v.option1 === curr.id ? b : a;
 
         return [...accOpt, [[curr.id, o.id], _val]];
       }, []),

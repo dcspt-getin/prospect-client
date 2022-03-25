@@ -3,6 +3,7 @@ import React from "react";
 import { Header, Grid, Button, Segment } from "semantic-ui-react";
 import styled from "styled-components";
 import { useSelector } from "react-redux";
+import { is, pipe, isEmpty, not, both, has, propEq, or, prop } from "ramda";
 
 import Dashboard from "components/Dashboard";
 import useTranslations from "hooks/useTranslations";
@@ -11,7 +12,7 @@ import useUserProfile from "hooks/useUserProfile";
 import configurations from "helpers/configurations/index";
 import questionTypes from "helpers/questions/questionTypes";
 import { getAppConfiguration } from "store/app/selectors";
-import { is, pipe, isEmpty, not, both, has, propEq, or, prop } from "ramda";
+import { filterIterationsWithValue } from "helpers/questions/pairWiseCombinations";
 
 import MultipleChoice from "./questions/MultipleChoice";
 import ShortAnswer from "./questions/ShortAnswer";
@@ -52,7 +53,7 @@ export default () => {
   const userProfileKeys = userProfile && Object.keys(userProfile);
   const alreadyFilled = userProfile && userProfileKeys.length > 0;
   const showActionsButtons =
-    !isInfoQuestion(currentQuestion) || hasChildren(currentQuestion);
+    !isInfoQuestion(currentQuestion) || hasChildren(currentQuestion?.children);
 
   React.useEffect(() => {
     const _verifyAlert = () => {
@@ -86,7 +87,12 @@ export default () => {
     if (!value) return !!q?.default_value;
 
     if (q?.question_type === questionTypes.PAIRWISE_COMBINATIONS) {
-      return Array.isArray(value) && value.every((v) => v.value !== undefined);
+      return (
+        Array.isArray(value) &&
+        value
+          .filter(filterIterationsWithValue)
+          .every((v) => v.value !== undefined)
+      );
     }
 
     return !!userProfile[q?.id];
@@ -118,7 +124,7 @@ export default () => {
         return (
           <>
             <QuestionInfo question={q} />
-            {isParentQuestion(q) && !hasChildren(q) && (
+            {isParentQuestion(q) && !hasChildren(q.children) && (
               <Grid>
                 <Grid.Column width={16}>
                   <Button onClick={_nextQuestion} floated="left">

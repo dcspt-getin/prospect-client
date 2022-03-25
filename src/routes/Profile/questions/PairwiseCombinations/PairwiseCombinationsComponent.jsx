@@ -6,6 +6,7 @@ import { useSelector } from "react-redux";
 
 import configurations from "helpers/configurations/index";
 import { getAppConfiguration } from "store/app/selectors";
+import { filterIterationsWithValue } from "helpers/questions/pairWiseCombinations";
 import QuestionInfo from "../common/QuestionInfo";
 import Balance from "./Balance";
 import calcEigenVector from "./helpers/calcEigenVector";
@@ -74,7 +75,10 @@ export default ({ question, value, onChange }) => {
 
   React.useEffect(() => {
     const allInterationsDone =
-      value && value.every((v) => v.value !== undefined && v.value !== null);
+      value &&
+      value
+        .filter(filterIterationsWithValue)
+        .every((v) => v.value !== undefined && v.value !== null);
 
     if (allInterationsDone && iteration === null) {
       setIteration(-1);
@@ -115,7 +119,7 @@ export default ({ question, value, onChange }) => {
 
       const eigenVector = calcEigenVector(options, value);
       const _newValue = [
-        ...(value || []).filter((v) => v.key !== "eigenVector"),
+        ...(value || []).filter(filterIterationsWithValue),
         {
           key: "eigenVector",
           value: eigenVector,
