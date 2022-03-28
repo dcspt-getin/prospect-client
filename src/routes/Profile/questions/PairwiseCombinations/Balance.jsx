@@ -13,6 +13,7 @@ export default (props) => {
   const [value, setValue] = React.useState(
     _convertValueToSlider(props.value || 0)
   );
+  const balanceRef = React.useRef(null);
 
   React.useEffect(() => {
     setValue(_convertValueToSlider(props.value || 0));
@@ -29,23 +30,22 @@ export default (props) => {
     if (props.onChange) props.onChange(_convertValueFromSlider(_val));
   };
   const _onBalanceClick = (e) => {
-    // console.log({ e });
+    const rect = balanceRef.current.getBoundingClientRect();
 
     const {
       target: { clientWidth },
-      screenX,
+      pageX,
     } = e;
+    const start = rect.left;
+    const screenX = pageX - start;
 
     const parcel = Math.round(clientWidth / 6);
-    let val = Math.round((screenX * -1) / parcel - 0.5);
+    let val = Math.round(screenX / parcel);
 
     if (val > 6) val = 6;
     if (val < 0) val = 0;
 
-    val = 6 - val;
-
-    // console.log({ val, clientWidth, screenX });
-    // setValue(val);
+    setValue(val);
   };
 
   return (
@@ -56,7 +56,7 @@ export default (props) => {
             <Grid.Row>
               <Grid.Column width={16}>
                 <BalanceContainer>
-                  <div id="roberval">
+                  <div id="roberval" ref={balanceRef} onClick={_onBalanceClick}>
                     <div id="balance" style={{ transform: `rotate(${x}deg)` }}>
                       <div
                         id="ball"
@@ -68,7 +68,7 @@ export default (props) => {
                           _convertValueFromSlider(value)
                         )}
                       </div>
-                      <div id="bar" onClick={_onBalanceClick}></div>
+                      <div id="bar"></div>
                     </div>
                     <div id="base"></div>
                   </div>
@@ -157,7 +157,6 @@ const BalanceContainer = styled.div`
     height: 10px;
     margin-bottom: 1px;
     border-radius: 3px;
-    cursor: pointer;
   }
   #roberval {
     width: 100%;
@@ -165,7 +164,8 @@ const BalanceContainer = styled.div`
     margin: 0;
     font-size: 1rem;
     padding: 0 10px;
-    margin-top: 36px;
+    padding-top: 36px;
+    cursor: pointer;
   }
   #base {
     width: 0;
