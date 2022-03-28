@@ -96,7 +96,7 @@ export default ({ question, value, onChange }) => {
         v.option2 === currentIteration?.option2?.id
     )?.value;
   const _onIterationValueChange = (val) => {
-    const _newValue = [
+    let _newValue = [
       ...(value || []).filter(
         (v) =>
           v.option1 !== currentIteration.option1.id ||
@@ -109,6 +109,16 @@ export default ({ question, value, onChange }) => {
       },
     ];
 
+    if (iteration + 1 === optionsMatrix.length) {
+      const eigenVector = calcEigenVector(options, value);
+      _newValue = [
+        ..._newValue.filter(filterIterationsWithValue),
+        {
+          key: "eigenVector",
+          value: eigenVector,
+        },
+      ];
+    }
     onChange(_newValue, questionRef.current);
   };
   const _onClickNextIteration = () => {
@@ -116,17 +126,6 @@ export default ({ question, value, onChange }) => {
 
     if (iteration + 1 === optionsMatrix.length) {
       setIteration(-1);
-
-      const eigenVector = calcEigenVector(options, value);
-      const _newValue = [
-        ...(value || []).filter(filterIterationsWithValue),
-        {
-          key: "eigenVector",
-          value: eigenVector,
-        },
-      ];
-
-      onChange(_newValue, questionRef.current);
       return;
     }
     setIteration(iteration + 1);

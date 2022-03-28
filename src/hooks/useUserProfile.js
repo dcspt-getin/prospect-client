@@ -30,6 +30,17 @@ export default () => {
   const _debouncedUpdateProfile = useDebouncedCallback(
     // function
     (update) => {
+      const updateKeys = Object.keys(update);
+
+      const anyChange = updateKeys.reduce((result, key) => {
+        if (!result) return false;
+        if (!activeProfile.profile_data[key]) return false;
+
+        return isEqual(activeProfile.profile_data[key], update[key]);
+      }, true);
+
+      if (anyChange === true) return;
+
       dispatch(
         updateUserProfile(activeProfile.id, {
           profile_data: { ...activeProfile.profile_data, ...update },
@@ -37,7 +48,7 @@ export default () => {
       );
     },
     // delay in ms
-    500
+    200
   );
 
   const _updateProfile = (update) => {

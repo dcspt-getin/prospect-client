@@ -3,7 +3,18 @@ import React from "react";
 import { Header, Grid, Button, Segment } from "semantic-ui-react";
 import styled from "styled-components";
 import { useSelector } from "react-redux";
-import { is, pipe, isEmpty, not, both, has, propEq, or, prop } from "ramda";
+import {
+  is,
+  pipe,
+  isEmpty,
+  not,
+  both,
+  has,
+  propEq,
+  or,
+  prop,
+  either,
+} from "ramda";
 
 import Dashboard from "components/Dashboard";
 import useTranslations from "hooks/useTranslations";
@@ -26,12 +37,18 @@ const isNotEmpty = pipe(isEmpty, not);
 const hasChildren = both(isArray, isNotEmpty);
 const isParentQuestion = pipe(prop("parent_question"), not);
 const questionFilled = (questionId) => has(questionId);
+const questionIsSubmitted = propEq("submitted", true);
 const isInfoQuestion = propEq(
   "question_type",
   questionTypes.ONLY_QUESTION_INFO
 );
 const isQuestionFilledOrisOnlyInfo = (userProfile, question) =>
   or(questionFilled(question.id)(userProfile), isInfoQuestion(question));
+const isSubmittedOrIsInfoQuestion = (userProfile, question) =>
+  or(
+    isInfoQuestion(question),
+    questionIsSubmitted(userProfile[question.id]?.meta)
+  );
 
 export default () => {
   const [t] = useTranslations("profile");
@@ -67,20 +84,36 @@ export default () => {
     _verifyAlert();
   }, [questions, userProfile, showAlert, alreadyFilled]);
 
-  const _onChangeQuestion = (value, question) => {
+  const _onChangeQuestion = (value, question, meta = {}) => {
     if (!question) question = currentQuestionRef.current;
 
     updateUserProfile({
       ...userProfile,
-      [question.id]: value,
+      [question.id]: {
+        value,
+        meta: {
+          ...userProfile[question.id]?.meta,
+          ...meta,
+        },
+      },
     });
   };
   const _hasValidAnswer = (q) => {
-    const value = userProfile[q?.id];
+    const { value } = userProfile[q?.id] || {};
+
+    const _validateChildrenFilled = (current) => {
+      const _isValid = !!userProfile[current.id] || isInfoQuestion(current);
+
+      if (current.children) {
+        return (
+          _isValid &&
+          current.children?.every((child) => _validateChildrenFilled(child))
+        );
+      }
+      return _isValid;
+    };
     const childrenHaveValue = () =>
-      q?.children?.every(
-        (child) => !!userProfile[child.id] || isInfoQuestion(child)
-      );
+      q?.children?.every((child) => _validateChildrenFilled(child));
 
     if (hasChildren(q?.children)) return childrenHaveValue();
     if (isInfoQuestion(q)) return true;
@@ -115,6 +148,9 @@ export default () => {
     if (next === questions.length) next = next - 1;
     setCurrentQuestionIndex(next);
   };
+  const _submitParentQuestion = (q) => {
+    _onChangeQuestion(userProfile[q.id]?.value, q, { submitted: true });
+  };
 
   const _renderQuestion = (q) => {
     if (!q) return "";
@@ -139,7 +175,7 @@ export default () => {
         return (
           <ShortAnswer
             question={q}
-            value={userProfile[q.id]}
+            value={userProfile[q.id]?.value}
             onChange={_onChangeQuestion}
           />
         );
@@ -148,7 +184,7 @@ export default () => {
         return (
           <PairwiseCombinations
             question={q}
-            value={userProfile[q.id]}
+            value={userProfile[q.id]?.value}
             onChange={_onChangeQuestion}
           />
         );
@@ -157,7 +193,7 @@ export default () => {
         return (
           <MultipleChoice
             question={q}
-            value={userProfile[q.id]}
+            value={userProfile[q.id]?.value}
             onChange={_onChangeQuestion}
           />
         );
@@ -166,6 +202,32 @@ export default () => {
         return "";
     }
   };
+  const _renderQuestionWithChildren = (q) => {
+    return (
+      <>
+        {_renderQuestion(q)}
+        {hasChildren(q.children) &&
+          !isInfoQuestion(q) &&
+          questionFilled(q.id)(userProfile) &&
+          !questionIsSubmitted(userProfile[q.id]?.meta) && (
+            <Grid>
+              <Grid.Column width={16}>
+                <Button onClick={() => _submitParentQuestion(q)} floated="left">
+                  Submeter resposta
+                </Button>
+              </Grid.Column>
+            </Grid>
+          )}
+
+        {q &&
+          hasChildren(q.children) &&
+          isQuestionFilledOrisOnlyInfo(userProfile, q) &&
+          isSubmittedOrIsInfoQuestion(userProfile, q) && (
+            <>{q.children.map((child) => _renderQuestionWithChildren(child))}</>
+          )}
+      </>
+    );
+  };
   const _renderProfileQuestions = () => (
     <>
       <Segment>
@@ -173,20 +235,7 @@ export default () => {
           <Grid.Row>
             <Grid.Column width={16}>
               <QuestionContainer>
-                {_renderQuestion(currentQuestion)}
-
-                {currentQuestion &&
-                  hasChildren(currentQuestion.children) &&
-                  isQuestionFilledOrisOnlyInfo(
-                    userProfile,
-                    currentQuestion
-                  ) && (
-                    <>
-                      {currentQuestion.children.map((child) =>
-                        _renderQuestion(child)
-                      )}
-                    </>
-                  )}
+                {_renderQuestionWithChildren(currentQuestion)}
               </QuestionContainer>
             </Grid.Column>
           </Grid.Row>

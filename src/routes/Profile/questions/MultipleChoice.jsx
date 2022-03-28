@@ -53,7 +53,7 @@ export default ({ question, value, onChange }) => {
                 onChange(
                   (Array.isArray(value) ? value : []).includes(o.id)
                     ? value.filter((v) => v !== o.id)
-                    : [...value, o.id],
+                    : [...(value || []), o.id],
                   questionRef.current
                 )
               }
