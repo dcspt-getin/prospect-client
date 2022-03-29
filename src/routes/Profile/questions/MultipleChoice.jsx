@@ -18,7 +18,7 @@ export default ({ question, value, onChange }) => {
     onChange(
       (Array.isArray(value) ? value : []).includes(o.id)
         ? value.filter((v) => v !== o.id)
-        : [...(value || []), o.id],
+        : [...(Array.isArray(value) ? value : []), o.id],
       questionRef.current
     );
   };
@@ -26,6 +26,8 @@ export default ({ question, value, onChange }) => {
 
   React.useEffect(() => {
     const renderedOptionsOnDesc = [];
+
+    if (!["RADIO", "MULTIPLE_VALUES"].includes(selectionType)) return;
 
     options.forEach((option, i) => {
       const shouldRender = description_html.includes(`{option_${i + 1}}`);
@@ -96,7 +98,7 @@ export default ({ question, value, onChange }) => {
         );
         result = result.replace(`{option_${i + 1}_title}`, option.title);
 
-        if (option.id === value) {
+        if (selectionType === "RADIO" && option.id === value) {
           setTimeout(() => {
             const radiobtn = document.getElementById(
               `input-option-${option.id}`
