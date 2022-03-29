@@ -4,7 +4,7 @@ import { Grid, Header, Image } from "semantic-ui-react";
 import HTMLContent from "src/components/HTMLContent";
 import styled from "styled-components";
 
-export default ({ question }) => {
+export default ({ question, renderDescription }) => {
   const _renderDescriptionImage = () => {
     const image = question.description_image || question.image_url;
 
@@ -36,6 +36,8 @@ export default ({ question }) => {
 
       return result;
     }
+
+    if (renderDescription) return renderDescription(desc);
 
     return desc;
   };
