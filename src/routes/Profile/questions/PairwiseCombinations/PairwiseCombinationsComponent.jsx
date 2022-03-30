@@ -32,6 +32,15 @@ export default ({ question, value, onChange }) => {
         configurations.ALLOW_USER_REPEAT_BALANCE_QUESTION
       ) === "true"
   );
+  let consistencyRatioMatrix = useSelector((state) =>
+    getAppConfiguration(state, configurations.CONSISTENCY_RATIO_MATRIX)
+  );
+
+  try {
+    consistencyRatioMatrix = JSON.parse(consistencyRatioMatrix);
+  } catch (e) {
+    consistencyRatioMatrix = {};
+  }
 
   React.useEffect(() => {
     if (options.length < 2) return;
@@ -110,7 +119,11 @@ export default ({ question, value, onChange }) => {
     ];
 
     if (iteration + 1 === optionsMatrix.length) {
-      const eigenVector = calcEigenVector(options, value);
+      const eigenVector = calcEigenVector(
+        options,
+        value,
+        consistencyRatioMatrix
+      );
       _newValue = [
         ..._newValue.filter(filterIterationsWithValue),
         {

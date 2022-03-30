@@ -1,6 +1,6 @@
 /* eslint-disable import/no-anonymous-default-export */
 
-export default (options, value) => {
+export default (options, value, consistencyRatioMatrix) => {
   // Step 1: Cal Matrix
   const matrix = options.reduce((acc, curr) => {
     return [
@@ -98,11 +98,34 @@ export default (options, value) => {
     {}
   );
 
+  // step 6: sum all eigenvector values
+  const eigenvectorSum = Object.keys(eigenvector).reduce(
+    (acc, curr) => acc + eigenvector[curr] * valuesByColumn[curr].total,
+    0
+  );
+
+  // setp 7: calc inconsistency index
+  const inconsistencyIndex =
+    (eigenvectorSum - Object.keys(eigenvector).length) /
+    (Object.keys(eigenvector).length - 1);
+
+  // step 8: calc consistency ratio
+  const consistencyRatio =
+    inconsistencyIndex /
+    (parseFloat(consistencyRatioMatrix[Object.keys(eigenvector).length]) || 0);
+
+  // step 9: calc perfect consistency matrix
+  // const perfectConsistencyMatrix =
+
   console.log({
     valuesByColumn,
     normalizedValues,
     normalizedValueSumByRow,
     eigenvector,
+    eigenvectorSum,
+    inconsistencyIndex,
+    consistencyRatio,
+    consistencyRatioMatrix,
   });
 
   return eigenvector;
