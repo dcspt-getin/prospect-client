@@ -22,10 +22,10 @@ export default ({ question, renderDescription }) => {
   };
   const _getDescription = (desc) => {
     const { parent_question } = question;
+    let result = desc;
 
     if (parent_question) {
       const parentKeys = Object.keys(parent_question);
-      let result = desc;
 
       parentKeys.forEach((key) => {
         result = result.replace(
@@ -33,13 +33,11 @@ export default ({ question, renderDescription }) => {
           parent_question[key]
         );
       });
-
-      return result;
     }
 
-    if (renderDescription) return renderDescription(desc);
+    if (renderDescription) return renderDescription(result);
 
-    return desc;
+    return result;
   };
 
   return (
