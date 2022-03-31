@@ -1,20 +1,9 @@
 /* eslint-disable import/no-anonymous-default-export */
 import React from "react";
-import { Header, Grid, Button, Segment } from "semantic-ui-react";
+import { Header, Grid, Button, Segment, Breadcrumb } from "semantic-ui-react";
 import styled from "styled-components";
 import { useSelector } from "react-redux";
-import {
-  is,
-  pipe,
-  isEmpty,
-  not,
-  both,
-  has,
-  propEq,
-  or,
-  prop,
-  either,
-} from "ramda";
+import { is, pipe, isEmpty, not, both, has, propEq, or } from "ramda";
 
 import Dashboard from "components/Dashboard";
 import useTranslations from "hooks/useTranslations";
@@ -35,7 +24,6 @@ import ContinueProfileAlert from "./ContinueProfileAlert";
 const isArray = is(Array);
 const isNotEmpty = pipe(isEmpty, not);
 const hasChildren = both(isArray, isNotEmpty);
-const isParentQuestion = pipe(prop("parent_question"), not);
 const questionFilled = (questionId) => has(questionId);
 const questionIsSubmitted = propEq("submitted", true);
 const isInfoQuestion = propEq(
@@ -52,7 +40,15 @@ const isSubmittedOrIsInfoQuestion = (userProfile, question) =>
 
 export default () => {
   const [t] = useTranslations("profile");
-  const [questions] = useQuestions();
+  const {
+    questions,
+    currentQuestion,
+    currentGroup,
+    hasNextQuestion,
+    gotoNextQuestion,
+    goToPrevQuestion,
+    goToQuestionIndex,
+  } = useQuestions();
   const [showAlert, setShowAlert] = React.useState(null);
   const [userProfile, updateUserProfile] = useUserProfile();
   const showPreviousQuestionButton = useSelector(
@@ -60,10 +56,6 @@ export default () => {
       getAppConfiguration(state, configurations.SHOW_PREVIOUS_QUESTION) ===
       "true"
   );
-
-  const [currentQuestionIndex, setCurrentQuestionIndex] = React.useState(0);
-  const currentQuestion =
-    questions.length > 0 && questions[currentQuestionIndex];
   const currentQuestionRef = React.useRef(currentQuestion);
 
   currentQuestionRef.current = currentQuestion;
@@ -149,7 +141,7 @@ export default () => {
     return !!userProfile[q?.id];
   };
   const _nextQuestion = () => {
-    setCurrentQuestionIndex(currentQuestionIndex + 1);
+    gotoNextQuestion();
 
     if (currentQuestion?.default_value && !userProfile[currentQuestion.id]) {
       _onChangeQuestion(currentQuestion.default_value, currentQuestion);
@@ -164,7 +156,7 @@ export default () => {
 
     let next = anseredQuestions.length;
     if (next === questions.length) next = next - 1;
-    setCurrentQuestionIndex(next);
+    goToQuestionIndex(next);
   };
   const _submitParentQuestion = (q) => {
     _onChangeQuestion(userProfile[q.id]?.value, q, { submitted: true });
@@ -246,8 +238,33 @@ export default () => {
       </>
     );
   };
+  const _renderBreadcrumbs = () => {
+    const _renderGroup = (g, divider = true) => {
+      const breadcrumb = (
+        <>
+          <Breadcrumb.Section>{g.group.name}</Breadcrumb.Section>
+          {divider && <Breadcrumb.Divider icon="right chevron" />}
+        </>
+      );
+      if (g.parent) {
+        return (
+          <>
+            {_renderGroup(g.parent)}
+            {breadcrumb}
+          </>
+        );
+      }
+
+      return breadcrumb;
+    };
+
+    return (
+      <Breadcrumb size="large">{_renderGroup(currentGroup, false)}</Breadcrumb>
+    );
+  };
   const _renderProfileQuestions = () => (
     <>
+      {_renderBreadcrumbs()}
       <Segment>
         <Grid verticalAlign="middle">
           <Grid.Row>
@@ -264,10 +281,7 @@ export default () => {
           <ActionsRow>
             <Grid.Column floated="right" width={16}>
               <Button
-                disabled={
-                  currentQuestionIndex + 1 === questions.length ||
-                  !_hasValidAnswer(currentQuestion)
-                }
+                disabled={!hasNextQuestion || !_hasValidAnswer(currentQuestion)}
                 onClick={_nextQuestion}
                 floated="right"
                 style={{ margin: "5px" }}
@@ -276,10 +290,8 @@ export default () => {
               </Button>
               {showPreviousQuestionButton && (
                 <Button
-                  disabled={currentQuestionIndex === 0}
-                  onClick={() =>
-                    setCurrentQuestionIndex(currentQuestionIndex - 1)
-                  }
+                  // disabled={currentQuestionIndex === 0}
+                  onClick={goToPrevQuestion}
                   floated="right"
                   style={{ margin: "5px" }}
                 >
