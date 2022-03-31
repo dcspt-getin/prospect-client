@@ -97,6 +97,7 @@ export default (options, value, consistencyRatioMatrix) => {
     },
     {}
   );
+  const eigenvectorSize = Object.keys(eigenvector).length;
 
   // step 6: sum all eigenvector values
   const eigenvectorSum = Object.keys(eigenvector).reduce(
@@ -106,27 +107,62 @@ export default (options, value, consistencyRatioMatrix) => {
 
   // setp 7: calc inconsistency index
   const inconsistencyIndex =
-    (eigenvectorSum - Object.keys(eigenvector).length) /
-    (Object.keys(eigenvector).length - 1);
+    (eigenvectorSum - eigenvectorSize) / (eigenvectorSize - 1);
 
   // step 8: calc consistency ratio
   const consistencyRatio =
     inconsistencyIndex /
-    (parseFloat(consistencyRatioMatrix[Object.keys(eigenvector).length]) || 0);
+    (parseFloat(consistencyRatioMatrix[eigenvectorSize]) || 0);
 
   // step 9: calc perfect consistency matrix
-  // const perfectConsistencyMatrix =
+  const perfectConsistencyMatrix = Object.values(eigenvector).reduce(
+    (acc, curr) => {
+      return [
+        ...acc,
+        Object.values(eigenvector).reduce((accRow, currRow) => {
+          return [...accRow, curr / currRow];
+        }, []),
+      ];
+    },
+    []
+  );
+  const inversedPerfectConsistencyMatrix = perfectConsistencyMatrix.map(
+    (row, rowIndex) => {
+      return row.map((col, colIndex) => {
+        if (rowIndex > colIndex) {
+          return 1 / perfectConsistencyMatrix[colIndex][rowIndex];
+        }
+        return col;
+      });
+    }
+  );
+  const sumInversedPerfectConsistencyMatrix =
+    inversedPerfectConsistencyMatrix.reduce((acc, curr) => {
+      return [
+        ...acc,
+        curr.reduce((accRow, currRow) => {
+          return accRow + currRow;
+        }, 0),
+      ];
+    }, []);
+
+  // step 10: compare the perfect consistency matrix with the current value matrix
 
   console.log({
-    valuesByColumn,
-    normalizedValues,
-    normalizedValueSumByRow,
-    eigenvector,
-    eigenvectorSum,
-    inconsistencyIndex,
-    consistencyRatio,
-    consistencyRatioMatrix,
+    inversedPerfectConsistencyMatrix,
+    sumInversedPerfectConsistencyMatrix,
   });
+
+  // console.log({
+  //   valuesByColumn,
+  //   normalizedValues,
+  //   normalizedValueSumByRow,
+  //   eigenvector,
+  //   eigenvectorSum,
+  //   inconsistencyIndex,
+  //   consistencyRatio,
+  //   consistencyRatioMatrix,
+  // });
 
   return eigenvector;
 };

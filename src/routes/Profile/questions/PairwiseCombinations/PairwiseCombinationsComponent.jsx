@@ -1,6 +1,6 @@
 /* eslint-disable import/no-anonymous-default-export */
 import React from "react";
-import { Grid, Button } from "semantic-ui-react";
+import { Grid, Button, Header } from "semantic-ui-react";
 import styled from "styled-components";
 import { useSelector } from "react-redux";
 
@@ -138,6 +138,8 @@ export default ({ question, value, onChange }) => {
     if (currentIteratonValue === undefined) _onIterationValueChange(0);
 
     if (iteration + 1 === optionsMatrix.length) {
+      if (currentIteratonValue) _onIterationValueChange(currentIteratonValue);
+
       setIteration(-1);
       return;
     }
@@ -153,7 +155,9 @@ export default ({ question, value, onChange }) => {
             <Grid.Column width={16}>
               <br />
               <b>
-                Terminou esta escolha par-a-par, passe para a questão seguinte
+                <Header size="medium">
+                  Terminou esta escolha par-a-par, passe para a questão seguinte
+                </Header>
               </b>
             </Grid.Column>
           </Grid.Row>
@@ -233,7 +237,7 @@ export default ({ question, value, onChange }) => {
           </Grid.Column>
           <Grid.Column floated="right" mobile={16} tablet={8} computer={8}>
             <Button
-              // disabled={iteration + 1 === optionsMatrix.length}
+              disabled={currentIteratonValue === undefined}
               onClick={_onClickNextIteration}
               floated="right"
             >
@@ -275,7 +279,7 @@ export default ({ question, value, onChange }) => {
                 </Button>
               )}
               <Button
-                // disabled={iteration + 1 === optionsMatrix.length}
+                disabled={currentIteratonValue === undefined}
                 onClick={_onClickNextIteration}
               >
                 Seguinte

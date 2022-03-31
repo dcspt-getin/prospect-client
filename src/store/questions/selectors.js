@@ -10,13 +10,22 @@ export const makeGetQuestions = () => {
   return createSelector(getState, (state, status = QUESTION_ACTIVE) => {
     return sortBy(Object.values(state.data), ["rank", "id"])
       .filter((q) => q.status === status)
-      .map((q) => ({
-        ...q,
-        children: q.children.map((child) => ({
-          ...child,
-          parent_question: omit(q, ["children"]),
-        })),
-      }));
+      .map((q) => {
+        const _getQuestionWithChildren = (parent) => {
+          const children = parent?.children || [];
+
+          return {
+            ...parent,
+            children: children.map((c) => {
+              const _c = { ...c, parent_question: omit(parent, ["children"]) };
+
+              return _getQuestionWithChildren(_c);
+            }),
+          };
+        };
+
+        return _getQuestionWithChildren(q);
+      });
   });
 };
 

@@ -69,8 +69,26 @@ export default () => {
   currentQuestionRef.current = currentQuestion;
   const userProfileKeys = userProfile && Object.keys(userProfile);
   const alreadyFilled = userProfile && userProfileKeys.length > 0;
-  const showActionsButtons =
-    !isInfoQuestion(currentQuestion) || hasChildren(currentQuestion?.children);
+  const showActionsButtons = () => {
+    const _hasSomeChildInfoQuestion = (children = []) => {
+      const _hasInfoQuestion =
+        children.filter((q) => isInfoQuestion(q)).length > 0;
+
+      if (!_hasInfoQuestion) {
+        return children.some((child) =>
+          _hasSomeChildInfoQuestion(child.children)
+        );
+      }
+
+      return _hasInfoQuestion;
+    };
+
+    if (_hasSomeChildInfoQuestion(currentQuestion.children)) return false;
+
+    return (
+      !isInfoQuestion(currentQuestion) || hasChildren(currentQuestion?.children)
+    );
+  };
 
   React.useEffect(() => {
     const _verifyAlert = () => {
@@ -160,7 +178,7 @@ export default () => {
         return (
           <>
             <QuestionInfo question={q} />
-            {isParentQuestion(q) && !hasChildren(q.children) && (
+            {!hasChildren(q.children) && (
               <Grid>
                 <Grid.Column width={16}>
                   <Button onClick={_nextQuestion} floated="left">
@@ -241,7 +259,7 @@ export default () => {
           </Grid.Row>
         </Grid>
       </Segment>
-      {showActionsButtons && (
+      {showActionsButtons() && (
         <Grid verticalAlign="middle">
           <ActionsRow>
             <Grid.Column floated="right" width={16}>
