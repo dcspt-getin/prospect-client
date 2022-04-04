@@ -130,6 +130,15 @@ export default () => {
     if (isInfoQuestion(q)) return true;
     if (!value) return !!q?.default_value;
 
+    if (
+      q?.question_type === questionTypes.MULTIPLE_CHOICE &&
+      q?.multiple_selection_type === "MULTIPLE_VALUES" &&
+      q?.checkbox_min_options
+    ) {
+      return (
+        Array.isArray(value) && value.length >= parseInt(q.checkbox_min_options)
+      );
+    }
     if (q?.question_type === questionTypes.PAIRWISE_COMBINATIONS) {
       return (
         Array.isArray(value) &&

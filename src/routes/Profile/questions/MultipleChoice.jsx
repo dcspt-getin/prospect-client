@@ -10,6 +10,8 @@ export default ({ question, value, onChange }) => {
     multiple_selection_type: selectionType,
     options,
     description_html,
+    // checkbox_min_options,
+    checkbox_max_options,
   } = question;
   const questionRef = React.useRef(question);
   const [optionsToIgnore, setOptionsToIgnore] = React.useState([]);
@@ -75,6 +77,10 @@ export default ({ question, value, onChange }) => {
       id={`input-option-${o.id}`}
       // name={`checkbox-group-${question.id}`}
       value={o.id}
+      disabled={
+        !(Array.isArray(value) ? value : []).includes(o.id) &&
+        (value || []).length >= parseInt(checkbox_max_options)
+      }
       checked={(Array.isArray(value) ? value : []).includes(o.id)}
       onChange={() => _onChangeCheckbox(o)}
     />
