@@ -1,7 +1,6 @@
 /* eslint-disable import/no-anonymous-default-export */
 import React from "react";
 import styled from "styled-components";
-import { Slider } from "react-semantic-ui-range";
 import { Grid } from "semantic-ui-react";
 import MuiSlider from "@material-ui/core/Slider";
 
@@ -25,7 +24,7 @@ export default (props) => {
   const x = Math.max(-maxAngle, Math.min(maxAngle, angle)) - 5;
   const left = (value * 100) / 6;
 
-  const _onSliderChange = (_val) => {
+  const _onSliderChange = (_val, e) => {
     setValue(_val);
     if (props.onChange) props.onChange(_convertValueFromSlider(_val));
   };
@@ -78,22 +77,13 @@ export default (props) => {
             <Grid.Row>
               <Grid.Column width={16}>
                 <SliderContainer>
-                  <Slider
+                  <HorizSlider
+                    color="primary"
                     value={value}
-                    discrete
-                    style={{
-                      track: { backgroundColor: "#2184d061" },
-                      thumb: {
-                        backgroundColor: "#2185d0",
-                      },
-                    }}
-                    settings={{
-                      start: 0,
-                      min: 0,
-                      max: 6,
-                      step: 1,
-                      onChange: _onSliderChange,
-                    }}
+                    min={0}
+                    max={6}
+                    step={1}
+                    onChange={(e, val) => _onSliderChange(val, e)}
                   />
                 </SliderContainer>
               </Grid.Column>
@@ -109,7 +99,7 @@ export default (props) => {
               min={0}
               max={6}
               step={1}
-              onChange={(e, val) => _onSliderChange(val)}
+              onChange={(e, val) => _onSliderChange(val, e)}
               valueLabelDisplay="on"
               valueLabelFormat={(v) =>
                 _convertValueToSliderLabel(_convertValueFromSlider(v))
@@ -183,6 +173,21 @@ const SliderContainer = styled.div`
   .semantic_ui_range_inner {
     div:nth-child(2) {
       background-color: transparent !important;
+    }
+  }
+`;
+
+const HorizSlider = styled(MuiSlider)`
+  &&& {
+    .MuiSlider-track {
+      display: none;
+    }
+
+    .MuiSlider-thumb {
+      width: 16px;
+      height: 16px;
+      margin-top: -8px;
+      margin-left: -8px;
     }
   }
 `;

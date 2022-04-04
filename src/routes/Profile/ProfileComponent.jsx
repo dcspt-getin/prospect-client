@@ -43,7 +43,8 @@ export default () => {
   const {
     questions,
     currentQuestion,
-    currentGroup,
+    groups,
+    hasPrevQuestion,
     hasNextQuestion,
     gotoNextQuestion,
     goToPrevQuestion,
@@ -239,7 +240,18 @@ export default () => {
     );
   };
   const _renderBreadcrumbs = () => {
+    const _getQuestionGroup = () => {
+      return currentQuestion.groups.reduce((acc, group, i) => {
+        const g = groups[group.id];
+
+        if (i === currentQuestion.groups.length - 1) return g;
+        if (!g.parent) return acc;
+
+        return g;
+      }, null);
+    };
     const _renderGroup = (g, divider = true) => {
+      if (!g) return "";
       const breadcrumb = (
         <>
           <Breadcrumb.Section>{g.group.name}</Breadcrumb.Section>
@@ -259,7 +271,10 @@ export default () => {
     };
 
     return (
-      <Breadcrumb size="large">{_renderGroup(currentGroup, false)}</Breadcrumb>
+      <Breadcrumb size="large">
+        <Breadcrumb.Divider icon="right chevron" />{" "}
+        {_renderGroup(_getQuestionGroup(), false)}
+      </Breadcrumb>
     );
   };
   const _renderProfileQuestions = () => (
@@ -290,7 +305,7 @@ export default () => {
               </Button>
               {showPreviousQuestionButton && (
                 <Button
-                  // disabled={currentQuestionIndex === 0}
+                  disabled={!hasPrevQuestion}
                   onClick={goToPrevQuestion}
                   floated="right"
                   style={{ margin: "5px" }}

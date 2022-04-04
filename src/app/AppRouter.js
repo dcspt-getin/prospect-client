@@ -5,9 +5,9 @@ import { Dimmer, Loader, Segment } from "semantic-ui-react";
 
 import Login from "routes/Login";
 import Register from "routes/Register";
-import Home from "routes/Home";
-import About from "routes/About";
-import Contacts from "routes/Contacts";
+// import Home from "routes/Home";
+// import About from "routes/About";
+import Results from "routes/Results";
 import Profile from "routes/Profile";
 import TriggerError from "components/TriggerError";
 import TermsAndConditions from "routes/TermsAndConditions";
@@ -43,6 +43,9 @@ export default () => {
       </Route>
       <PrivateRoute path="/questionario">
         <Profile />
+      </PrivateRoute>
+      <PrivateRoute path="/results">
+        <Results />
       </PrivateRoute>
       <Route path="/">
         <Login />

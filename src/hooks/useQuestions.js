@@ -14,10 +14,8 @@ export default () => {
     dispatch(fetchQuestions());
   }, []);
 
-  const [currentGroupId, setCurrentGroupId] = React.useState();
+  // const [currentGroupId, setCurrentGroupId] = React.useState();
   const [currentQuestionIndex, setCurrentQuestionIndex] = React.useState(0);
-  const currentQuestion =
-    questions.length > 0 && questions[currentQuestionIndex];
 
   /*
     create group tree to add questions to each group and subgroup
@@ -80,26 +78,30 @@ export default () => {
     return groupTree;
   }, [questions]);
 
-  React.useEffect(() => {
-    const groupsValues = Object.values(groups);
+  // const _getNextGroupWithChildren = (g) => {
+  //   const childrenGroups = Object.values(groups).filter(
+  //     (g1) => g1.group.parent === g.group.id
+  //   );
+  //   if (childrenGroups.length > 0) {
+  //     return _getNextGroupWithChildren(childrenGroups[0]);
+  //   }
 
-    if (!groupsValues.length) return;
+  //   return g.group.id;
+  // };
 
-    const _getFirstGroupChildren = (g) => {
-      const childrenGroups = Object.values(groups).filter(
-        (g1) => g1.group.parent === g.group.id
-      );
-      if (childrenGroups.length > 0) {
-        return _getFirstGroupChildren(childrenGroups[0]);
-      }
+  // React.useEffect(() => {
+  //   const groupsValues = Object.values(groups);
 
-      return g.group.id;
-    };
+  //   if (!groupsValues.length) return;
 
-    setCurrentGroupId(_getFirstGroupChildren(groupsValues[0]));
-  }, [Object.keys(groups)]);
+  //   setCurrentGroupId(_getNextGroupWithChildren(groupsValues[0]));
+  // }, [Object.keys(groups)]);
 
+  // const currentGroup = groups[currentGroupId];
+  const currentQuestion =
+    questions.length > 0 && questions[currentQuestionIndex];
   const hasNextQuestion = currentQuestionIndex < questions.length - 1;
+  const hasPrevQuestion = currentQuestionIndex > 0;
   const gotoNextQuestion = () => {
     setCurrentQuestionIndex(currentQuestionIndex + 1);
   };
@@ -109,13 +111,12 @@ export default () => {
   const goToQuestionIndex = (index) => {
     setCurrentQuestionIndex(index);
   };
-  const currentGroup = groups[currentGroupId];
 
   return {
     questions,
     groups,
     currentQuestion,
-    currentGroup,
+    hasPrevQuestion,
     hasNextQuestion,
     gotoNextQuestion,
     goToPrevQuestion,
