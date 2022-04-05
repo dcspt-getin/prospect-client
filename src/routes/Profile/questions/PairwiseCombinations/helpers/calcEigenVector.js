@@ -136,21 +136,41 @@ export default (options, value, consistencyRatioMatrix) => {
       });
     }
   );
-  const sumInversedPerfectConsistencyMatrix =
-    inversedPerfectConsistencyMatrix.reduce((acc, curr) => {
-      return [
-        ...acc,
-        curr.reduce((accRow, currRow) => {
-          return accRow + currRow;
-        }, 0),
-      ];
-    }, []);
+  // const sumInversedPerfectConsistencyMatrix = [];
+
+  // for (
+  //   let index = 0;
+  //   index < inversedPerfectConsistencyMatrix.length;
+  //   index++
+  // ) {
+  //   sumInversedPerfectConsistencyMatrix[index] =
+  //     inversedPerfectConsistencyMatrix.reduce((acc, curr) => {
+  //       return acc + curr[index];
+  //     }, 0);
+  // }
 
   // step 10: compare the perfect consistency matrix with the current value matrix
 
+  const currentValueMatrix = Object.keys(valuesByColumn).reduce(
+    (acc, currKey) => {
+      const curr = valuesByColumn[currKey];
+
+      return [
+        ...acc,
+        Object.keys(curr).reduce((accRow, currRow) => {
+          if (currRow === "total") return accRow;
+
+          return [...accRow, curr[currRow]];
+        }, []),
+      ];
+    },
+    []
+  );
+
   console.log({
     inversedPerfectConsistencyMatrix,
-    sumInversedPerfectConsistencyMatrix,
+    currentValueMatrix,
+    // sumInversedPerfectConsistencyMatrix,
   });
 
   // console.log({

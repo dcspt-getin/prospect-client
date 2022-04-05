@@ -45,6 +45,7 @@ export default (props) => {
     if (val < 0) val = 0;
 
     setValue(val);
+    if (props.onChange) props.onChange(_convertValueFromSlider(val));
   };
 
   return (
