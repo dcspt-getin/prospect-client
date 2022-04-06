@@ -35,6 +35,7 @@ export default () => {
         const eigenVector = v.find((entry) => entry.key === "eigenVector");
         return eigenVector?.value;
       })
+      .filter(Boolean)
       .reduce((acc, curr) => {
         Object.keys(curr).forEach((key) => {
           acc[key] = (acc[key] || 0) + curr[key];

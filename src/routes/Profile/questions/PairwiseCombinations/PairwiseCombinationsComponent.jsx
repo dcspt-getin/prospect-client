@@ -162,7 +162,7 @@ export default ({ question, value, meta, onChange }) => {
             </Grid.Column>
           </Grid.Row>
 
-          {allowUserRepeatQuestion && (
+          {(allowUserRepeatQuestion || !meta.isValid) && (
             <Grid.Row>
               <Grid.Column width={16}>
                 <Button onClick={() => setIteration(0)} floated="left">
