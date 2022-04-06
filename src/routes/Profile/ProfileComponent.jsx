@@ -142,6 +142,7 @@ export default () => {
     if (q?.question_type === questionTypes.PAIRWISE_COMBINATIONS) {
       return (
         Array.isArray(value) &&
+        userProfile[q?.id]?.meta?.isValid &&
         value
           .filter(filterIterationsWithValue)
           .every((v) => v.value !== undefined)
@@ -205,6 +206,7 @@ export default () => {
           <PairwiseCombinations
             question={q}
             value={userProfile[q.id]?.value}
+            meta={userProfile[q.id]?.meta}
             onChange={_onChangeQuestion}
           />
         );

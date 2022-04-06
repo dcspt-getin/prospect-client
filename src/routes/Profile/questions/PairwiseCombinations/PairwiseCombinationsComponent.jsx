@@ -17,7 +17,7 @@ const shuffleArray = (array) =>
     .sort(([a], [b]) => a - b)
     .map(([_, x]) => x);
 
-export default ({ question, value, onChange }) => {
+export default ({ question, value, meta, onChange }) => {
   const { options } = question;
 
   const questionRef = React.useRef(question);
@@ -32,15 +32,15 @@ export default ({ question, value, onChange }) => {
         configurations.ALLOW_USER_REPEAT_BALANCE_QUESTION
       ) === "true"
   );
-  let consistencyRatioMatrix = useSelector((state) =>
-    getAppConfiguration(state, configurations.CONSISTENCY_RATIO_MATRIX)
-  );
+  // let consistencyRatioMatrix = useSelector((state) =>
+  //   getAppConfiguration(state, configurations.CONSISTENCY_RATIO_MATRIX)
+  // );
 
-  try {
-    consistencyRatioMatrix = JSON.parse(consistencyRatioMatrix);
-  } catch (e) {
-    consistencyRatioMatrix = {};
-  }
+  // try {
+  //   consistencyRatioMatrix = JSON.parse(consistencyRatioMatrix);
+  // } catch (e) {
+  //   consistencyRatioMatrix = {};
+  // }
 
   React.useEffect(() => {
     if (options.length < 2) return;
@@ -104,7 +104,7 @@ export default ({ question, value, onChange }) => {
         v.option1 === currentIteration?.option1?.id &&
         v.option2 === currentIteration?.option2?.id
     )?.value;
-  const _onIterationValueChange = (val) => {
+  const _onIterationValueChange = async (val) => {
     let _newValue = [
       ...(value || []).filter(
         (v) =>
@@ -119,26 +119,24 @@ export default ({ question, value, onChange }) => {
     ];
 
     if (iteration + 1 === optionsMatrix.length) {
-      const eigenVector = calcEigenVector(
-        options,
-        value,
-        consistencyRatioMatrix
-      );
-      _newValue = [
-        ..._newValue.filter(filterIterationsWithValue),
-        {
-          key: "eigenVector",
-          value: eigenVector,
-        },
-      ];
     }
     onChange(_newValue, questionRef.current);
   };
-  const _onClickNextIteration = () => {
+  const _onClickNextIteration = async () => {
     if (currentIteratonValue === undefined) _onIterationValueChange(0);
 
     if (iteration + 1 === optionsMatrix.length) {
-      if (currentIteratonValue) _onIterationValueChange(currentIteratonValue);
+      const egeinVectorData = await calcEigenVector(options, value, meta);
+      const _meta = egeinVectorData;
+      const _newValue = [
+        ...value.filter(filterIterationsWithValue),
+        {
+          key: "eigenVector",
+          value: egeinVectorData.eigenVector,
+        },
+      ];
+      onChange(_newValue, questionRef.current, _meta);
+      // if (currentIteratonValue) _onIterationValueChange(currentIteratonValue);
 
       setIteration(-1);
       return;
@@ -156,11 +154,14 @@ export default ({ question, value, onChange }) => {
               <br />
               <b>
                 <Header size="medium">
-                  Terminou esta escolha par-a-par, passe para a questão seguinte
+                  {meta.isValid
+                    ? "Terminou esta escolha par-a-par, passe para a questão seguinte"
+                    : "Tem respostas que não são coerentes, por favor volte a preencher!"}
                 </Header>
               </b>
             </Grid.Column>
           </Grid.Row>
+
           {allowUserRepeatQuestion && (
             <Grid.Row>
               <Grid.Column width={16}>

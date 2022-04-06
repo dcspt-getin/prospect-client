@@ -18,17 +18,16 @@ export default () => {
 
   return (
     <MyMenu size="large">
-      <Menu.Menu position="left">
-        {/* {isAuthenticated && (
-          <Menu.Item
-            name={t("Questionário")}
-            active={history.location === "/questionario"}
-            onClick={() => history.push("/questionario")}
-          />
-        )} */}
-      </Menu.Menu>
+      <Menu.Menu position="left"></Menu.Menu>
 
       <Menu.Menu position="right">
+        {/* {isAuthenticated && (
+          <Menu.Item
+            name={t("Resultados")}
+            active={history.location === "/results"}
+            onClick={() => history.push("/results")}
+          />
+        )} */}
         <Menu.Item>
           {!isAuthenticated && (
             <Button primary onClick={() => history.push("/login")}>

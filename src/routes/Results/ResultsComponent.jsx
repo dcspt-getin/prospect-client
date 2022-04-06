@@ -1,6 +1,6 @@
 /* eslint-disable import/no-anonymous-default-export */
 import React from "react";
-import { Header, Segment, Divider } from "semantic-ui-react";
+import { Header, Segment, Divider, Grid, Dropdown } from "semantic-ui-react";
 import ReactECharts from "echarts-for-react";
 
 import Dashboard from "components/Dashboard";
@@ -9,14 +9,23 @@ import useQuestions from "hooks/useQuestions";
 import questionTypes from "helpers/questions/questionTypes";
 
 import useResultsData from "./hooks/useResultsData";
+import useGroups from "./hooks/useGroups";
 
 export default () => {
   const [t] = useTranslations("contacts");
   const { questions } = useQuestions();
   const results = useResultsData();
+  const groups = useGroups();
+  const [selectedGroup, setSelectedGroup] = React.useState(null);
 
-  const pairWiseQuestion = questions.filter(
-    (q) => q.question_type === questionTypes.PAIRWISE_COMBINATIONS
+  const pairWiseQuestion = React.useMemo(
+    () =>
+      questions.filter(
+        (q) =>
+          q.question_type === questionTypes.PAIRWISE_COMBINATIONS &&
+          q.groups.some((g) => g.id === selectedGroup)
+      ),
+    [questions, selectedGroup]
   );
   const _getPairWiseData = (q) => {
     const allQuestionValues = results
@@ -41,14 +50,10 @@ export default () => {
       return allQuestionValues[o.id] / allQuestionValues.count;
     });
   };
+  const _renderQuestions = () => {
+    if (!pairWiseQuestion.length) return "";
 
-  return (
-    <Dashboard>
-      <div className="p-4">
-        <Header size="huge" as="h1">
-          {t("Resultados")}
-        </Header>
-      </div>
+    return (
       <Segment>
         {pairWiseQuestion.map((q) => (
           <div key={q.id}>
@@ -65,10 +70,15 @@ export default () => {
                 },
                 legend: {},
                 grid: {
-                  left: "3%",
+                  left: "35%",
                   right: "4%",
-                  bottom: "3%",
-                  containLabel: true,
+                  bottom: "10%",
+                  containLabel: false,
+                },
+                axisLabel: {
+                  interval: 0,
+                  width: document.querySelector(".App > div").offsetWidth * 0.3, //fixed number of pixels
+                  overflow: "truncate", // or 'break' to continue in a new line
                 },
                 xAxis: {
                   type: "value",
@@ -97,6 +107,35 @@ export default () => {
           </div>
         ))}
       </Segment>
+    );
+  };
+
+  return (
+    <Dashboard>
+      <div className="p-4">
+        <Header size="huge" as="h1">
+          {t("Resultados")}
+        </Header>
+      </div>
+      <Grid>
+        <Grid.Row>
+          <Grid.Column width={16}>
+            <Dropdown
+              placeholder="Seleccione o grupo"
+              options={groups.map((g) => ({
+                key: g.id,
+                value: g.id,
+                text: g.name,
+              }))}
+              selection
+              fluid
+              // search
+              onChange={(e, { value }) => setSelectedGroup(value)}
+            />
+          </Grid.Column>
+        </Grid.Row>
+      </Grid>
+      {selectedGroup && _renderQuestions()}
     </Dashboard>
   );
 };

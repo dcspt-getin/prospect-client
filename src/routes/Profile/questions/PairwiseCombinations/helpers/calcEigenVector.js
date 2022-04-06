@@ -1,6 +1,9 @@
 /* eslint-disable import/no-anonymous-default-export */
+import axios from "axios";
 
-export default (options, value, consistencyRatioMatrix) => {
+import { API_BASE_URL } from "config";
+
+export default async (options, value, meta) => {
   // Step 1: Cal Matrix
   const matrix = options.reduce((acc, curr) => {
     return [
@@ -97,22 +100,22 @@ export default (options, value, consistencyRatioMatrix) => {
     },
     {}
   );
-  const eigenvectorSize = Object.keys(eigenvector).length;
+  // const eigenvectorSize = Object.keys(eigenvector).length;
 
-  // step 6: sum all eigenvector values
-  const eigenvectorSum = Object.keys(eigenvector).reduce(
-    (acc, curr) => acc + eigenvector[curr] * valuesByColumn[curr].total,
-    0
-  );
+  // // step 6: sum all eigenvector values
+  // const eigenvectorSum = Object.keys(eigenvector).reduce(
+  //   (acc, curr) => acc + eigenvector[curr] * valuesByColumn[curr].total,
+  //   0
+  // );
 
-  // setp 7: calc inconsistency index
-  const inconsistencyIndex =
-    (eigenvectorSum - eigenvectorSize) / (eigenvectorSize - 1);
+  // // setp 7: calc inconsistency index
+  // const inconsistencyIndex =
+  //   (eigenvectorSum - eigenvectorSize) / (eigenvectorSize - 1);
 
-  // step 8: calc consistency ratio
-  const consistencyRatio =
-    inconsistencyIndex /
-    (parseFloat(consistencyRatioMatrix[eigenvectorSize]) || 0);
+  // // step 8: calc consistency ratio
+  // const consistencyRatio =
+  //   inconsistencyIndex /
+  //   (parseFloat(consistencyRatioMatrix[eigenvectorSize]) || 0);
 
   // step 9: calc perfect consistency matrix
   const perfectConsistencyMatrix = Object.values(eigenvector).reduce(
@@ -136,18 +139,6 @@ export default (options, value, consistencyRatioMatrix) => {
       });
     }
   );
-  // const sumInversedPerfectConsistencyMatrix = [];
-
-  // for (
-  //   let index = 0;
-  //   index < inversedPerfectConsistencyMatrix.length;
-  //   index++
-  // ) {
-  //   sumInversedPerfectConsistencyMatrix[index] =
-  //     inversedPerfectConsistencyMatrix.reduce((acc, curr) => {
-  //       return acc + curr[index];
-  //     }, 0);
-  // }
 
   // step 10: compare the perfect consistency matrix with the current value matrix
 
@@ -167,22 +158,56 @@ export default (options, value, consistencyRatioMatrix) => {
     []
   );
 
+  const { data } = await axios.post(
+    `${API_BASE_URL}/configurations/calc_correl/`,
+    {
+      xarr: currentValueMatrix,
+      yarr: inversedPerfectConsistencyMatrix,
+    }
+  );
+
+  const r = parseFloat(data.result);
+  const r2 = r * r;
+  const isValid = r2 > 0.6;
+  const comparisionsMatrix = [];
+  const numAttempts = (meta?.numAttempts || 0) + 1;
+
+  if (!isValid) {
+    for (let i = 0; i < currentValueMatrix.length; i++) {
+      const row = currentValueMatrix[i];
+      const comparisionsMatrixRow = [];
+
+      for (let j = 0; j < row.length; j++) {
+        const currentValue = currentValueMatrix[i][j];
+        const perfectConsistencyValue = inversedPerfectConsistencyMatrix[i][j];
+
+        const comparision =
+          Math.abs(perfectConsistencyValue - currentValue) /
+          (perfectConsistencyValue + currentValue);
+
+        comparisionsMatrixRow.push(comparision);
+      }
+
+      comparisionsMatrix.push(comparisionsMatrixRow);
+    }
+  }
+
   console.log({
     inversedPerfectConsistencyMatrix,
     currentValueMatrix,
-    // sumInversedPerfectConsistencyMatrix,
+    r,
+    r2,
+    isValid,
+    comparisionsMatrix,
   });
 
-  // console.log({
-  //   valuesByColumn,
-  //   normalizedValues,
-  //   normalizedValueSumByRow,
-  //   eigenvector,
-  //   eigenvectorSum,
-  //   inconsistencyIndex,
-  //   consistencyRatio,
-  //   consistencyRatioMatrix,
-  // });
-
-  return eigenvector;
+  return {
+    eigenVector: eigenvector,
+    currentValueMatrix,
+    perfectConsistencyMatrix: inversedPerfectConsistencyMatrix,
+    r2,
+    isValid: isValid || numAttempts > 1,
+    comparisionsMatrix,
+    numAttempts,
+  };
 };
