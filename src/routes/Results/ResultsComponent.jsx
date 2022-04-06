@@ -8,16 +8,37 @@ import useTranslations from "hooks/useTranslations";
 import useQuestions from "hooks/useQuestions";
 import questionTypes from "helpers/questions/questionTypes";
 
+import useResultsData from "./hooks/useResultsData";
+
 export default () => {
   const [t] = useTranslations("contacts");
   const { questions } = useQuestions();
+  const results = useResultsData();
 
   const pairWiseQuestion = questions.filter(
     (q) => q.question_type === questionTypes.PAIRWISE_COMBINATIONS
   );
   const _getPairWiseData = (q) => {
+    const allQuestionValues = results
+      .map((r) => (r.profile_data || {})[q.id]?.value)
+      .filter(Boolean)
+      .map((v) => {
+        const eigenVector = v.find((entry) => entry.key === "eigenVector");
+        return eigenVector?.value;
+      })
+      .reduce((acc, curr) => {
+        Object.keys(curr).forEach((key) => {
+          acc[key] = (acc[key] || 0) + curr[key];
+        });
+
+        return {
+          ...acc,
+          count: (acc.count || 0) + 1,
+        };
+      }, {});
+
     return q.options.map((o) => {
-      return Math.random() * 100;
+      return allQuestionValues[o.id] / allQuestionValues.count;
     });
   };
 

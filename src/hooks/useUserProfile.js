@@ -34,7 +34,7 @@ export default () => {
 
       const anyChange = updateKeys.reduce((result, key) => {
         if (!result) return false;
-        if (!activeProfile.profile_data[key]) return false;
+        if (!(activeProfile.profile_data || {})[key]) return false;
 
         return isEqual(activeProfile.profile_data[key], update[key]);
       }, true);
@@ -43,7 +43,7 @@ export default () => {
 
       dispatch(
         updateUserProfile(activeProfile.id, {
-          profile_data: { ...activeProfile.profile_data, ...update },
+          profile_data: { ...(activeProfile.profile_data || {}), ...update },
         })
       );
     },
