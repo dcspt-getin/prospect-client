@@ -9,7 +9,9 @@ export default () => {
 
   React.useEffect(() => {
     const fetchResults = async () => {
-      const { data } = await axios.get(`${API_BASE_URL}/groups-questions/`);
+      const { data } = await axios.get(
+        `${API_BASE_URL}/groups-questions/?limit=1000`
+      );
 
       setResults(data.results.filter((g) => g.is_visible_on_results === true));
     };
