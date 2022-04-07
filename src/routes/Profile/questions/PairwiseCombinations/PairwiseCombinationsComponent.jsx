@@ -154,7 +154,7 @@ export default ({ question, value, meta, onChange, disabled }) => {
               <br />
               <b>
                 <Header size="medium">
-                  {meta.isValid
+                  {meta?.isValid
                     ? "Terminou esta escolha par-a-par, passe para a questão seguinte"
                     : "Tem respostas que não são coerentes, por favor volte a preencher!"}
                 </Header>
@@ -162,7 +162,7 @@ export default ({ question, value, meta, onChange, disabled }) => {
             </Grid.Column>
           </Grid.Row>
 
-          {(allowUserRepeatQuestion || !meta.isValid) && (
+          {(allowUserRepeatQuestion || (meta && !meta.isValid)) && (
             <Grid.Row>
               <Grid.Column width={16}>
                 <Button onClick={() => setIteration(0)} floated="left">
