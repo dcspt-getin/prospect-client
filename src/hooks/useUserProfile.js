@@ -17,6 +17,43 @@ export default () => {
   const [activeProfileData, setActiveProfileData] = React.useState(
     activeProfile?.profile_data
   );
+  const activeProfileDataRef = React.useRef(activeProfileData);
+
+  activeProfileDataRef.current = activeProfileData;
+
+  const _checkAnyChanges = (newData) => {
+    const updateKeys = Object.keys(newData);
+
+    const anyChange = updateKeys.reduce((result, key) => {
+      if (!result) return false;
+      if (!(activeProfile.profile_data || {})[key]) return false;
+
+      return isEqual(activeProfile.profile_data[key], newData[key]);
+    }, true);
+
+    return anyChange;
+  };
+  const _debouncedSaveProfile = useDebouncedCallback(
+    // function
+    () => {
+      if (_checkAnyChanges(activeProfileData) === true) return;
+
+      dispatch(
+        updateUserProfile(activeProfile.id, {
+          profile_data: {
+            ...(activeProfile.profile_data || {}),
+            ...activeProfileData,
+          },
+        })
+      );
+    },
+    // delay in ms
+    200
+  );
+  const _updateProfile = (update) => {
+    setActiveProfileData({ ...activeProfileData, ...update });
+    _debouncedSaveProfile(update);
+  };
 
   React.useEffect(() => {
     if (isLoading) return;
@@ -27,34 +64,5 @@ export default () => {
     setActiveProfileData(newProfileData);
   }, [isLoading, activeProfile?.profile_data]);
 
-  const _debouncedUpdateProfile = useDebouncedCallback(
-    // function
-    (update) => {
-      const updateKeys = Object.keys(update);
-
-      const anyChange = updateKeys.reduce((result, key) => {
-        if (!result) return false;
-        if (!(activeProfile.profile_data || {})[key]) return false;
-
-        return isEqual(activeProfile.profile_data[key], update[key]);
-      }, true);
-
-      if (anyChange === true) return;
-
-      dispatch(
-        updateUserProfile(activeProfile.id, {
-          profile_data: { ...(activeProfile.profile_data || {}), ...update },
-        })
-      );
-    },
-    // delay in ms
-    200
-  );
-
-  const _updateProfile = (update) => {
-    setActiveProfileData({ ...activeProfileData, ...update });
-    _debouncedUpdateProfile(update);
-  };
-
-  return [activeProfileData, _updateProfile, isLoading];
+  return [activeProfileData, _updateProfile, _debouncedSaveProfile];
 };

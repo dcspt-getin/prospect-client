@@ -47,8 +47,21 @@ export default () => {
         };
       }, {});
 
+    const onlyValues = Object.keys(allQuestionValues).reduce((acc, key) => {
+      if (key === "count") return acc;
+
+      return {
+        ...acc,
+        [key]: allQuestionValues[key] / allQuestionValues.count,
+      };
+    }, {});
+    const max = Math.max(...Object.values(onlyValues));
+
     return q.options.map((o) => {
-      return allQuestionValues[o.id] / allQuestionValues.count;
+      const value = onlyValues[o.id];
+
+      const percentageValue = parseInt((value * 100) / max);
+      return percentageValue;
     });
   };
   const _renderQuestions = () => {
