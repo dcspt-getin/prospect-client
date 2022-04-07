@@ -45,8 +45,19 @@ export default async (options, value, meta) => {
       [column]: {
         ...(acc[column] || {}),
         [row]: value,
-        total: (acc[column]?.total || 0) + value,
       },
+    };
+  }, {});
+
+  const valuesByColumnSum = Object.keys(valuesByColumn).reduce((acc, key) => {
+    const totalCol = Object.keys(valuesByColumn).reduce(
+      (accCol, keyCol) => accCol + valuesByColumn[keyCol][key],
+      0
+    );
+
+    return {
+      ...acc,
+      [key]: totalCol,
     };
   }, {});
 
@@ -58,48 +69,45 @@ export default async (options, value, meta) => {
       ...acc,
       [curr]: Object.keys(column).reduce((accRow, currRow) => {
         const value = column[currRow];
-        const normalizedValue = value / column.total;
+        const normalizedValue = value / valuesByColumnSum[currRow];
 
         return {
           ...accRow,
           [currRow]: normalizedValue,
-          total: (accRow[column]?.total || 0) + normalizedValue,
+          total: (accRow?.total || 0) + normalizedValue,
         };
       }, {}),
     };
   }, {});
 
   // Step 4: Get all rows values and sum
-  const normalizedValueSumByRow = Object.keys(normalizedValues).reduce(
-    (acc, row) => {
-      return {
-        ...acc,
-        ...Object.keys(normalizedValues).reduce((accRow, col) => {
-          if (col === "total" || row === "total") return accRow;
-          const value = normalizedValues[col][row];
+  // const normalizedValueSumByRow = Object.keys(normalizedValues).reduce(
+  //   (acc, row) => {
+  //     return {
+  //       ...acc,
+  //       ...Object.keys(normalizedValues).reduce((accRow, col) => {
+  //         if (col === "total" || row === "total") return accRow;
+  //         const value = normalizedValues[col][row];
 
-          return {
-            ...accRow,
-            [row]: (accRow[row] || 0) + value,
-          };
-        }, {}),
-      };
-    },
-    {}
-  );
+  //         return {
+  //           ...accRow,
+  //           [row]: (accRow[row] || 0) + value,
+  //         };
+  //       }, {}),
+  //     };
+  //   },
+  //   {}
+  // );
 
   // Step 5: calc Eigenvector
-  const eigenvector = Object.keys(normalizedValueSumByRow).reduce(
-    (acc, row) => {
-      return {
-        ...acc,
-        [row]:
-          normalizedValueSumByRow[row] *
-          (1 / Object.keys(normalizedValueSumByRow).length),
-      };
-    },
-    {}
-  );
+  const eigenvector = Object.keys(normalizedValues).reduce((acc, colId) => {
+    return {
+      ...acc,
+      [colId]:
+        (1 / Object.keys(normalizedValues).length) *
+        normalizedValues[colId].total,
+    };
+  }, {});
   // const eigenvectorSize = Object.keys(eigenvector).length;
 
   // // step 6: sum all eigenvector values
@@ -192,14 +200,20 @@ export default async (options, value, meta) => {
     }
   }
 
-  console.log({
-    inversedPerfectConsistencyMatrix,
-    currentValueMatrix,
-    r,
-    r2,
-    isValid,
-    comparisionsMatrix,
-  });
+  // console.log({
+  //   value,
+  //   matrix,
+  //   valuesByColumn,
+  //   normalizedValues,
+  //   normalizedValueSumByRow,
+  //   eigenvector,
+  //   inversedPerfectConsistencyMatrix,
+  //   currentValueMatrix,
+  //   r,
+  //   r2,
+  //   isValid,
+  //   comparisionsMatrix,
+  // });
 
   return {
     eigenVector: eigenvector,
