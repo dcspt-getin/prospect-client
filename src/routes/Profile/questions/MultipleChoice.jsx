@@ -5,7 +5,7 @@ import styled from "styled-components";
 import { Grid, Dropdown, Form, Radio, Checkbox } from "semantic-ui-react";
 import QuestionInfo from "./common/QuestionInfo";
 
-export default ({ question, value, onChange }) => {
+export default ({ question, value, onChange, disabled }) => {
   const {
     multiple_selection_type: selectionType,
     options,
@@ -67,6 +67,7 @@ export default ({ question, value, onChange }) => {
       id={`input-option-${o.id}`}
       name={`radio-group-${question.id}`}
       value={o.id}
+      disabled={disabled}
       checked={value === o.id}
       onChange={_onChangeRadio}
     />
@@ -78,8 +79,9 @@ export default ({ question, value, onChange }) => {
       // name={`checkbox-group-${question.id}`}
       value={o.id}
       disabled={
-        !(Array.isArray(value) ? value : []).includes(o.id) &&
-        (value || []).length >= parseInt(checkbox_max_options)
+        (!(Array.isArray(value) ? value : []).includes(o.id) &&
+          (value || []).length >= parseInt(checkbox_max_options)) ||
+        disabled
       }
       checked={(Array.isArray(value) ? value : []).includes(o.id)}
       onChange={() => _onChangeCheckbox(o)}
@@ -127,6 +129,7 @@ export default ({ question, value, onChange }) => {
           placeholder="Select"
           options={sortedOptions.map((o) => ({ value: o.id, text: o.title }))}
           value={value}
+          disabled={disabled}
           onChange={(e, { value }) => onChange(value, questionRef.current)}
         />
       </>

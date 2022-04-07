@@ -196,6 +196,9 @@ export default () => {
         return (
           <ShortAnswer
             question={q}
+            disabled={
+              hasChildren(q.children) && userProfile[q.id]?.meta?.submitted
+            }
             value={userProfile[q.id]?.value}
             onChange={_onChangeQuestion}
           />
@@ -205,6 +208,9 @@ export default () => {
         return (
           <PairwiseCombinations
             question={q}
+            disabled={
+              hasChildren(q.children) && userProfile[q.id]?.meta?.submitted
+            }
             value={userProfile[q.id]?.value}
             meta={userProfile[q.id]?.meta}
             onChange={_onChangeQuestion}
@@ -215,6 +221,9 @@ export default () => {
         return (
           <MultipleChoice
             question={q}
+            disabled={
+              hasChildren(q.children) && userProfile[q.id]?.meta?.submitted
+            }
             value={userProfile[q.id]?.value}
             onChange={_onChangeQuestion}
           />

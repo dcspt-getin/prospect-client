@@ -29,6 +29,8 @@ export default (props) => {
     if (props.onChange) props.onChange(_convertValueFromSlider(_val));
   };
   const _onBalanceClick = (e) => {
+    if (props.disabled) return;
+
     const rect = balanceRef.current.getBoundingClientRect();
 
     const {
@@ -79,6 +81,7 @@ export default (props) => {
               <Grid.Column width={16}>
                 <SliderContainer>
                   <HorizSlider
+                    disabled={props.disabled}
                     color="primary"
                     value={value}
                     min={0}
@@ -94,6 +97,7 @@ export default (props) => {
         <Grid.Row only="mobile">
           <Grid.Column width={16} style={{ height: 200 }}>
             <VerticalSlider
+              disabled={props.disabled}
               orientation="vertical"
               color="primary"
               value={value}

@@ -17,7 +17,7 @@ const shuffleArray = (array) =>
     .sort(([a], [b]) => a - b)
     .map(([_, x]) => x);
 
-export default ({ question, value, meta, onChange }) => {
+export default ({ question, value, meta, onChange, disabled }) => {
   const { options } = question;
 
   const questionRef = React.useRef(question);
@@ -190,6 +190,7 @@ export default ({ question, value, meta, onChange }) => {
             <Balance
               value={currentIteratonValue}
               onChange={_onIterationValueChange}
+              disabled={disabled}
             />
           </Grid.Column>
           <Grid.Column mobile={2} tablet={5} computer={5}>
@@ -227,6 +228,7 @@ export default ({ question, value, meta, onChange }) => {
             <Balance
               value={currentIteratonValue}
               onChange={_onIterationValueChange}
+              disabled={disabled}
             />
           </Grid.Column>
         </Grid.Row>
