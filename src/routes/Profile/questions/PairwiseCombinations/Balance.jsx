@@ -19,10 +19,11 @@ export default (props) => {
   }, [props.value]);
 
   const maxAngle = 10;
-  const angle = (value * maxAngle) / 6;
+  const balanceValue = 6 - value;
+  const angle = (balanceValue * maxAngle) / 6;
 
   const x = Math.max(-maxAngle, Math.min(maxAngle, angle)) - 5;
-  const left = (value * 100) / 6;
+  const left = (balanceValue * 100) / 6;
 
   const _onSliderChange = (_val, e) => {
     setValue(_val);
@@ -45,6 +46,8 @@ export default (props) => {
 
     if (val > 6) val = 6;
     if (val < 0) val = 0;
+
+    val = 6 - val;
 
     setValue(val);
     if (props.onChange) props.onChange(_convertValueFromSlider(val));
@@ -83,11 +86,11 @@ export default (props) => {
                   <HorizSlider
                     disabled={props.disabled}
                     color="primary"
-                    value={value}
+                    value={balanceValue}
                     min={0}
                     max={6}
                     step={1}
-                    onChange={(e, val) => _onSliderChange(val, e)}
+                    onChange={(e, val) => _onSliderChange(6 - val, e)}
                   />
                 </SliderContainer>
               </Grid.Column>

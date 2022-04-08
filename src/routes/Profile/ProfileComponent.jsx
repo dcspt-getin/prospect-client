@@ -117,7 +117,7 @@ export default () => {
       updateServer
     );
   };
-  const _hasValidAnswer = (q) => {
+  const _hasValidAnswer = (q, validateChildren = true) => {
     const { value } = userProfile[q?.id] || {};
 
     const _validateChildrenFilled = (current) => {
@@ -134,7 +134,8 @@ export default () => {
     const childrenHaveValue = () =>
       q?.children?.every((child) => _validateChildrenFilled(child));
 
-    if (hasChildren(q?.children)) return childrenHaveValue();
+    if (hasChildren(q?.children) && validateChildren)
+      return childrenHaveValue();
     if (isInfoQuestion(q)) return true;
     if (!value) return !!q?.default_value;
 
@@ -247,12 +248,14 @@ export default () => {
     }
   };
   const _renderQuestionWithChildren = (q) => {
+    if (!q) return "";
+
     return (
       <>
         {_renderQuestion(q)}
-        {hasChildren(q.children) &&
+        {hasChildren(q?.children) &&
           !isInfoQuestion(q) &&
-          questionFilled(q.id)(userProfile) &&
+          _hasValidAnswer(q, false) &&
           !questionIsSubmitted(userProfile[q.id]?.meta) && (
             <Grid>
               <Grid.Column width={16}>
@@ -264,7 +267,7 @@ export default () => {
           )}
 
         {q &&
-          hasChildren(q.children) &&
+          hasChildren(q?.children) &&
           isQuestionFilledOrisOnlyInfo(userProfile, q) &&
           isSubmittedOrIsInfoQuestion(userProfile, q) && (
             <>{q.children.map((child) => _renderQuestionWithChildren(child))}</>
@@ -274,7 +277,7 @@ export default () => {
   };
   const _renderBreadcrumbs = () => {
     const _getQuestionGroup = () => {
-      return currentQuestion.groups.reduce((acc, group, i) => {
+      return (currentQuestion?.groups || []).reduce((acc, group, i) => {
         const g = groups[group.id];
 
         if (i === currentQuestion.groups.length - 1) return g;
@@ -310,48 +313,54 @@ export default () => {
       </Breadcrumb>
     );
   };
-  const _renderProfileQuestions = () => (
-    <>
-      {_renderBreadcrumbs()}
-      <Segment>
-        <Grid verticalAlign="middle">
-          <Grid.Row>
-            <Grid.Column width={16}>
-              <QuestionContainer>
-                {_renderQuestionWithChildren(currentQuestion)}
-              </QuestionContainer>
-            </Grid.Column>
-          </Grid.Row>
-        </Grid>
-      </Segment>
-      {showActionsButtons() && (
-        <Grid verticalAlign="middle">
-          <ActionsRow>
-            <Grid.Column floated="right" width={16}>
-              <Button
-                disabled={!hasNextQuestion || !_hasValidAnswer(currentQuestion)}
-                onClick={_nextQuestion}
-                floated="right"
-                style={{ margin: "5px" }}
-              >
-                Seguinte
-              </Button>
-              {showPreviousQuestionButton && (
+  const _renderProfileQuestions = () => {
+    if (!currentQuestion) return "";
+
+    return (
+      <>
+        {_renderBreadcrumbs()}
+        <Segment>
+          <Grid verticalAlign="middle">
+            <Grid.Row>
+              <Grid.Column width={16}>
+                <QuestionContainer>
+                  {_renderQuestionWithChildren(currentQuestion)}
+                </QuestionContainer>
+              </Grid.Column>
+            </Grid.Row>
+          </Grid>
+        </Segment>
+        {showActionsButtons() && (
+          <Grid verticalAlign="middle">
+            <ActionsRow>
+              <Grid.Column floated="right" width={16}>
                 <Button
-                  disabled={!hasPrevQuestion}
-                  onClick={goToPrevQuestion}
+                  disabled={
+                    !hasNextQuestion || !_hasValidAnswer(currentQuestion)
+                  }
+                  onClick={_nextQuestion}
                   floated="right"
                   style={{ margin: "5px" }}
                 >
-                  Anterior
+                  Seguinte
                 </Button>
-              )}
-            </Grid.Column>
-          </ActionsRow>
-        </Grid>
-      )}
-    </>
-  );
+                {showPreviousQuestionButton && (
+                  <Button
+                    disabled={!hasPrevQuestion}
+                    onClick={goToPrevQuestion}
+                    floated="right"
+                    style={{ margin: "5px" }}
+                  >
+                    Anterior
+                  </Button>
+                )}
+              </Grid.Column>
+            </ActionsRow>
+          </Grid>
+        )}
+      </>
+    );
+  };
 
   return (
     <Dashboard>

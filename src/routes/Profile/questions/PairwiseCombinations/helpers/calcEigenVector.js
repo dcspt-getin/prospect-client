@@ -205,7 +205,6 @@ export default async (options, value, meta) => {
   //   matrix,
   //   valuesByColumn,
   //   normalizedValues,
-  //   normalizedValueSumByRow,
   //   eigenvector,
   //   inversedPerfectConsistencyMatrix,
   //   currentValueMatrix,
