@@ -95,25 +95,33 @@ export default () => {
     _verifyAlert();
   }, [questions, userProfile, showAlert, alreadyFilled]);
 
-  const _onChangeQuestion = (value, question, meta = {}) => {
+  const _onChangeQuestion = (
+    value,
+    question,
+    meta = {},
+    updateServer = true
+  ) => {
     if (!question) question = currentQuestionRef.current;
 
-    updateUserProfile({
-      ...userProfile,
-      [question.id]: {
-        value,
-        meta: {
-          ...userProfile[question.id]?.meta,
-          ...meta,
+    updateUserProfile(
+      {
+        ...userProfile,
+        [question.id]: {
+          value,
+          meta: {
+            ...userProfile[question.id]?.meta,
+            ...meta,
+          },
         },
       },
-    });
+      updateServer
+    );
   };
   const _hasValidAnswer = (q) => {
     const { value } = userProfile[q?.id] || {};
 
     const _validateChildrenFilled = (current) => {
-      const _isValid = !!userProfile[current.id] || isInfoQuestion(current);
+      const _isValid = _hasValidAnswer(current);
 
       if (current.children) {
         return (
@@ -156,6 +164,11 @@ export default () => {
 
     if (currentQuestion?.default_value && !userProfile[currentQuestion.id]) {
       _onChangeQuestion(currentQuestion.default_value, currentQuestion);
+    } else {
+      _onChangeQuestion(
+        userProfile[currentQuestion.id]?.value,
+        currentQuestion
+      );
     }
   };
   const _onContinueProfile = () => {

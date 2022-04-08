@@ -30,7 +30,7 @@ export default ({ question, value, onChange, disabled }) => {
       val = question.value_max;
     }
 
-    onChange(val, questionRef.current);
+    onChange(val, questionRef.current, {}, false);
   };
   const inputVal = value === undefined ? question.default_value : value;
 

@@ -118,9 +118,7 @@ export default ({ question, value, meta, onChange, disabled }) => {
       },
     ];
 
-    if (iteration + 1 === optionsMatrix.length) {
-    }
-    onChange(_newValue, questionRef.current);
+    onChange(_newValue, questionRef.current, {}, false);
   };
   const _onClickNextIteration = async () => {
     if (currentIteratonValue === undefined) _onIterationValueChange(0);
@@ -136,7 +134,6 @@ export default ({ question, value, meta, onChange, disabled }) => {
         },
       ];
       onChange(_newValue, questionRef.current, _meta);
-      // if (currentIteratonValue) _onIterationValueChange(currentIteratonValue);
 
       setIteration(-1);
       return;

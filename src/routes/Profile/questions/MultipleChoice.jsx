@@ -17,14 +17,14 @@ export default ({ question, value, onChange, disabled }) => {
   const [optionsToIgnore, setOptionsToIgnore] = React.useState([]);
 
   const _onChangeCheckbox = (o) => {
-    onChange(
-      (Array.isArray(value) ? value : []).includes(o.id)
-        ? value.filter((v) => v !== o.id)
-        : [...(Array.isArray(value) ? value : []), o.id],
-      questionRef.current
-    );
+    const _newValue = (Array.isArray(value) ? value : []).includes(o.id)
+      ? value.filter((v) => v !== o.id)
+      : [...(Array.isArray(value) ? value : []), o.id];
+
+    onChange(_newValue, questionRef.current, {}, false);
   };
-  const _onChangeRadio = (e, { value }) => onChange(value, questionRef.current);
+  const _onChangeRadio = (e, { value }) =>
+    onChange(value, questionRef.current, {}, false);
 
   React.useEffect(() => {
     const renderedOptionsOnDesc = [];
@@ -130,7 +130,9 @@ export default ({ question, value, onChange, disabled }) => {
           options={sortedOptions.map((o) => ({ value: o.id, text: o.title }))}
           value={value}
           disabled={disabled}
-          onChange={(e, { value }) => onChange(value, questionRef.current)}
+          onChange={(e, { value }) =>
+            onChange(value, questionRef.current, {}, false)
+          }
         />
       </>
     ),

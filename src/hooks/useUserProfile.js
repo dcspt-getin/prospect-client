@@ -50,9 +50,9 @@ export default () => {
     // delay in ms
     200
   );
-  const _updateProfile = (update) => {
+  const _updateProfile = (update, updateServer = true) => {
     setActiveProfileData({ ...activeProfileData, ...update });
-    _debouncedSaveProfile(update);
+    if (updateServer) _debouncedSaveProfile(update);
   };
 
   React.useEffect(() => {
