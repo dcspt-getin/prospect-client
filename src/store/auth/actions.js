@@ -48,6 +48,40 @@ export const login =
     }
   };
 
+export const passwordlessLogin =
+  ({ token, email }) =>
+  async (dispatch) => {
+    try {
+      const { data: tokenData } = await axios.post(
+        `${API_BASE_URL}/auth/token/`,
+        {
+          token,
+          email,
+        }
+      );
+
+      axios.defaults.headers.common[
+        "Authorization"
+      ] = `Bearer ${tokenData.token}`;
+      localStorage.setItem("jwtToken", tokenData.token);
+
+      dispatch({
+        type: AUTHENTICATE_USER,
+        payload: tokenData,
+      });
+
+      await dispatch(getCurrentUser());
+
+      return [true];
+    } catch (err) {
+      dispatch({
+        type: AUTHENTICATE_USER_FAILED,
+      });
+
+      return [false];
+    }
+  };
+
 export const verifyCurrentToken = (token) => async (dispatch) => {
   try {
     dispatch({

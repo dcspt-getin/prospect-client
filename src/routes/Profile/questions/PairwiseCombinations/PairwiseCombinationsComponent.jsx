@@ -24,6 +24,7 @@ export default ({ question, value, meta, onChange, disabled }) => {
 
   questionRef.current = question;
   const [optionsMatrix, setOptionsMatrix] = React.useState([]);
+  const [iterationsToRepeat, setIterationsToRepeat] = React.useState([]);
   const [iteration, setIteration] = React.useState(null);
   const allowUserRepeatQuestion = useSelector(
     (state) =>
@@ -32,15 +33,12 @@ export default ({ question, value, meta, onChange, disabled }) => {
         configurations.ALLOW_USER_REPEAT_BALANCE_QUESTION
       ) === "true"
   );
-  // let consistencyRatioMatrix = useSelector((state) =>
-  //   getAppConfiguration(state, configurations.CONSISTENCY_RATIO_MATRIX)
-  // );
 
-  // try {
-  //   consistencyRatioMatrix = JSON.parse(consistencyRatioMatrix);
-  // } catch (e) {
-  //   consistencyRatioMatrix = {};
-  // }
+  React.useEffect(() => {
+    if (iterationsToRepeat.length === 0) return;
+
+    setIteration(iterationsToRepeat[0]);
+  }, [iterationsToRepeat]);
 
   React.useEffect(() => {
     if (options.length < 2) return;
@@ -121,9 +119,14 @@ export default ({ question, value, meta, onChange, disabled }) => {
     onChange(_newValue, questionRef.current, {}, false);
   };
   const _onClickNextIteration = async () => {
-    if (currentIteratonValue === undefined) _onIterationValueChange(0);
+    const _next = iteration + 1;
+    const _isTheLastOne =
+      (iterationsToRepeat.length &&
+        iterationsToRepeat.findIndex((i) => i === iteration) ===
+          iterationsToRepeat.length - 1) ||
+      _next === optionsMatrix.length;
 
-    if (iteration + 1 === optionsMatrix.length) {
+    if (_isTheLastOne) {
       const egeinVectorData = await calcEigenVector(options, value, meta);
       const _meta = egeinVectorData;
       const _newValue = [
@@ -138,7 +141,65 @@ export default ({ question, value, meta, onChange, disabled }) => {
       setIteration(-1);
       return;
     }
-    setIteration(iteration + 1);
+
+    if (iterationsToRepeat.length && iterationsToRepeat.includes(iteration)) {
+      const _currentIndex = iterationsToRepeat.findIndex(
+        (i) => i === iteration
+      );
+
+      setIteration(iterationsToRepeat[_currentIndex + 1]);
+      return;
+    }
+    setIteration(_next);
+  };
+  const _onRepeatQuestion = () => {
+    const { valuesByColumn, comparisionsMatrix, hasValidR2 } = meta;
+
+    if (!comparisionsMatrix || hasValidR2) {
+      setIteration(0);
+      setIterationsToRepeat([]);
+      return;
+    }
+    let max = [0, 0];
+    let maxCoord = [];
+    const colsIds = Object.keys(valuesByColumn);
+    const rowsValues = Object.values(valuesByColumn);
+
+    for (let colIndex = 0; colIndex < comparisionsMatrix.length; colIndex++) {
+      const col = comparisionsMatrix[colIndex];
+
+      for (let rowIndex = 0; rowIndex < col.length; rowIndex++) {
+        const value = col[rowIndex];
+        const rowIds = Object.keys(rowsValues[rowIndex]);
+
+        if (value > max[0]) {
+          max[0] = value;
+          maxCoord[0] = [colsIds[colIndex], rowIds[rowIndex]];
+        } else if (value > max[1] && max[1] < max[0]) {
+          if (
+            maxCoord[0] &&
+            maxCoord[0][0] !== colsIds[colIndex] &&
+            maxCoord[0][0] !== rowIds[rowIndex]
+          ) {
+            max[1] = value;
+            maxCoord[1] = [colsIds[colIndex], rowIds[rowIndex]];
+          }
+        }
+      }
+    }
+
+    const toRepeat = maxCoord.reduce((acc, cur) => {
+      return [
+        ...acc,
+        value.findIndex(
+          (o) =>
+            (o.option1 === +cur[0] && o.option2 === +cur[1]) ||
+            (o.option2 === +cur[0] && o.option1 === +cur[1])
+        ),
+      ];
+    }, []);
+
+    setIterationsToRepeat(toRepeat);
   };
 
   if (iteration === -1)
@@ -162,7 +223,7 @@ export default ({ question, value, meta, onChange, disabled }) => {
           {(allowUserRepeatQuestion || (meta && !meta.isValid)) && (
             <Grid.Row>
               <Grid.Column width={16}>
-                <Button onClick={() => setIteration(0)} floated="left">
+                <Button onClick={_onRepeatQuestion} floated="left">
                   Voltar a Preencher
                 </Button>
               </Grid.Column>

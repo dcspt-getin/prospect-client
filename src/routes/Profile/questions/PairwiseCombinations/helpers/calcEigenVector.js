@@ -176,11 +176,11 @@ export default async (options, value, meta) => {
 
   const r = parseFloat(data.result);
   const r2 = r * r;
-  const isValid = r2 > 0.6;
+  const hasValidR2 = r2 > 0.6;
   const comparisionsMatrix = [];
   const numAttempts = (meta?.numAttempts || 0) + 1;
 
-  if (!isValid) {
+  if (!hasValidR2) {
     for (let i = 0; i < currentValueMatrix.length; i++) {
       const row = currentValueMatrix[i];
       const comparisionsMatrixRow = [];
@@ -210,7 +210,7 @@ export default async (options, value, meta) => {
   //   currentValueMatrix,
   //   r,
   //   r2,
-  //   isValid,
+  //   hasValidR2,
   //   comparisionsMatrix,
   // });
 
@@ -219,8 +219,10 @@ export default async (options, value, meta) => {
     currentValueMatrix,
     perfectConsistencyMatrix: inversedPerfectConsistencyMatrix,
     r2,
-    isValid: isValid || numAttempts > 1,
+    hasValidR2,
+    isValid: hasValidR2 || numAttempts > 1,
     comparisionsMatrix,
     numAttempts,
+    valuesByColumn,
   };
 };

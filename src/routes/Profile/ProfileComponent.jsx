@@ -330,10 +330,10 @@ export default () => {
             </Grid.Row>
           </Grid>
         </Segment>
-        {showActionsButtons() && (
-          <Grid verticalAlign="middle">
-            <ActionsRow>
-              <Grid.Column floated="right" width={16}>
+        <Grid verticalAlign="middle">
+          <ActionsRow>
+            <Grid.Column floated="right" width={16}>
+              {showActionsButtons() && (
                 <Button
                   disabled={
                     !hasNextQuestion || !_hasValidAnswer(currentQuestion)
@@ -344,20 +344,20 @@ export default () => {
                 >
                   Seguinte
                 </Button>
-                {showPreviousQuestionButton && (
-                  <Button
-                    disabled={!hasPrevQuestion}
-                    onClick={goToPrevQuestion}
-                    floated="right"
-                    style={{ margin: "5px" }}
-                  >
-                    Anterior
-                  </Button>
-                )}
-              </Grid.Column>
-            </ActionsRow>
-          </Grid>
-        )}
+              )}
+              {showPreviousQuestionButton && (
+                <Button
+                  disabled={!hasPrevQuestion}
+                  onClick={goToPrevQuestion}
+                  floated="right"
+                  style={{ margin: "5px" }}
+                >
+                  Anterior
+                </Button>
+              )}
+            </Grid.Column>
+          </ActionsRow>
+        </Grid>
       </>
     );
   };

@@ -29,6 +29,7 @@ export default () => {
   );
   const _getPairWiseData = (q) => {
     const allQuestionValues = results
+      .filter((r) => (r.profile_data || {})[q.id]?.meta?.hasValidR2)
       .map((r) => (r.profile_data || {})[q.id]?.value)
       .filter(Boolean)
       .map((v) => {

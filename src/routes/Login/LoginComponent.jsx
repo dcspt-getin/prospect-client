@@ -4,11 +4,13 @@ import { useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 
 import Dashboard from "components/Dashboard";
+import usePasswordlessLogin from "hooks/usePasswordlessLogin";
 
 import LoginForm from "./LoginForm";
 
 export default () => {
   const history = useHistory();
+  usePasswordlessLogin();
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
 
   if (isAuthenticated) history.push("/questionario");
