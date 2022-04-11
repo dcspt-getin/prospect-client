@@ -78,6 +78,7 @@ export default ({ question, value, meta, onChange, disabled }) => {
 
   React.useEffect(() => {
     setIteration(null);
+    setIterationsToRepeat([]);
   }, [question?.id]);
 
   React.useEffect(() => {
