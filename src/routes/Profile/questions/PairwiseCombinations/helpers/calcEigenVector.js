@@ -3,7 +3,7 @@ import axios from "axios";
 
 import { API_BASE_URL } from "config";
 
-export default async (options, value, meta) => {
+export default async (options, value, meta, config = {}) => {
   // Step 1: Cal Matrix
   const matrix = options.reduce((acc, curr) => {
     return [
@@ -176,7 +176,7 @@ export default async (options, value, meta) => {
 
   const r = parseFloat(data.result);
   const r2 = r * r;
-  const hasValidR2 = r2 > 0.6;
+  const hasValidR2 = r2 > (parseFloat(config.correlationLimitValue) || 0.6);
   const comparisionsMatrix = [];
   const numAttempts = (meta?.numAttempts || 0) + 1;
 

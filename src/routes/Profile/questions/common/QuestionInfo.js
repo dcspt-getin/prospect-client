@@ -4,7 +4,7 @@ import { Grid, Header, Image } from "semantic-ui-react";
 import HTMLContent from "src/components/HTMLContent";
 import styled from "styled-components";
 
-export default ({ question, renderDescription }) => {
+export default ({ question, renderDescription, hideDescription }) => {
   const _renderDescriptionImage = () => {
     const image = question.description_image || question.image_url;
 
@@ -47,24 +47,30 @@ export default ({ question, renderDescription }) => {
           <Title size="medium">{question.title}</Title>
         </Grid.Column>
       </Grid.Row>
-      {_renderDescriptionImage(question)}
-      {question.description && (
-        <Grid.Row style={{ paddingBottom: 0 }}>
-          <Grid.Column width={16}>
-            <Description>
-              <p>{_getDescription(question.description)}</p>
-            </Description>
-          </Grid.Column>
-        </Grid.Row>
-      )}
-      {question.description_html && (
-        <Grid.Row style={{ paddingBottom: 0 }}>
-          <Grid.Column width={16}>
-            <Description>
-              <HTMLContent html={_getDescription(question.description_html)} />
-            </Description>
-          </Grid.Column>
-        </Grid.Row>
+      {!hideDescription && (
+        <>
+          {_renderDescriptionImage(question)}
+          {question.description && (
+            <Grid.Row style={{ paddingBottom: 0 }}>
+              <Grid.Column width={16}>
+                <Description>
+                  <p>{_getDescription(question.description)}</p>
+                </Description>
+              </Grid.Column>
+            </Grid.Row>
+          )}
+          {question.description_html && (
+            <Grid.Row style={{ paddingBottom: 0 }}>
+              <Grid.Column width={16}>
+                <Description>
+                  <HTMLContent
+                    html={_getDescription(question.description_html)}
+                  />
+                </Description>
+              </Grid.Column>
+            </Grid.Row>
+          )}
+        </>
       )}
     </Grid>
   );

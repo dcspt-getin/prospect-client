@@ -33,6 +33,9 @@ export default ({ question, value, meta, onChange, disabled }) => {
         configurations.ALLOW_USER_REPEAT_BALANCE_QUESTION
       ) === "true"
   );
+  const correlationLimitValue = useSelector((state) =>
+    getAppConfiguration(state, configurations.CORRELATION_LIMIT_VALUE)
+  );
 
   React.useEffect(() => {
     if (iterationsToRepeat.length === 0) return;
@@ -128,7 +131,9 @@ export default ({ question, value, meta, onChange, disabled }) => {
       _next === optionsMatrix.length;
 
     if (_isTheLastOne) {
-      const egeinVectorData = await calcEigenVector(options, value, meta);
+      const egeinVectorData = await calcEigenVector(options, value, meta, {
+        correlationLimitValue,
+      });
       const _meta = egeinVectorData;
       const _newValue = [
         ...value.filter(filterIterationsWithValue),
@@ -206,16 +211,23 @@ export default ({ question, value, meta, onChange, disabled }) => {
   if (iteration === -1)
     return (
       <>
-        <QuestionInfo question={question} />
+        <QuestionInfo question={question} hideDescription={!meta?.isValid} />
         <Grid>
           <Grid.Row>
             <Grid.Column width={16}>
               <br />
               <b>
                 <Header size="medium">
-                  {meta?.isValid
-                    ? "Terminou esta escolha par-a-par, passe para a questão seguinte"
-                    : "Tem respostas que não são coerentes, por favor volte a preencher!"}
+                  {meta?.isValid ? (
+                    "Terminou esta escolha par-a-par, passe para a questão seguinte"
+                  ) : (
+                    <>
+                      <strong style={{ color: "darkred" }}>
+                        As suas respostas têm problemas de transitividade. Para
+                        resolver, reconsidere as seguintes respostas.
+                      </strong>
+                    </>
+                  )}
                 </Header>
               </b>
             </Grid.Column>

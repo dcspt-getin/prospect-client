@@ -121,5 +121,6 @@ export default () => {
     gotoNextQuestion,
     goToPrevQuestion,
     goToQuestionIndex,
+    currentQuestionIndex,
   };
 };

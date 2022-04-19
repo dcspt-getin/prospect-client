@@ -1,6 +1,13 @@
 /* eslint-disable import/no-anonymous-default-export */
 import React from "react";
-import { Header, Grid, Button, Segment, Breadcrumb } from "semantic-ui-react";
+import {
+  Header,
+  Grid,
+  Button,
+  Segment,
+  Breadcrumb,
+  Progress,
+} from "semantic-ui-react";
 import styled from "styled-components";
 import { useSelector } from "react-redux";
 import { is, pipe, isEmpty, not, both, has, propEq, or } from "ramda";
@@ -49,6 +56,7 @@ export default () => {
     gotoNextQuestion,
     goToPrevQuestion,
     goToQuestionIndex,
+    currentQuestionIndex,
   } = useQuestions();
   const [showAlert, setShowAlert] = React.useState(null);
   const [userProfile, updateUserProfile] = useUserProfile();
@@ -332,7 +340,21 @@ export default () => {
         </Segment>
         <Grid verticalAlign="middle">
           <ActionsRow>
-            <Grid.Column floated="right" width={16}>
+            <Grid.Column floated="left" mobile={16} tablet={8} computer={8}>
+              <Grid style={{ marginTop: 0 }}>
+                <Grid.Row>
+                  <Grid.Column mobile={8}>
+                    <Progress
+                      percent={(currentQuestionIndex / questions.length) * 100}
+                    />
+                  </Grid.Column>
+                  <Grid.Column floated="right" mobile={8}>
+                    Questão {currentQuestionIndex + 1} de {questions.length}
+                  </Grid.Column>
+                </Grid.Row>
+              </Grid>
+            </Grid.Column>
+            <Grid.Column floated="right" mobile={16} tablet={8} computer={8}>
               {showActionsButtons() && (
                 <Button
                   disabled={

@@ -58,69 +58,79 @@ export default () => {
     }, {});
     const max = Math.max(...Object.values(onlyValues));
 
-    return q.options.map((o) => {
-      const value = onlyValues[o.id];
+    return q.options
+      .map((o) => {
+        const value = onlyValues[o.id];
 
-      const percentageValue = parseInt((value * 100) / max);
-      return percentageValue;
-    });
+        const percentageValue = parseInt((value * 100) / max);
+        return {
+          title: o.title,
+          value: percentageValue,
+        };
+      })
+      .sort((a, b) => a.value - b.value);
   };
   const _renderQuestions = () => {
     if (!pairWiseQuestion.length) return "";
 
     return (
       <Segment>
-        {pairWiseQuestion.map((q) => (
-          <div key={q.id}>
-            <ReactECharts
-              option={{
-                title: {
-                  text: q.title,
-                },
-                tooltip: {
-                  trigger: "axis",
-                  axisPointer: {
-                    type: "shadow",
+        {pairWiseQuestion.map((q) => {
+          const data = _getPairWiseData(q);
+
+          return (
+            <div key={q.id}>
+              <ReactECharts
+                option={{
+                  title: {
+                    text: q.title,
                   },
-                },
-                legend: {},
-                grid: {
-                  left: "35%",
-                  right: "4%",
-                  bottom: "10%",
-                  containLabel: false,
-                },
-                axisLabel: {
-                  interval: 0,
-                  width: document.querySelector(".App > div").offsetWidth * 0.3, //fixed number of pixels
-                  overflow: "truncate", // or 'break' to continue in a new line
-                },
-                xAxis: {
-                  type: "value",
-                  boundaryGap: [0, 0.01],
-                },
-                yAxis: {
-                  type: "category",
-                  data: q.options.map((o) => o.title),
-                },
-                series: [
-                  {
-                    name: "",
-                    type: "bar",
-                    data: _getPairWiseData(q),
+                  tooltip: {
+                    trigger: "axis",
+                    axisPointer: {
+                      type: "shadow",
+                    },
                   },
-                ],
-              }}
-              notMerge={true}
-              lazyUpdate={true}
-              // theme={"theme_name"}
-              // onChartReady={this.onChartReadyCallback}
-              // onEvents={EventsDict}
-              // opts={}
-            />
-            <Divider />
-          </div>
-        ))}
+                  legend: {},
+                  grid: {
+                    left: "35%",
+                    right: "4%",
+                    bottom: "10%",
+                    containLabel: false,
+                  },
+                  axisLabel: {
+                    interval: 0,
+                    width:
+                      document.querySelector(".App > div").offsetWidth * 0.3, //fixed number of pixels
+                    overflow: "truncate", // or 'break' to continue in a new line
+                  },
+                  xAxis: {
+                    type: "value",
+                    boundaryGap: [0, 0.01],
+                  },
+                  yAxis: {
+                    type: "category",
+                    data: data.map((o) => o.title),
+                  },
+                  series: [
+                    {
+                      name: "",
+                      type: "bar",
+                      data: data.map((o) => o.value),
+                    },
+                  ],
+                }}
+                notMerge={true}
+                lazyUpdate={true}
+                // theme={"theme_name"}
+                // onChartReady={this.onChartReadyCallback}
+                // onEvents={EventsDict}
+                // opts={}
+              />
+              <Divider />
+            </div>
+          );
+        })}
       </Segment>
     );
   };
