@@ -6,3 +6,16 @@
 .App {
   min-height: 100vh;
 }
+
+@media only screen and (max-width: 600px) {
+  body,
+  button,
+  table,
+  label,
+  span,
+  footer,
+  .ui.segment,
+  p {
+    font-size: 16px !important;
+  }
+}

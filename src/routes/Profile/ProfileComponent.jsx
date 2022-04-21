@@ -7,6 +7,7 @@ import {
   Segment,
   Breadcrumb,
   Progress,
+  Divider,
 } from "semantic-ui-react";
 import styled from "styled-components";
 import { useSelector } from "react-redux";
@@ -198,10 +199,22 @@ export default () => {
   const _renderQuestion = (q) => {
     if (!q) return "";
 
+    const _renderDivider = () => {
+      if (q.parent_question)
+        return (
+          <>
+            <br />
+            <Divider />
+            <br />
+          </>
+        );
+    };
+
     switch (q.question_type) {
       case questionTypes.ONLY_QUESTION_INFO:
         return (
           <>
+            {_renderDivider()}
             <QuestionInfo question={q} />
             {!hasChildren(q.children) && (
               <Grid>
@@ -216,39 +229,48 @@ export default () => {
         );
       case questionTypes.SHORT_ANSWER:
         return (
-          <ShortAnswer
-            question={q}
-            disabled={
-              hasChildren(q.children) && userProfile[q.id]?.meta?.submitted
-            }
-            value={userProfile[q.id]?.value}
-            onChange={_onChangeQuestion}
-          />
+          <>
+            {_renderDivider()}
+            <ShortAnswer
+              question={q}
+              disabled={
+                hasChildren(q.children) && userProfile[q.id]?.meta?.submitted
+              }
+              value={userProfile[q.id]?.value}
+              onChange={_onChangeQuestion}
+            />
+          </>
         );
 
       case questionTypes.PAIRWISE_COMBINATIONS:
         return (
-          <PairwiseCombinations
-            question={q}
-            disabled={
-              hasChildren(q.children) && userProfile[q.id]?.meta?.submitted
-            }
-            value={userProfile[q.id]?.value}
-            meta={userProfile[q.id]?.meta}
-            onChange={_onChangeQuestion}
-          />
+          <>
+            {_renderDivider()}
+            <PairwiseCombinations
+              question={q}
+              disabled={
+                hasChildren(q.children) && userProfile[q.id]?.meta?.submitted
+              }
+              value={userProfile[q.id]?.value}
+              meta={userProfile[q.id]?.meta}
+              onChange={_onChangeQuestion}
+            />
+          </>
         );
 
       case questionTypes.MULTIPLE_CHOICE:
         return (
-          <MultipleChoice
-            question={q}
-            disabled={
-              hasChildren(q.children) && userProfile[q.id]?.meta?.submitted
-            }
-            value={userProfile[q.id]?.value}
-            onChange={_onChangeQuestion}
-          />
+          <>
+            {_renderDivider()}
+            <MultipleChoice
+              question={q}
+              disabled={
+                hasChildren(q.children) && userProfile[q.id]?.meta?.submitted
+              }
+              value={userProfile[q.id]?.value}
+              onChange={_onChangeQuestion}
+            />
+          </>
         );
 
       default:
@@ -324,6 +346,8 @@ export default () => {
   const _renderProfileQuestions = () => {
     if (!currentQuestion) return "";
 
+    const totalQuestions = questions.length;
+
     return (
       <>
         {_renderBreadcrumbs()}
@@ -341,18 +365,23 @@ export default () => {
         <Grid verticalAlign="middle">
           <ActionsRow>
             <Grid.Column floated="left" mobile={16} tablet={8} computer={8}>
-              <Grid style={{ marginTop: 0 }}>
-                <Grid.Row>
-                  <Grid.Column mobile={8}>
-                    <Progress
-                      percent={(currentQuestionIndex / questions.length) * 100}
-                    />
-                  </Grid.Column>
-                  <Grid.Column floated="right" mobile={8}>
-                    Questão {currentQuestionIndex + 1} de {questions.length}
-                  </Grid.Column>
-                </Grid.Row>
-              </Grid>
+              {currentQuestion.question_type !==
+                questionTypes.ONLY_QUESTION_INFO && (
+                <Grid style={{ marginTop: 0 }}>
+                  <Grid.Row>
+                    <Grid.Column mobile={12}>
+                      <Progress
+                        percent={(currentQuestionIndex / totalQuestions) * 100}
+                      />
+                    </Grid.Column>
+                    <Grid.Column floated="right" mobile={4}>
+                      <MobileRightAligned>
+                        {currentQuestionIndex + 1} de {totalQuestions}
+                      </MobileRightAligned>
+                    </Grid.Column>
+                  </Grid.Row>
+                </Grid>
+              )}
             </Grid.Column>
             <Grid.Column floated="right" mobile={16} tablet={8} computer={8}>
               {showActionsButtons() && (
@@ -423,5 +452,11 @@ const PageHeader = styled(Header)`
   &&&& {
     margin-bottom: 2rem;
     margin-top: 1rem;
+  }
+`;
+
+const MobileRightAligned = styled.div`
+  @media only screen and (max-width: 600px) {
+    text-align: right;
   }
 `;
