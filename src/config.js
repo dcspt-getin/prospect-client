@@ -5,7 +5,7 @@ switch (process.env.REACT_APP_ENV) {
     apiBaseUrl = "https://thawing-wildwood-49356.herokuapp.com/api";
     break;
   case "production":
-    apiBaseUrl = "";
+    apiBaseUrl = "https://protcapp.tk/api";
     break;
 
   default:
