@@ -13,7 +13,7 @@ import useGroups from "./hooks/useGroups";
 
 export default () => {
   const [t] = useTranslations("contacts");
-  const { questions } = useQuestions();
+  const { questions } = useQuestions(true);
   const results = useResultsData();
   const groups = useGroups();
   const [selectedGroup, setSelectedGroup] = React.useState(null);
@@ -90,6 +90,9 @@ export default () => {
                     axisPointer: {
                       type: "shadow",
                     },
+                    formatter: (params) => {
+                      return `${params[0].value}`;
+                    },
                   },
                   legend: {},
                   grid: {
@@ -102,11 +105,13 @@ export default () => {
                     interval: 0,
                     width:
                       document.querySelector(".App > div").offsetWidth * 0.3, //fixed number of pixels
-                    overflow: "truncate", // or 'break' to continue in a new line
+                    overflow: "break", // or 'break' to continue in a new line
                   },
                   xAxis: {
                     type: "value",
                     boundaryGap: [0, 0.01],
+                    min: 0,
+                    max: 100,
                   },
                   yAxis: {
                     type: "category",

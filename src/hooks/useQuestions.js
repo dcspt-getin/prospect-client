@@ -6,12 +6,12 @@ import { fetchQuestions } from "src/store/questions/actions";
 import { getQuestions } from "store/questions/selectors";
 
 /* eslint-disable import/no-anonymous-default-export */
-export default () => {
+export default (allQuestions) => {
   const dispatch = useDispatch();
   const questions = useSelector(getQuestions);
 
   React.useEffect(() => {
-    dispatch(fetchQuestions());
+    dispatch(fetchQuestions(allQuestions));
   }, []);
 
   // const [currentGroupId, setCurrentGroupId] = React.useState();

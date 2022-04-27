@@ -10,13 +10,12 @@ export default () => {
 
   return (
     <Footer>
-      <Grid columns={2} padded="horizontally">
+      <Grid columns={1} padded="horizontally">
         <Grid.Column>
           <Container textAlign="justified" style={{ fontSize: 12 }}>
             <span dangerouslySetInnerHTML={{ __html: t("Copyright 2022") }} />
           </Container>
         </Grid.Column>
-        <Grid.Column></Grid.Column>
       </Grid>
     </Footer>
   );
