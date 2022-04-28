@@ -116,6 +116,7 @@ export default () => {
                   yAxis: {
                     type: "category",
                     data: data.map((o) => o.title),
+                    axisLabel: { fontSize: "16" },
                   },
                   series: [
                     {
