@@ -4,6 +4,8 @@ import axios from "axios";
 
 import { API_BASE_URL } from "config";
 
+const TIME_INTERVAL = 1000 * 60; // 1 minute
+
 export default () => {
   const [results, setResults] = React.useState([]);
 
@@ -18,7 +20,12 @@ export default () => {
       );
     };
 
+    // run first time
     fetchResults();
+
+    const interval = setInterval(() => fetchResults(), TIME_INTERVAL);
+    //destroy interval on unmount
+    return () => clearInterval(interval);
   }, []);
 
   return results;

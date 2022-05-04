@@ -1,12 +1,20 @@
 /* eslint-disable import/no-anonymous-default-export */
 import React from "react";
-import { Header, Segment, Divider, Grid, Dropdown } from "semantic-ui-react";
+import {
+  Header,
+  Segment,
+  Divider,
+  Grid,
+  Dropdown,
+  Checkbox,
+} from "semantic-ui-react";
 import ReactECharts from "echarts-for-react";
 
 import Dashboard from "components/Dashboard";
 import useTranslations from "hooks/useTranslations";
 import useQuestions from "hooks/useQuestions";
 import questionTypes from "helpers/questions/questionTypes";
+import useUserProfile from "hooks/useUserProfile";
 
 import useResultsData from "./hooks/useResultsData";
 import useGroups from "./hooks/useGroups";
@@ -14,9 +22,33 @@ import useGroups from "./hooks/useGroups";
 export default () => {
   const [t] = useTranslations("contacts");
   const { questions } = useQuestions(true);
-  const results = useResultsData();
   const groups = useGroups();
+  const [userProfile] = useUserProfile();
   const [selectedGroup, setSelectedGroup] = React.useState(null);
+  const [showGlobalResults, setShowGlobalResults] = React.useState(true);
+  const [showUserResults, setShowUserResults] = React.useState(false);
+  const results = useResultsData(selectedGroup);
+
+  const totals = React.useMemo(() => {
+    const questionsOnGroup = questions.filter((q) =>
+      q.groups.some((g) => g.id === selectedGroup)
+    );
+    const totalProfiles = results.length;
+    const totalProfilesWithAnswer = results.filter(
+      (result) => result.profile_data !== null
+    ).length;
+    const totalCompletedProfiles = results.filter(
+      (result) =>
+        result.profile_data &&
+        questionsOnGroup.every((q) => result.profile_data[q.id] !== null)
+    ).length;
+
+    return {
+      totalProfiles,
+      totalProfilesWithAnswer,
+      totalCompletedProfiles,
+    };
+  }, [results]);
 
   const pairWiseQuestion = React.useMemo(
     () =>
@@ -61,11 +93,15 @@ export default () => {
     return q.options
       .map((o) => {
         const value = onlyValues[o.id];
+        const userValue =
+          (userProfile && (userProfile[q.id]?.meta?.eigenVector || {})[o.id]) ||
+          0;
 
         const percentageValue = parseInt((value * 100) / max);
         return {
           title: o.title,
           value: percentageValue,
+          userValue: userValue * 100,
         };
       })
       .sort((a, b) => a.value - b.value);
@@ -119,11 +155,26 @@ export default () => {
                     axisLabel: { fontSize: "16" },
                   },
                   series: [
-                    {
-                      name: "",
-                      type: "bar",
-                      data: data.map((o) => o.value),
-                    },
+                    ...(showGlobalResults
+                      ? [
+                          {
+                            name: "",
+                            type: "bar",
+                            itemStyle: { color: "#2185d0" },
+                            data: data.map((o) => o.value),
+                          },
+                        ]
+                      : []),
+                    ...(showUserResults
+                      ? [
+                          {
+                            name: "",
+                            type: "bar",
+                            itemStyle: { color: "green" },
+                            data: data.map((o) => o.userValue),
+                          },
+                        ]
+                      : []),
                   ],
                 }}
                 notMerge={true}
@@ -166,6 +217,41 @@ export default () => {
           </Grid.Column>
         </Grid.Row>
       </Grid>
+      {selectedGroup && (
+        <Grid>
+          <Grid.Row>
+            <Grid.Column width={4}>
+              <Segment>
+                <Checkbox
+                  checked={showUserResults}
+                  onChange={() => setShowUserResults(!showUserResults)}
+                  label="Meus resultados"
+                />
+              </Segment>
+            </Grid.Column>
+            <Grid.Column width={4}>
+              <Segment>
+                <Checkbox
+                  checked={showGlobalResults}
+                  onChange={() => setShowGlobalResults(!showGlobalResults)}
+                  label="Resultados globais"
+                />
+              </Segment>
+            </Grid.Column>
+          </Grid.Row>
+          <Grid.Row>
+            <Grid.Column width={16}>
+              <Segment>
+                <strong>Numero de questionarios com resposta: </strong>{" "}
+                {totals.totalProfilesWithAnswer} / {totals.totalProfiles}
+                <br />
+                <strong>Numero de questionarios completos: </strong>
+                {totals.totalCompletedProfiles}{" "}
+              </Segment>
+            </Grid.Column>
+          </Grid.Row>
+        </Grid>
+      )}
       {selectedGroup && _renderQuestions()}
     </Dashboard>
   );
