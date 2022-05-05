@@ -13,7 +13,15 @@ export default () => {
   usePasswordlessLogin();
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
 
-  if (isAuthenticated) history.push("/questionario");
+  if (isAuthenticated) {
+    const query = new URLSearchParams(window.location.search);
+
+    if (query.get("next")) {
+      history.push(query.get("next"));
+    } else {
+      history.push("/questionario");
+    }
+  }
 
   return (
     <Dashboard hideLeftMenu>

@@ -1,4 +1,4 @@
-let apiBaseUrl = "http://lvh.me:8000/api";
+let apiBaseUrl = "https://protcapp.tk/api";
 
 switch (process.env.REACT_APP_ENV) {
   case "staging":

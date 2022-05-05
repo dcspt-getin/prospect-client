@@ -94,12 +94,17 @@ export default () => {
         const userValue =
           (userProfile && (userProfile[q.id]?.meta?.eigenVector || {})[o.id]) ||
           0;
+        const maxUser = Math.max(
+          ...Object.values(
+            userProfile && (userProfile[q.id]?.meta?.eigenVector || {})
+          )
+        );
 
         const percentageValue = parseInt((value * 100) / max);
         return {
           title: o.title,
           value: percentageValue,
-          userValue: parseInt((userValue * 100) / max),
+          userValue: parseInt((userValue * 100) / maxUser),
         };
       })
       .sort((a, b) => a.value - b.value);
@@ -125,7 +130,7 @@ export default () => {
                       type: "shadow",
                     },
                     formatter: (params) => {
-                      return `${params[0].value}`;
+                      return params.map((p) => p.value + "%").join("<br/>");
                     },
                   },
                   legend: {},
