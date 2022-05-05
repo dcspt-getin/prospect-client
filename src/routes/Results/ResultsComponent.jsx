@@ -33,7 +33,6 @@ export default () => {
     const questionsOnGroup = questions.filter((q) =>
       q.groups.some((g) => g.id === selectedGroup)
     );
-    const totalProfiles = results.length;
     const totalProfilesWithAnswer = results.filter(
       (result) => result.profile_data !== null
     ).length;
@@ -44,7 +43,6 @@ export default () => {
     ).length;
 
     return {
-      totalProfiles,
       totalProfilesWithAnswer,
       totalCompletedProfiles,
     };
@@ -101,7 +99,7 @@ export default () => {
         return {
           title: o.title,
           value: percentageValue,
-          userValue: userValue * 100,
+          userValue: parseInt((userValue * 100) / max),
         };
       })
       .sort((a, b) => a.value - b.value);
@@ -152,7 +150,12 @@ export default () => {
                   yAxis: {
                     type: "category",
                     data: data.map((o) => o.title),
-                    axisLabel: { fontSize: "16" },
+                    axisLabel: {
+                      fontSize:
+                        document.querySelector(".App > div").offsetWidth > 600
+                          ? "16"
+                          : "12",
+                    },
                   },
                   series: [
                     ...(showGlobalResults
@@ -220,7 +223,7 @@ export default () => {
       {selectedGroup && (
         <Grid>
           <Grid.Row>
-            <Grid.Column width={4}>
+            <Grid.Column mobile={16} tablet={8} computer={4}>
               <Segment>
                 <Checkbox
                   checked={showUserResults}
@@ -229,7 +232,7 @@ export default () => {
                 />
               </Segment>
             </Grid.Column>
-            <Grid.Column width={4}>
+            <Grid.Column mobile={16} tablet={8} computer={4}>
               <Segment>
                 <Checkbox
                   checked={showGlobalResults}
@@ -243,7 +246,7 @@ export default () => {
             <Grid.Column width={16}>
               <Segment>
                 <strong>Numero de questionarios com resposta: </strong>{" "}
-                {totals.totalProfilesWithAnswer} / {totals.totalProfiles}
+                {totals.totalProfilesWithAnswer}
                 <br />
                 <strong>Numero de questionarios completos: </strong>
                 {totals.totalCompletedProfiles}{" "}
