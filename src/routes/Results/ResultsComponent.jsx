@@ -9,6 +9,7 @@ import {
   Checkbox,
 } from "semantic-ui-react";
 import ReactECharts from "echarts-for-react";
+import ceil from "lodash/ceil";
 
 import Dashboard from "components/Dashboard";
 import useTranslations from "hooks/useTranslations";
@@ -39,7 +40,7 @@ export default () => {
     const totalCompletedProfiles = results.filter(
       (result) =>
         result.profile_data &&
-        questionsOnGroup.every((q) => result.profile_data[q.id] !== null)
+        questionsOnGroup.every((q) => result.profile_data[q.id] !== undefined)
     ).length;
 
     return {
@@ -101,10 +102,14 @@ export default () => {
         );
 
         const percentageValue = parseInt((value * 100) / max);
+        const userValueNormalized = parseInt(
+          (ceil(userValue, 2) * 100) / ceil(maxUser, 2)
+        );
+
         return {
           title: o.title,
           value: percentageValue,
-          userValue: parseInt((userValue * 100) / maxUser),
+          userValue: userValueNormalized,
         };
       })
       .sort((a, b) => a.value - b.value);
@@ -130,7 +135,12 @@ export default () => {
                       type: "shadow",
                     },
                     formatter: (params) => {
-                      return params.map((p) => p.value + "%").join("<br/>");
+                      return params
+                        .map(
+                          (p) =>
+                            `<span style="display:inline-block;background-color: ${p.color};width: 12px; height: 12px;margin-right: 4px;"></span>${p.value}`
+                        )
+                        .join("<br/>");
                     },
                   },
                   legend: {},
