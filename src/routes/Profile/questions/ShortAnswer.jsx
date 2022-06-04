@@ -3,7 +3,7 @@ import React from "react";
 import { Grid, Input } from "semantic-ui-react";
 import styled from "styled-components";
 // import { Slider } from "react-semantic-ui-range";
-import QuestionInfo from "./common/QuestionInfo";
+import QuestionInfo from "./_shared/QuestionInfo";
 import MuiSlider from "@material-ui/core/Slider";
 
 const INPUT_TYPES = {

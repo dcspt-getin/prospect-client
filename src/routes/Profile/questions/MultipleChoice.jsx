@@ -3,7 +3,7 @@ import React from "react";
 import ReactDOMServer from "react-dom/server";
 import styled from "styled-components";
 import { Grid, Dropdown, Form, Radio, Checkbox } from "semantic-ui-react";
-import QuestionInfo from "./common/QuestionInfo";
+import QuestionInfo from "./_shared/QuestionInfo";
 
 export default ({ question, value, onChange, disabled }) => {
   const {

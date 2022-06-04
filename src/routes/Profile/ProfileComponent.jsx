@@ -25,7 +25,9 @@ import { filterIterationsWithValue } from "helpers/questions/pairWiseCombination
 import MultipleChoice from "./questions/MultipleChoice";
 import ShortAnswer from "./questions/ShortAnswer";
 import PairwiseCombinations from "./questions/PairwiseCombinations/index";
-import QuestionInfo from "./questions/common/QuestionInfo";
+import CitizenGeneralProfile from "./questions/CitizenGeneralProfile";
+import UrbanShapes from "./questions/UrbanShapes";
+import QuestionInfo from "./questions/_shared/QuestionInfo";
 import ContinueProfileAlert from "./ContinueProfileAlert";
 
 // Auxiliary functions
@@ -209,13 +211,20 @@ export default () => {
           </>
         );
     };
+    const questionProps = {
+      question: q,
+      value: userProfile[q.id]?.value,
+      meta: userProfile[q.id]?.meta,
+      disabled: hasChildren(q.children) && userProfile[q.id]?.meta?.submitted,
+      onChange: _onChangeQuestion,
+    };
 
     switch (q.question_type) {
       case questionTypes.ONLY_QUESTION_INFO:
         return (
           <>
             {_renderDivider()}
-            <QuestionInfo question={q} />
+            <QuestionInfo {...questionProps} />
             {!hasChildren(q.children) && (
               <Grid>
                 <Grid.Column width={16}>
@@ -231,14 +240,7 @@ export default () => {
         return (
           <>
             {_renderDivider()}
-            <ShortAnswer
-              question={q}
-              disabled={
-                hasChildren(q.children) && userProfile[q.id]?.meta?.submitted
-              }
-              value={userProfile[q.id]?.value}
-              onChange={_onChangeQuestion}
-            />
+            <ShortAnswer {...questionProps} />
           </>
         );
 
@@ -246,15 +248,7 @@ export default () => {
         return (
           <>
             {_renderDivider()}
-            <PairwiseCombinations
-              question={q}
-              disabled={
-                hasChildren(q.children) && userProfile[q.id]?.meta?.submitted
-              }
-              value={userProfile[q.id]?.value}
-              meta={userProfile[q.id]?.meta}
-              onChange={_onChangeQuestion}
-            />
+            <PairwiseCombinations {...questionProps} />
           </>
         );
 
@@ -262,14 +256,23 @@ export default () => {
         return (
           <>
             {_renderDivider()}
-            <MultipleChoice
-              question={q}
-              disabled={
-                hasChildren(q.children) && userProfile[q.id]?.meta?.submitted
-              }
-              value={userProfile[q.id]?.value}
-              onChange={_onChangeQuestion}
-            />
+            <MultipleChoice {...questionProps} />
+          </>
+        );
+
+      case questionTypes.CITIZEN_PROFILE:
+        return (
+          <>
+            {_renderDivider()}
+            <CitizenGeneralProfile {...questionProps} />
+          </>
+        );
+
+      case questionTypes.URBAN_SHAPES:
+        return (
+          <>
+            {_renderDivider()}
+            <UrbanShapes {...questionProps} />
           </>
         );
 

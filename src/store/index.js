@@ -9,6 +9,7 @@ import authReducer from "./auth/reducer";
 import appReducer from "./app/reducer";
 import questionsReducer from "./questions/reducer";
 import profilesReducer from "./profiles/reducer";
+import urbanShapesReducer from "./urbanShapes/reducer";
 import {
   getAppConfigurations,
   getAppTranslations,
@@ -22,6 +23,7 @@ export default function initStore() {
     app: appReducer,
     questions: questionsReducer,
     profiles: profilesReducer,
+    urbanShapes: urbanShapesReducer,
   });
 
   const store = createStore(rootReducer, middlewares);

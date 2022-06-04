@@ -7,7 +7,7 @@ import { useSelector } from "react-redux";
 import configurations from "helpers/configurations/index";
 import { getAppConfiguration } from "store/app/selectors";
 import { filterIterationsWithValue } from "helpers/questions/pairWiseCombinations";
-import QuestionInfo from "../common/QuestionInfo";
+import QuestionInfo from "../_shared/QuestionInfo";
 import Balance from "./Balance";
 import calcEigenVector from "./helpers/calcEigenVector";
 

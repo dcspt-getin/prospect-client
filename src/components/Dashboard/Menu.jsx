@@ -6,7 +6,7 @@ import { useHistory } from "react-router-dom";
 
 import { logOutUser } from "store/auth/actions";
 import styled from "styled-components";
-// import LanguageSelector from "./LanguageSelector";
+import LanguageSelector from "./LanguageSelector";
 import useTranslations from "src/hooks/useTranslations";
 import configurations from "helpers/configurations";
 import { getAppConfiguration } from "store/app/selectors";
@@ -55,7 +55,7 @@ export default () => {
             </Button>
           )}
         </Menu.Item>
-        {/* <LanguageSelector /> */}
+        <LanguageSelector />
       </Menu.Menu>
     </MyMenu>
   );
