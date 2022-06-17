@@ -129,6 +129,8 @@ export default () => {
     );
   };
   const _hasValidAnswer = (q, validateChildren = true) => {
+    if (!q.is_required) return true;
+
     const { value } = userProfile[q?.id] || {};
 
     const _validateChildrenFilled = (current) => {
@@ -268,7 +270,7 @@ export default () => {
           </>
         );
 
-      case questionTypes.URBAN_SHAPES:
+      case questionTypes.IMAGE_PAIRWISE_COMBINATIONS:
         return (
           <>
             {_renderDivider()}

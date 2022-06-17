@@ -224,7 +224,7 @@ export default ({ question, onChange, value }) => {
   };
 
   const _hasPermissionForQuestion = (permission) => {
-    return true;
+    return question.options.some((option) => option.title === permission);
 
     // return permissions
     //   .map((p) => p.replace("housearch.", ""))
@@ -245,7 +245,7 @@ export default ({ question, onChange, value }) => {
       key: "sexo",
       label: t("QUESTION_1_TITLE"),
       orderKey: "1",
-      visible: _hasPermissionForQuestion("general_profile_question_1"),
+      visible: _hasPermissionForQuestion("1"),
     },
     {
       renderQuestion: (label, { key }) => (
@@ -260,7 +260,7 @@ export default ({ question, onChange, value }) => {
       key: "idade",
       label: t("QUESTION_2_TITLE"),
       orderKey: "2",
-      visible: _hasPermissionForQuestion("general_profile_question_2"),
+      visible: _hasPermissionForQuestion("2"),
     },
     {
       renderQuestion: (label, { key }) => (
@@ -275,7 +275,7 @@ export default ({ question, onChange, value }) => {
       key: "estadoCivil",
       label: t("QUESTION_3_TITLE"),
       orderKey: "3",
-      visible: _hasPermissionForQuestion("general_profile_question_3"),
+      visible: _hasPermissionForQuestion("3"),
     },
     {
       renderQuestion: (label, { key }) => (
@@ -290,7 +290,7 @@ export default ({ question, onChange, value }) => {
       key: "escolaridade",
       label: t("QUESTION_4_TITLE"),
       orderKey: "4",
-      visible: _hasPermissionForQuestion("general_profile_question_4"),
+      visible: _hasPermissionForQuestion("4"),
     },
     {
       renderQuestion: (label, { key }) => (
@@ -308,7 +308,7 @@ export default ({ question, onChange, value }) => {
       key: "actividadePincipal",
       label: t("QUESTION_5_TITLE"),
       orderKey: "5",
-      visible: _hasPermissionForQuestion("general_profile_question_5"),
+      visible: _hasPermissionForQuestion("5"),
     },
     {
       renderQuestion: (label, { key }) => (
@@ -326,7 +326,7 @@ export default ({ question, onChange, value }) => {
       key: "situacaoProfissao",
       label: t("QUESTION_6_TITLE"),
       orderKey: "6",
-      visible: _hasPermissionForQuestion("general_profile_question_6"),
+      visible: _hasPermissionForQuestion("6"),
     },
     {
       renderQuestion: (label, { key }) => (
@@ -344,7 +344,7 @@ export default ({ question, onChange, value }) => {
       key: "profissao",
       label: t("QUESTION_7_TITLE"),
       orderKey: "7",
-      visible: _hasPermissionForQuestion("general_profile_question_7"),
+      visible: _hasPermissionForQuestion("7"),
     },
     {
       renderQuestion: (label, { key }) => (
@@ -356,7 +356,7 @@ export default ({ question, onChange, value }) => {
       key: "numResidentes",
       label: t("QUESTION_8_TITLE"),
       orderKey: "8",
-      visible: _hasPermissionForQuestion("general_profile_question_8"),
+      visible: _hasPermissionForQuestion("8"),
     },
     {
       renderQuestion: (label, { key }) => (
@@ -392,7 +392,7 @@ export default ({ question, onChange, value }) => {
       key: "agregadoFamiliar",
       label: t("QUESTION_9_TITLE"),
       orderKey: "9",
-      visible: _hasPermissionForQuestion("general_profile_question_9"),
+      visible: _hasPermissionForQuestion("9"),
     },
     {
       renderQuestion: (label, { key }) => (
@@ -410,7 +410,7 @@ export default ({ question, onChange, value }) => {
       key: "fontesRendimento",
       label: t("QUESTION_10_TITLE"),
       orderKey: "10",
-      visible: _hasPermissionForQuestion("general_profile_question_10"),
+      visible: _hasPermissionForQuestion("10"),
     },
     {
       renderQuestion: (label, { key }) => (
@@ -428,7 +428,7 @@ export default ({ question, onChange, value }) => {
       key: "principalFonteRendimento",
       label: t("QUESTION_11_TITLE"),
       orderKey: "11",
-      visible: _hasPermissionForQuestion("general_profile_question_11"),
+      visible: _hasPermissionForQuestion("11"),
     },
     {
       renderQuestion: (label, { key }) => (
@@ -444,12 +444,8 @@ export default ({ question, onChange, value }) => {
       label: t("QUESTION_12_TITLE"),
       orderKey: "12",
       visible: () => {
-        const _visible = _hasPermissionForQuestion(
-          "general_profile_question_12"
-        );
-        const _visibleQuestion13 = _hasPermissionForQuestion(
-          "general_profile_question_13"
-        );
+        const _visible = _hasPermissionForQuestion("12");
+        const _visibleQuestion13 = _hasPermissionForQuestion("13");
 
         if (_visibleQuestion13 && _visible) {
           // only should be visible if question 13 has the answaer as 6
@@ -475,7 +471,7 @@ export default ({ question, onChange, value }) => {
       key: "ocupacaoProfissional",
       label: t("QUESTION_13_TITLE"),
       orderKey: "13",
-      visible: _hasPermissionForQuestion("general_profile_question_13"),
+      visible: _hasPermissionForQuestion("13"),
     },
     {
       renderQuestion: (label, { key }) => (
@@ -493,7 +489,7 @@ export default ({ question, onChange, value }) => {
       key: "deslocacaoUnidade",
       label: t("QUESTION_14_TITLE"),
       orderKey: "14",
-      visible: _hasPermissionForQuestion("general_profile_question_14"),
+      visible: _hasPermissionForQuestion("14"),
     },
     {
       renderQuestion: (label, { key }) => (
@@ -508,7 +504,7 @@ export default ({ question, onChange, value }) => {
       key: "frequenciaUtilizacaoCuidadosSaude",
       label: t("QUESTION_15_TITLE"),
       orderKey: "15",
-      visible: _hasPermissionForQuestion("general_profile_question_15"),
+      visible: _hasPermissionForQuestion("15"),
     },
     {
       renderQuestion: (label, { key }) => (
@@ -520,7 +516,7 @@ export default ({ question, onChange, value }) => {
       key: "localResidencia",
       label: t("QUESTION_16_TITLE"),
       orderKey: "16",
-      visible: _hasPermissionForQuestion("general_profile_question_16"),
+      visible: _hasPermissionForQuestion("16"),
     },
   ];
 
