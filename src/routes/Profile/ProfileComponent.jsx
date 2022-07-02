@@ -26,9 +26,11 @@ import MultipleChoice from "./questions/MultipleChoice";
 import ShortAnswer from "./questions/ShortAnswer";
 import PairwiseCombinations from "./questions/PairwiseCombinations/index";
 import CitizenGeneralProfile from "./questions/CitizenGeneralProfile";
-import UrbanShapes from "./questions/UrbanShapes";
 import QuestionInfo from "./questions/_shared/QuestionInfo";
 import ContinueProfileAlert from "./ContinueProfileAlert";
+import TerritorialCoverage from "./questions/TerritorialCoverage/TerritorialCoverage";
+import ImagePairwiseCombinations from "./questions/ImagePairwiseCombinations/ImagePairwiseCombinations";
+import GeoLocation from "./questions/GeoLocation/GeoLocation";
 
 // Auxiliary functions
 const isArray = is(Array);
@@ -274,7 +276,21 @@ export default () => {
         return (
           <>
             {_renderDivider()}
-            <UrbanShapes {...questionProps} />
+            <ImagePairwiseCombinations {...questionProps} />
+          </>
+        );
+      case questionTypes.TERRITORIAL_COVERAGE:
+        return (
+          <>
+            {_renderDivider()}
+            <TerritorialCoverage {...questionProps} />
+          </>
+        );
+      case questionTypes.GEOLOCATION:
+        return (
+          <>
+            {_renderDivider()}
+            <GeoLocation {...questionProps} />
           </>
         );
 

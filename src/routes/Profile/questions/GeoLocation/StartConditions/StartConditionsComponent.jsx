@@ -8,19 +8,21 @@ import { getAppConfiguration } from "store/app/selectors";
 
 import UserLocationMap from "./UserLocationMap";
 import UserWorkplaceMap from "./UserWorkplaceMap";
-import UrbanShapesSteps from "components/UrbanShapesSteps";
 import useTranslations from "hooks/useTranslations";
 import InfoModal from "components/InfoModal";
 import HTMLContent from "components/HTMLContent";
 import InllineHelpTextDiv from "components/InllineHelpTextDiv";
 
-export default () => {
+export default ({ question, value, onChange, disabled }) => {
   const [showHelpText, setShowHelpText] = React.useState();
 
   const [t] = useTranslations("urbanShapes");
 
-  const profile = {};
-  const updateProfileData = () => {};
+  const questionRef = React.useRef(question);
+
+  const profile = value || {};
+  const updateProfileData = (data) =>
+    onChange({ ...profile, ...data }, questionRef.current, {}, false);
 
   const setSelectedLiveRank = (rank) => (e) => {
     updateProfileData({ livingSatisfaction: rank });
@@ -30,15 +32,11 @@ export default () => {
   );
   // const currentUser = useSelector((state) => state.auth.currentUser);
 
-  if (!profile) return "";
-
   const showPartnerWorkplaceMap = true;
   //(currentUser.profile.citizen_profile_data || {}).estadoCivil === 2;
 
   return (
     <Wrapper>
-      <UrbanShapesSteps activeIndex={1} />
-
       <Grid>
         <Grid.Row>
           <Grid.Column>

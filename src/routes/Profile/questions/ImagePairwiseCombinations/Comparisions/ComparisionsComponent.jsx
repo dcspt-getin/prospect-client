@@ -11,7 +11,6 @@ import GoogleStreetView from "components/GoogleStreetView";
 import InfoModal from "components/InfoModal";
 import HTMLContent from "components/HTMLContent";
 import InllineHelpTextDiv from "components/InllineHelpTextDiv";
-import UrbanShapesSteps from "components/UrbanShapesSteps";
 import useTranslations from "hooks/useTranslations";
 
 import localReducer from "./localReducer";
@@ -26,12 +25,15 @@ const getRandomImageFromStack = (stack, exclude = []) => {
   return randomImage;
 };
 
-export default () => {
+export default ({ question, value, onChange, disabled }) => {
   const [t] = useTranslations("urbanShapes");
   const [imagesCoordinates, setImagesCoordinates] = React.useState([]);
 
-  const profile = {};
-  const updateProfileData = () => {};
+  const questionRef = React.useRef(question);
+
+  const profile = value || {};
+  const updateProfileData = (data) =>
+    onChange(data, questionRef.current, {}, false);
 
   const [isSelecting, setIsSelecting] = React.useState();
   const [selectedImage, setSelectedImage] = React.useState();
@@ -224,7 +226,6 @@ export default () => {
 
   return (
     <>
-      <UrbanShapesSteps activeIndex={2} />
       <div className="p-4">
         {completed && (
           <>
