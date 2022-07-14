@@ -24,7 +24,7 @@ class GoogleStreetview extends React.Component {
   }
 
   initialize(canvas, prevProps) {
-    if (this.props.googleMaps && this.streetView == null) {
+    if (this.props.googleMaps && this.streetView == null && this.props.apiKey) {
       this.streetView = new this.props.googleMaps.StreetViewPanorama(
         canvas,
         this.props.streetViewPanoramaOptions

@@ -12,6 +12,7 @@ import useTranslations from "hooks/useTranslations";
 import InfoModal from "components/InfoModal";
 import HTMLContent from "components/HTMLContent";
 import InllineHelpTextDiv from "components/InllineHelpTextDiv";
+import QuestionInfo from "../../_shared/QuestionInfo";
 
 export default ({ question, value, onChange, disabled }) => {
   const [showHelpText, setShowHelpText] = React.useState();
@@ -37,6 +38,7 @@ export default ({ question, value, onChange, disabled }) => {
 
   return (
     <Wrapper>
+      <QuestionInfo question={question} />
       <Grid>
         <Grid.Row>
           <Grid.Column>

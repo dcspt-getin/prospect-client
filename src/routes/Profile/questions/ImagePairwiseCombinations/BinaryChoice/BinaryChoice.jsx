@@ -4,7 +4,6 @@ import { Header, Button, Icon, Grid } from "semantic-ui-react";
 import styled from "styled-components";
 import { useSelector } from "react-redux";
 import isEqual from "lodash/isEqual";
-import { Redirect } from "react-router-dom";
 
 import { getAppConfiguration } from "store/app/selectors";
 import GoogleStreetView from "components/GoogleStreetView";
@@ -14,8 +13,9 @@ import InllineHelpTextDiv from "components/InllineHelpTextDiv";
 import useTranslations from "hooks/useTranslations";
 
 import localReducer from "./localReducer";
+import QuestionInfo from "../../_shared/QuestionInfo";
 
-const getRandomImageFromStack = (stack, exclude = []) => {
+const _getRandomImageFromStack = (stack, exclude = []) => {
   const filteredStack = stack.filter((i) => !exclude.includes(i));
   if (!filteredStack.length) return;
 
@@ -25,13 +25,13 @@ const getRandomImageFromStack = (stack, exclude = []) => {
   return randomImage;
 };
 
-export default ({ question, value, onChange, disabled }) => {
+export default ({ question, value, onChange, meta, disabled, imagesSet }) => {
   const [t] = useTranslations("urbanShapes");
   const [imagesCoordinates, setImagesCoordinates] = React.useState([]);
 
   const questionRef = React.useRef(question);
 
-  const profile = value || {};
+  const questionValue = value || {};
   const updateProfileData = (data) =>
     onChange(data, questionRef.current, {}, false);
 
@@ -42,10 +42,7 @@ export default ({ question, value, onChange, disabled }) => {
   const [images, setImages] = React.useState();
   const [showHelpText, setShowHelpText] = React.useState();
   const [localState, localActions] = localReducer(
-    profile && profile.comparisionsModel
-  );
-  const territorialCoverages = useSelector(
-    (state) => state.urbanShapes.territorialCoverages
+    questionValue && questionValue.comparisionsModel
   );
 
   const {
@@ -74,42 +71,21 @@ export default ({ question, value, onChange, disabled }) => {
   );
 
   React.useEffect(() => {
-    if (!profile) return;
+    if (!questionValue) return;
 
-    if (!isEqual(localState, profile.comparisionsModel)) {
+    if (!isEqual(localState, questionValue.comparisionsModel)) {
       updateProfileData({
         comparisionsModel: localState,
-        imagesSet: imagesCoordinates,
       });
     }
   }, [localState]);
 
   React.useEffect(() => {
-    if (!profile) return;
+    if (!questionValue) return;
 
-    let currentImagesCoordinates = profile.imagesSet;
+    let currentImagesCoordinates = imagesSet;
 
-    const selectedTC = territorialCoverages.find(
-      (tc) => tc.id === profile.selectedTC
-    );
-
-    if (!selectedTC) return;
-
-    if (!currentImagesCoordinates) {
-      currentImagesCoordinates = selectedTC.units
-        .slice(0, 12)
-        .reduce((acc, entry) => {
-          const randomImage =
-            entry.images[Math.floor(Math.random() * entry.images.length)];
-
-          return [
-            ...acc,
-            {
-              [entry.tucode]: randomImage.geometry,
-            },
-          ];
-        }, []);
-    }
+    if (!currentImagesCoordinates) return;
 
     const result = currentImagesCoordinates.reduce((acc, cur) => {
       const [key] = Object.keys(cur);
@@ -127,21 +103,21 @@ export default ({ question, value, onChange, disabled }) => {
 
     setImages(result);
     setImagesCoordinates(currentImagesCoordinates);
-    if (!profile.comparisionsModel || !currentIterationStack) {
+    if (!questionValue.comparisionsModel || !currentIterationStack) {
       startNewIteration("1");
       startNewIterationStack("1.1", initialStack);
     }
     setIsSelecting(true);
-  }, [profile && !profile.comparisionsModel]);
+  }, [questionValue && !questionValue.comparisionsModel]);
 
   React.useEffect(() => {
-    if (!profile) return;
+    if (!questionValue) return;
     if (!currentIteration || !currentIterationStack) return;
 
     const newImage1 = !currentIterationStack.selectedImage
-      ? getRandomImageFromStack(currentIterationStack.stack)
+      ? _getRandomImageFromStack(currentIterationStack.stack)
       : currentIterationStack.selectedImage;
-    let newImage2 = getRandomImageFromStack(currentIterationStack.stack, [
+    let newImage2 = _getRandomImageFromStack(currentIterationStack.stack, [
       newImage1,
       ...currentIterationStack.better,
       ...currentIterationStack.worst,
@@ -173,8 +149,6 @@ export default ({ question, value, onChange, disabled }) => {
       }
     }
   };
-
-  if (!profile) return <Redirect to="/territorial-settings" />;
 
   const _renderLeftImage = () => (
     <LeftImageContainer
@@ -226,6 +200,8 @@ export default ({ question, value, onChange, disabled }) => {
 
   return (
     <>
+      <QuestionInfo question={question} />
+
       <div className="p-4">
         {completed && (
           <>
@@ -238,7 +214,6 @@ export default ({ question, value, onChange, disabled }) => {
                   calibrations: [],
                   calibrationIndex: 0,
                   calibrationsCompleted: false,
-                  imagesSet: null,
                 });
                 resetState({});
                 // window.location.reload();

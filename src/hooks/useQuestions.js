@@ -14,25 +14,8 @@ export default (allQuestions) => {
     dispatch(fetchQuestions(allQuestions));
   }, []);
 
-  // const [currentGroupId, setCurrentGroupId] = React.useState();
   const [currentQuestionIndex, setCurrentQuestionIndex] = React.useState(0);
 
-  /*
-    create group tree to add questions to each group and subgroup
-
-    {
-      [group_id]: {
-        group: {...},
-        questions: [...],
-        parent: null,
-      },
-      [group_id]: {
-        group: {...},
-        parent: {...},
-        questions: [...],
-      },
-    }
-  */
   const groups = React.useMemo(() => {
     const allGroups = questions.reduce((acc, curr) => {
       return {
@@ -78,26 +61,6 @@ export default (allQuestions) => {
     return groupTree;
   }, [questions]);
 
-  // const _getNextGroupWithChildren = (g) => {
-  //   const childrenGroups = Object.values(groups).filter(
-  //     (g1) => g1.group.parent === g.group.id
-  //   );
-  //   if (childrenGroups.length > 0) {
-  //     return _getNextGroupWithChildren(childrenGroups[0]);
-  //   }
-
-  //   return g.group.id;
-  // };
-
-  // React.useEffect(() => {
-  //   const groupsValues = Object.values(groups);
-
-  //   if (!groupsValues.length) return;
-
-  //   setCurrentGroupId(_getNextGroupWithChildren(groupsValues[0]));
-  // }, [Object.keys(groups)]);
-
-  // const currentGroup = groups[currentGroupId];
   const currentQuestion =
     questions.length > 0 && questions[currentQuestionIndex];
   const hasNextQuestion = currentQuestionIndex < questions.length - 1;
