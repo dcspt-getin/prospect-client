@@ -1,19 +1,16 @@
 /* eslint-disable import/no-anonymous-default-export */
 import React from "react";
-import { Header, Button, Icon, Grid } from "semantic-ui-react";
+import { Button, Icon, Grid } from "semantic-ui-react";
 import styled from "styled-components";
 import { useSelector } from "react-redux";
 import isEqual from "lodash/isEqual";
 
 import { getAppConfiguration } from "store/app/selectors";
-import GoogleStreetView from "components/GoogleStreetView";
-import InfoModal from "components/InfoModal";
-import HTMLContent from "components/HTMLContent";
-import InllineHelpTextDiv from "components/InllineHelpTextDiv";
 import useTranslations from "hooks/useTranslations";
 
 import localReducer from "./localReducer";
 import QuestionInfo from "../../_shared/QuestionInfo";
+import IterationsDebugger from "./IterationsDebugger";
 
 const _getRandomImageFromStack = (stack, exclude = []) => {
   const filteredStack = stack.filter((i) => !exclude.includes(i));
@@ -25,22 +22,28 @@ const _getRandomImageFromStack = (stack, exclude = []) => {
   return randomImage;
 };
 
-export default ({ question, value, onChange, meta, disabled, imagesSet }) => {
+export default ({
+  question,
+  value,
+  onChange,
+  meta,
+  disabled,
+  imagesSet,
+  renderLocationImage,
+}) => {
   const [t] = useTranslations("urbanShapes");
   const [imagesCoordinates, setImagesCoordinates] = React.useState([]);
 
   const questionRef = React.useRef(question);
 
   const questionValue = value || {};
-  const updateProfileData = (data) =>
-    onChange(data, questionRef.current, {}, false);
+  const updateProfileData = (data, meta = {}) =>
+    onChange(data, questionRef.current, meta, false);
 
   const [isSelecting, setIsSelecting] = React.useState();
   const [selectedImage, setSelectedImage] = React.useState();
   const [image1, setImage1] = React.useState();
   const [image2, setImage2] = React.useState();
-  const [images, setImages] = React.useState();
-  const [showHelpText, setShowHelpText] = React.useState();
   const [localState, localActions] = localReducer(
     questionValue && questionValue.comparisionsModel
   );
@@ -66,49 +69,52 @@ export default ({ question, value, onChange, meta, disabled, imagesSet }) => {
   const debugIterations = useSelector(
     (state) => getAppConfiguration(state, "DEBUG_COMPARISIONS_MODEL") === "true"
   );
-  const googleMapsApiKey = useSelector((state) =>
-    getAppConfiguration(state, "GOOGLE_API_KEY")
-  );
+
+  const images = React.useMemo(() => {
+    if (!imagesSet) return {};
+
+    return imagesSet.reduce((acc, cur) => {
+      const [key] = Object.keys(cur);
+      const [value] = Object.values(cur);
+
+      return {
+        ...acc,
+        [key]: value,
+      };
+    }, {});
+  }, [imagesSet]);
 
   React.useEffect(() => {
     if (!questionValue) return;
 
     if (!isEqual(localState, questionValue.comparisionsModel)) {
-      updateProfileData({
-        comparisionsModel: localState,
-      });
+      updateProfileData(
+        {
+          comparisionsModel: localState,
+        },
+        {
+          ...(completed ? { isValid: true } : {}),
+        }
+      );
     }
   }, [localState]);
 
   React.useEffect(() => {
     if (!questionValue) return;
+    if (!images) return;
 
-    let currentImagesCoordinates = imagesSet;
-
-    if (!currentImagesCoordinates) return;
-
-    const result = currentImagesCoordinates.reduce((acc, cur) => {
-      const [key] = Object.keys(cur);
-      const [coord] = Object.values(cur);
-
-      return {
-        ...acc,
-        [key]: coord,
-      };
-    }, {});
-    const initialStack = currentImagesCoordinates.reduce(
+    const initialStack = imagesSet.reduce(
       (acc, cur) => [...acc, Object.keys(cur)[0]],
       []
     );
 
-    setImages(result);
-    setImagesCoordinates(currentImagesCoordinates);
+    setImagesCoordinates(imagesSet);
     if (!questionValue.comparisionsModel || !currentIterationStack) {
       startNewIteration("1");
       startNewIterationStack("1.1", initialStack);
     }
     setIsSelecting(true);
-  }, [questionValue && !questionValue.comparisionsModel]);
+  }, [questionValue && !questionValue.comparisionsModel, imagesSet]);
 
   React.useEffect(() => {
     if (!questionValue) return;
@@ -151,21 +157,17 @@ export default ({ question, value, onChange, meta, disabled, imagesSet }) => {
   };
 
   const _renderLeftImage = () => (
-    <LeftImageContainer
-      // onClick={() => setSelectedImage(image1)}
-      selected={selectedImage === image1}
-    >
-      {image1 && (
-        <GoogleStreetView
-          apiKey={googleMapsApiKey}
-          streetViewPanoramaOptions={{
-            position: images[image1],
-          }}
-        />
-      )}
+    <LeftImageContainer selected={selectedImage === image1}>
+      {image1 && renderLocationImage(images[image1])}
 
       {debugIterations && image1}
     </LeftImageContainer>
+  );
+  const _renderRightImage = () => (
+    <RightmageContainer selected={selectedImage === image2}>
+      {image2 && renderLocationImage(images[image2])}
+      {debugIterations && image2}
+    </RightmageContainer>
   );
   const _renderControls = () => (
     <ControlsContainer>
@@ -181,22 +183,19 @@ export default ({ question, value, onChange, meta, disabled, imagesSet }) => {
       />
     </ControlsContainer>
   );
-  const _renderRightImage = () => (
-    <RightmageContainer
-      // onClick={() => setSelectedImage(image2)}
-      selected={selectedImage === image2}
-    >
-      {image2 && (
-        <GoogleStreetView
-          apiKey={googleMapsApiKey}
-          streetViewPanoramaOptions={{
-            position: images[image2],
-          }}
-        />
-      )}
-      {debugIterations && image2}
-    </RightmageContainer>
-  );
+  const _onClickResetButton = async () => {
+    await updateProfileData(
+      {
+        comparisionsModel: null,
+        calibrations: [],
+        calibrationIndex: 0,
+        calibrationsCompleted: false,
+      },
+      { isValid: false }
+    );
+    resetState({});
+  };
+  const _onClickNextButton = () => _selectImage(selectedImage);
 
   return (
     <>
@@ -206,37 +205,13 @@ export default ({ question, value, onChange, meta, disabled, imagesSet }) => {
         {completed && (
           <>
             <p>{t("COMPLETED")}!</p>
-            <Button
-              size="small"
-              onClick={async () => {
-                await updateProfileData({
-                  comparisionsModel: null,
-                  calibrations: [],
-                  calibrationIndex: 0,
-                  calibrationsCompleted: false,
-                });
-                resetState({});
-                // window.location.reload();
-              }}
-            >
+            <Button size="small" onClick={_onClickResetButton}>
               {t("RESET")}
             </Button>
           </>
         )}
         {currentIterationStack && imagesCoordinates.length > 0 && (
           <>
-            <Header size="huge" as="h1">
-              {t("COMPARISIONS_TITLE")}
-              <InllineHelpTextDiv>
-                <InfoModal
-                  open={showHelpText === "help1"}
-                  onOpen={() => setShowHelpText("help1")}
-                  onClose={() => setShowHelpText(null)}
-                  content={<HTMLContent html={t("HELP_TEXT_5")} />}
-                  trigger={<Icon circular name="info" />}
-                />
-              </InllineHelpTextDiv>
-            </Header>
             <PageContent>
               <Grid>
                 <Grid.Column mobile={16} tablet={7} computer={7}>
@@ -256,67 +231,21 @@ export default ({ question, value, onChange, meta, disabled, imagesSet }) => {
               icon
               floated="right"
               disabled={!selectedImage}
-              onClick={() => _selectImage(selectedImage)}
+              onClick={_onClickNextButton}
             >
               {t("NEXT_COMPARISION")}
               <Icon name="right arrow" />
             </Button>
           </>
         )}
-
         {debugIterations && (
-          <div>
-            <DebugContainer>
-              {intermediateOrder.map((imageKey) => (
-                <DebugImageContainer
-                  comparing={[image1, image2].includes(imageKey)}
-                  selected={
-                    currentIterationStack &&
-                    currentIterationStack.selectedImage === imageKey
-                  }
-                  better={
-                    currentIterationStack &&
-                    currentIterationStack.better.includes(imageKey)
-                  }
-                  worst={
-                    currentIterationStack &&
-                    currentIterationStack.worst.includes(imageKey)
-                  }
-                >
-                  <span>{imageKey}</span>
-                  {/* <Image src={images[imageKey]} size="small" /> */}
-                </DebugImageContainer>
-              ))}
-            </DebugContainer>
-
-            {iterations.map((iteration) => (
-              <>
-                {iteration.stacks.map((iterationStack) => (
-                  <DebugContainer
-                    style={{
-                      ...(currentIterationStack &&
-                      iterationStack.key === currentIterationStack.key
-                        ? { border: "1px solid red" }
-                        : {}),
-                    }}
-                  >
-                    <span>{iterationStack.key}</span>
-                    {iterationStack.stack.map((imageKey) => (
-                      <DebugImageContainer
-                        comparing={[image1, image2].includes(imageKey)}
-                        selected={iterationStack.selectedImage === imageKey}
-                        better={iterationStack.better.includes(imageKey)}
-                        worst={iterationStack.worst.includes(imageKey)}
-                      >
-                        <span>{imageKey}</span>
-                        {/* <Image src={images[imageKey]} size="small" /> */}
-                      </DebugImageContainer>
-                    ))}
-                  </DebugContainer>
-                ))}
-              </>
-            ))}
-          </div>
+          <IterationsDebugger
+            iterations={iterations}
+            intermediateOrder={intermediateOrder}
+            image1={image1}
+            image2={image2}
+            currentIterationStack={currentIterationStack}
+          />
         )}
       </div>
     </>
@@ -360,59 +289,4 @@ const RightmageContainer = styled.div`
     `
       border: 5px solid green;
     `}
-`;
-
-const DebugContainer = styled.div`
-  display: flex;
-  margin-top: 70px;
-`;
-
-const DebugImageContainer = styled.div`
-  margin: 5px 5px;
-  position: relative;
-  width: 50px;
-  height: 50px;
-
-  span {
-    position: absolute;
-    z-index: 1;
-  }
-
-  &:after {
-    position: absolute;
-    left: 0;
-    top: 0;
-    opacity: 0.6;
-    width: 100%;
-    height: 100%;
-
-    ${({ comparing }) =>
-      comparing &&
-      `
-      content: '';
-      background: yellow;
-    `}
-    ${({ better }) =>
-      better &&
-      `
-      content: '';
-      background: green;
-    `}
-    ${({ worst }) =>
-      worst &&
-      `
-      content: '';
-      background: red;
-    `}
-    ${({ selected }) =>
-      selected &&
-      `
-      content: '';
-      background: blue;
-    `}
-  }
-
-  img {
-    width: 80px !important;
-  }
 `;

@@ -1,20 +1,14 @@
 /* eslint-disable import/no-anonymous-default-export */
 import React from "react";
-import { Header, List, Segment, Icon, Grid } from "semantic-ui-react";
+import { List, Segment, Grid } from "semantic-ui-react";
 import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
 
 import { getAppConfiguration } from "store/app/selectors";
 import { fetchTerritorialCoverages } from "store/urbanShapes/actions";
-import useTranslations from "hooks/useTranslations";
-import InfoModal from "components/InfoModal";
-import HTMLContent from "components/HTMLContent";
-import InllineHelpTextDiv from "components/InllineHelpTextDiv";
 import TerritorialMap from "./TerritorialMap";
 
 export default ({ question, value, onChange, disabled }) => {
-  const [t] = useTranslations("urbanShapes");
-  const [showHelpText, setShowHelpText] = React.useState(false);
   const [geoJson, setGeoJson] = React.useState();
   const [regions, setRegions] = React.useState();
   const [selectedRegion, _setSelectedRegion] = React.useState();
@@ -144,18 +138,6 @@ export default ({ question, value, onChange, disabled }) => {
   return (
     <>
       <div className="p-4">
-        <Header size="huge" as="h1">
-          {t("CHOOSE_TERRITOTIAL_SYSTEM_TITLE")}
-          <InllineHelpTextDiv>
-            <InfoModal
-              open={showHelpText}
-              onOpen={() => setShowHelpText(true)}
-              onClose={() => setShowHelpText(false)}
-              content={<HTMLContent html={t("HELP_TEXT_1")} />}
-              trigger={<Icon circular name="info" />}
-            />
-          </InllineHelpTextDiv>
-        </Header>
         <PageContent>
           <Grid>
             <Grid.Column only="tablet computer" tablet={8} computer={10}>

@@ -2,7 +2,6 @@ import React from "react";
 import styled from "styled-components";
 import { useSelector } from "react-redux";
 
-import GoogleStreetView from "components/GoogleStreetView";
 import configurations from "helpers/configurations/index";
 import { getAppConfiguration } from "store/app/selectors";
 import QuestionInfo from "../../_shared/QuestionInfo";
@@ -15,6 +14,7 @@ const WeightChoice = ({
   onChange,
   disabled,
   imagesSet,
+  renderLocationImage,
 }) => {
   const allowUserRepeatQuestion = useSelector(
     (state) =>
@@ -25,9 +25,6 @@ const WeightChoice = ({
   );
   const correlationLimitValue = useSelector((state) =>
     getAppConfiguration(state, configurations.CORRELATION_LIMIT_VALUE)
-  );
-  const googleMapsApiKey = useSelector((state) =>
-    getAppConfiguration(state, "GOOGLE_API_KEY")
   );
 
   const questionRef = React.useRef(question);
@@ -48,34 +45,29 @@ const WeightChoice = ({
       }),
     [imagesSet]
   );
-  const _renderOption = (option) => {
-    return (
-      <ImageContainer>
-        <GoogleStreetView
-          apiKey={googleMapsApiKey}
-          streetViewPanoramaOptions={{
-            position: option.value,
-          }}
-        />
-      </ImageContainer>
-    );
-  };
+
+  const _renderOption = (option) => (
+    <ImageContainer>{renderLocationImage(option.value)}</ImageContainer>
+  );
 
   return (
     <Wrapper>
       <QuestionInfo question={question} />
-      <WeightPairwiseCombinations
-        id={question.id}
-        options={_options}
-        value={value}
-        meta={meta}
-        onChange={_onChange}
-        disabled={disabled}
-        showPreviousIteration={question.show_previous_iteration}
-        allowUserRepeatQuestion={allowUserRepeatQuestion}
-        correlationLimitValue={correlationLimitValue}
-        renderOptionInfo={_renderOption}
-      />
+      <WeightPairwiseCombinationsWrapper>
+        <WeightPairwiseCombinations
+          id={question.id}
+          options={_options}
+          value={value}
+          meta={meta}
+          onChange={_onChange}
+          disabled={disabled}
+          showPreviousIteration={question.show_previous_iteration}
+          allowUserRepeatQuestion={allowUserRepeatQuestion}
+          correlationLimitValue={correlationLimitValue}
+          renderOptionInfo={_renderOption}
+          showBalance={question.show_balance}
+        />
+      </WeightPairwiseCombinationsWrapper>
     </Wrapper>
   );
 };
@@ -92,4 +84,8 @@ const ImageContainer = styled.div`
     min-height: 300px;
     position: inherit !important;
   }
+`;
+
+const WeightPairwiseCombinationsWrapper = styled.div`
+  margin: 0 20px;
 `;

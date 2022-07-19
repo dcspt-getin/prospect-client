@@ -1,7 +1,10 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import { Message } from "semantic-ui-react";
+import { Message, Image } from "semantic-ui-react";
+import styled from "styled-components";
 
+import GoogleStreetView from "components/GoogleStreetView";
+import { getAppConfiguration } from "store/app/selectors";
 import questionTypes from "helpers/questions/questionTypes";
 import { getActiveProfile } from "store/profiles/selectors";
 import { getQuestions } from "store/questions/selectors";
@@ -28,6 +31,9 @@ const ImagePairwiseCombinations = (props) => {
   const territorialCoverageQuestion = questions.find(
     (q) => q.question_type === questionTypes.TERRITORIAL_COVERAGE
   );
+  const googleMapsApiKey = useSelector((state) =>
+    getAppConfiguration(state, "GOOGLE_API_KEY")
+  );
 
   React.useEffect(() => {
     if (!territorialCoverageQuestion) return;
@@ -51,7 +57,7 @@ const ImagePairwiseCombinations = (props) => {
           return [
             ...acc,
             {
-              [entry.tucode]: randomImage.geometry,
+              [entry.tucode]: randomImage,
             },
           ];
         }, []);
@@ -61,10 +67,29 @@ const ImagePairwiseCombinations = (props) => {
     setSelectedTC(territorialCoverage);
   }, [value, territorialCoverageQuestion, profile]);
 
+  const _renderLocationImage = (option) => {
+    if (option.image_url)
+      return (
+        <ImageContainer
+          style={{ backgroundImage: `url(${option.image_url})` }}
+        ></ImageContainer>
+      );
+
+    return (
+      <GoogleStreetView
+        apiKey={googleMapsApiKey}
+        streetViewPanoramaOptions={{
+          position: option.geometry,
+        }}
+      />
+    );
+  };
+
   const allProps = {
     ...props,
     selectedTC,
     imagesSet,
+    renderLocationImage: _renderLocationImage,
   };
 
   if (!territorialCoverageQuestion)
@@ -91,3 +116,8 @@ const ImagePairwiseCombinations = (props) => {
 };
 
 export default ImagePairwiseCombinations;
+
+const ImageContainer = styled.div`
+  background-size: cover;
+  background-position: center;
+`;

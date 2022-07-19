@@ -58,28 +58,37 @@ export default (props) => {
       <Grid>
         <Grid.Row only="tablet computer">
           <Grid.Column width={16}>
-            <Grid.Row>
-              <Grid.Column width={16}>
-                <BalanceContainer>
-                  <div id="roberval" ref={balanceRef} onClick={_onBalanceClick}>
-                    <div id="balance" style={{ transform: `rotate(${x}deg)` }}>
+            {props.showBalance && (
+              <Grid.Row>
+                <Grid.Column width={16}>
+                  <BalanceContainer>
+                    <div
+                      id="roberval"
+                      ref={balanceRef}
+                      onClick={_onBalanceClick}
+                    >
                       <div
-                        id="ball"
-                        style={{
-                          left: `${left}%`,
-                        }}
+                        id="balance"
+                        style={{ transform: `rotate(${x}deg)` }}
                       >
-                        {_convertValueToSliderLabel(
-                          _convertValueFromSlider(value)
-                        )}
+                        <div
+                          id="ball"
+                          style={{
+                            left: `${left}%`,
+                          }}
+                        >
+                          {_convertValueToSliderLabel(
+                            _convertValueFromSlider(value)
+                          )}
+                        </div>
+                        <div id="bar"></div>
                       </div>
-                      <div id="bar"></div>
+                      <div id="base"></div>
                     </div>
-                    <div id="base"></div>
-                  </div>
-                </BalanceContainer>
-              </Grid.Column>
-            </Grid.Row>
+                  </BalanceContainer>
+                </Grid.Column>
+              </Grid.Row>
+            )}
             <Grid.Row>
               <Grid.Column width={16}>
                 <SliderContainer>

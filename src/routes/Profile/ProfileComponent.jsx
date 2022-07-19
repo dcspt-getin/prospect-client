@@ -20,7 +20,6 @@ import useUserProfile from "hooks/useUserProfile";
 import configurations from "helpers/configurations/index";
 import questionTypes from "helpers/questions/questionTypes";
 import { getAppConfiguration } from "store/app/selectors";
-import { filterIterationsWithValue } from "helpers/questions/pairWiseCombinations";
 
 import MultipleChoice from "./questions/MultipleChoice";
 import ShortAnswer from "./questions/ShortAnswer";
@@ -31,6 +30,7 @@ import ContinueProfileAlert from "./ContinueProfileAlert";
 import TerritorialCoverage from "./questions/TerritorialCoverage/TerritorialCoverage";
 import ImagePairwiseCombinations from "./questions/ImagePairwiseCombinations/ImagePairwiseCombinations";
 import GeoLocation from "./questions/GeoLocation/GeoLocation";
+import { getValidationByQuestionType } from "./helpers/validations";
 
 // Auxiliary functions
 const isArray = is(Array);
@@ -154,24 +154,13 @@ export default () => {
     if (isInfoQuestion(q)) return true;
     if (!value) return !!q?.default_value;
 
-    if (
-      q?.question_type === questionTypes.MULTIPLE_CHOICE &&
-      q?.multiple_selection_type === "MULTIPLE_VALUES" &&
-      q?.checkbox_min_options
-    ) {
-      return (
-        Array.isArray(value) && value.length >= parseInt(q.checkbox_min_options)
-      );
-    }
-    if (q?.question_type === questionTypes.PAIRWISE_COMBINATIONS) {
-      return (
-        Array.isArray(value) &&
-        userProfile[q?.id]?.meta?.isValid &&
-        value
-          .filter(filterIterationsWithValue)
-          .every((v) => v.value !== undefined)
-      );
-    }
+    const questionValidation = getValidationByQuestionType(
+      q,
+      value,
+      userProfile
+    );
+
+    if (!questionValidation) return false;
 
     return !!userProfile[q?.id];
   };

@@ -1,6 +1,7 @@
 import React from "react";
 import { Grid, Button, Header } from "semantic-ui-react";
 import styled from "styled-components";
+import isEqual from "lodash/isEqual";
 
 import { filterIterationsWithValue } from "helpers/questions/pairWiseCombinations";
 import calcEigenVector from "helpers/questions/calcEigenVector";
@@ -18,6 +19,7 @@ const WeightPairwiseCombinations = ({
   correlationLimitValue,
   allowUserRepeatQuestion,
   renderOptionInfo,
+  showBalance,
 }) => {
   const [optionsMatrix, setOptionsMatrix] = React.useState([]);
   const [iterationsToRepeat, setIterationsToRepeat] = React.useState([]);
@@ -184,8 +186,8 @@ const WeightPairwiseCombinations = ({
         ...acc,
         value.findIndex(
           (o) =>
-            (o.option1 === +cur[0] && o.option2 === +cur[1]) ||
-            (o.option2 === +cur[0] && o.option1 === +cur[1])
+            (isEqual(o.option1, cur[0]) && isEqual(o.option2, cur[1])) ||
+            (isEqual(o.option2, cur[0]) && isEqual(o.option1, cur[1]))
         ),
       ];
     }, []);
@@ -330,6 +332,7 @@ const WeightPairwiseCombinations = ({
           value={currentIteratonValue}
           onChange={_onIterationValueChange}
           disabled={disabled}
+          showBalance={showBalance}
         />
       </Grid.Column>
     </>
@@ -346,6 +349,7 @@ const WeightPairwiseCombinations = ({
           value={currentIteratonValue}
           onChange={_onIterationValueChange}
           disabled={disabled}
+          showBalance={showBalance}
         />
       </Grid.Column>
       <Grid.Column mobile={2} tablet={5} computer={5}>
