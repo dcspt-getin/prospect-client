@@ -18,6 +18,8 @@ export default ({ question, value, onChange, disabled }) => {
   );
   const questionRef = React.useRef(question);
 
+  questionRef.current = question;
+
   const profile = value || {};
   const updateProfileData = (data) =>
     onChange(data, questionRef.current, {}, false);

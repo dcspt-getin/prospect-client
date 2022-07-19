@@ -2,6 +2,7 @@
 import React from "react";
 import { compose, withProps, lifecycle } from "recompose";
 import get from "lodash/get";
+import isEqual from "lodash/isEqual";
 import isFunction from "lodash/isFunction";
 import {
   withScriptjs,
@@ -120,6 +121,10 @@ export default compose(
       },
     });
   }, [location, props.markers, props.center]);
+
+  React.useEffect(() => {
+    setLocation(props.value && props.value.location);
+  }, [props.value]);
 
   const _onPlacesChanged = (place) => {
     setLocation(place.formatted_address);

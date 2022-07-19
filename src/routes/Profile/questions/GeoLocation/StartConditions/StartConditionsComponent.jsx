@@ -11,6 +11,9 @@ import QuestionInfo from "../../_shared/QuestionInfo";
 
 export default ({ question, value, onChange, disabled }) => {
   const questionRef = React.useRef(question);
+  const [rerender, setRerender] = React.useState(false);
+
+  questionRef.current = question;
 
   const profile = value || {};
   const updateProfileData = (data) =>
@@ -19,6 +22,16 @@ export default ({ question, value, onChange, disabled }) => {
   const googleMapsApiKey = useSelector((state) =>
     getAppConfiguration(state, "GOOGLE_API_KEY")
   );
+
+  React.useEffect(() => {
+    setRerender(true);
+
+    setTimeout(() => {
+      setRerender(false);
+    }, 100);
+  }, [question]);
+
+  if (rerender) return "";
 
   return (
     <Wrapper>
