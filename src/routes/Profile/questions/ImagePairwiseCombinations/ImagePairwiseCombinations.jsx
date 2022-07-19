@@ -49,7 +49,7 @@ const ImagePairwiseCombinations = (props) => {
 
     if (!currentImagesCoordinates || !currentImagesCoordinates.length) {
       currentImagesCoordinates = territorialCoverage.units
-        .slice(0, 4)
+        // .slice(0, 4)
         .reduce((acc, entry) => {
           const randomImage =
             entry.images[Math.floor(Math.random() * entry.images.length)];
