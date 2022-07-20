@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getAppConfiguration } from "store/app/selectors";
 import { fetchTerritorialCoverages } from "store/urbanShapes/actions";
 import TerritorialMap from "./TerritorialMap";
+import QuestionInfo from "../_shared/QuestionInfo";
 
 export default ({ question, value, onChange, disabled }) => {
   const [geoJson, setGeoJson] = React.useState();
@@ -139,21 +140,20 @@ export default ({ question, value, onChange, disabled }) => {
 
   return (
     <>
-      <div className="p-4">
-        <PageContent>
-          <Grid>
-            <Grid.Column only="tablet computer" tablet={8} computer={10}>
-              {_renderMap()}
-            </Grid.Column>
-            <Grid.Column mobile={16} tablet={8} computer={6}>
-              {_renderTerritorialSelector()}
-            </Grid.Column>
-            <Grid.Column mobile={16} only="mobile">
-              {_renderMap()}
-            </Grid.Column>
-          </Grid>
-        </PageContent>
-      </div>
+      <QuestionInfo question={question} />
+      <PageContent>
+        <Grid>
+          <Grid.Column only="tablet computer" tablet={8} computer={10}>
+            {_renderMap()}
+          </Grid.Column>
+          <Grid.Column mobile={16} tablet={8} computer={6}>
+            {_renderTerritorialSelector()}
+          </Grid.Column>
+          <Grid.Column mobile={16} only="mobile">
+            {_renderMap()}
+          </Grid.Column>
+        </Grid>
+      </PageContent>
     </>
   );
 };

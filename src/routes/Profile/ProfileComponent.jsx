@@ -75,6 +75,11 @@ export default () => {
   currentQuestionRef.current = currentQuestion;
   const userProfileKeys = userProfile && Object.keys(userProfile);
   const alreadyFilled = userProfile && userProfileKeys.length > 0;
+  const questionIsNotQuestionInfo =
+    currentQuestion.question_type !== questionTypes.ONLY_QUESTION_INFO;
+  const totalQuestions = questions.length;
+  const isCompleted = currentQuestionIndex + 1 === totalQuestions;
+
   const showActionsButtons = () => {
     const _hasSomeChildInfoQuestion = (children = []) => {
       const _hasInfoQuestion =
@@ -88,6 +93,8 @@ export default () => {
 
       return _hasInfoQuestion;
     };
+
+    if (isCompleted) return false;
 
     if (_hasSomeChildInfoQuestion(currentQuestion.children)) return false;
 
@@ -356,8 +363,6 @@ export default () => {
   const _renderProfileQuestions = () => {
     if (!currentQuestion) return "";
 
-    const totalQuestions = questions.length;
-
     return (
       <>
         {_renderBreadcrumbs()}
@@ -375,13 +380,14 @@ export default () => {
         <Grid verticalAlign="middle">
           <ActionsRow>
             <Grid.Column floated="left" mobile={16} tablet={8} computer={8}>
-              {currentQuestion.question_type !==
-                questionTypes.ONLY_QUESTION_INFO && (
+              {questionIsNotQuestionInfo && !isCompleted && (
                 <Grid style={{ marginTop: 0 }}>
                   <Grid.Row>
                     <Grid.Column mobile={12}>
                       <Progress
-                        percent={(currentQuestionIndex / totalQuestions) * 100}
+                        percent={
+                          ((currentQuestionIndex + 1) / totalQuestions) * 100
+                        }
                       />
                     </Grid.Column>
                     <Grid.Column floated="right" mobile={4}>
@@ -392,9 +398,10 @@ export default () => {
                   </Grid.Row>
                 </Grid>
               )}
+              {isCompleted && <>Completo</>}
             </Grid.Column>
             <Grid.Column floated="right" mobile={16} tablet={8} computer={8}>
-              {showActionsButtons() && (
+              {showActionsButtons(currentQuestionIndex, totalQuestions) && (
                 <Button
                   disabled={
                     !hasNextQuestion || !_hasValidAnswer(currentQuestion)
@@ -404,6 +411,15 @@ export default () => {
                   style={{ margin: "5px" }}
                 >
                   Seguinte
+                </Button>
+              )}
+              {isCompleted && (
+                <Button
+                  onClick={() => goToQuestionIndex(0)}
+                  floated="right"
+                  style={{ margin: "5px" }}
+                >
+                  Reiniciar
                 </Button>
               )}
               {showPreviousQuestionButton && (
