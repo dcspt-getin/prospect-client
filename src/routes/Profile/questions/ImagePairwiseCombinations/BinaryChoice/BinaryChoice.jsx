@@ -213,9 +213,7 @@ export default ({
       <div className="p-4">
         {completed && (
           <>
-            <p>
-              Terminou esta escolha par-a-par, passe para a questão seguinte
-            </p>
+            <p>Completo!</p>
             {allowUserRepeatQuestion && (
               <Button onClick={_onClickResetButton} floated="left">
                 Voltar a Preencher

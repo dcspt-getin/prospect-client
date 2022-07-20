@@ -211,7 +211,7 @@ const WeightPairwiseCombinations = ({
               <b>
                 <Header size="medium">
                   {meta?.isValid ? (
-                    "Terminou esta escolha par-a-par, passe para a questão seguinte"
+                    "Completo"
                   ) : (
                     <>
                       <strong style={{ color: "darkred" }}>

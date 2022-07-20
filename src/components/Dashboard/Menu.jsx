@@ -43,6 +43,11 @@ export default () => {
             onClick={() => history.push("/results")}
           />
         )}
+        <Menu.Item
+          name={t("Acerca de")}
+          active={history.location === "/terms-conditions"}
+          onClick={() => history.push("/terms-conditions")}
+        />
         <Menu.Item>
           {!isAuthenticated && (
             <Button primary onClick={() => history.push("/login")}>

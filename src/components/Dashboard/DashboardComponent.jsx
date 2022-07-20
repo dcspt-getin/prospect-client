@@ -17,7 +17,11 @@ export default ({ children }) => {
             // content={}
             onClick={() => (window.location = `${process.env.PUBLIC_URL}/`)}
           />
-          <Card.Description content={t("PROT-C APP")} />
+          <Card.Description
+            style={{ cursor: "pointer" }}
+            onClick={() => (window.location = `${process.env.PUBLIC_URL}/`)}
+            content="GetProspect - Plataforma de recolha de preferências Grupo de Estudos em Território e Inovação da Universidade de Aveiro"
+          />
         </Card.Content>
         <Menu />
       </Card>
