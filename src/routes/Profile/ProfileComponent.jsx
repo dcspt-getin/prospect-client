@@ -57,7 +57,7 @@ export default () => {
     currentQuestion,
     groups,
     hasPrevQuestion,
-    hasNextQuestion,
+    // hasNextQuestion,
     gotoNextQuestion,
     goToPrevQuestion,
     goToQuestionIndex,
@@ -76,9 +76,9 @@ export default () => {
   const userProfileKeys = userProfile && Object.keys(userProfile);
   const alreadyFilled = userProfile && userProfileKeys.length > 0;
   const questionIsNotQuestionInfo =
-    currentQuestion.question_type !== questionTypes.ONLY_QUESTION_INFO;
+    currentQuestion?.question_type !== questionTypes.ONLY_QUESTION_INFO;
   const totalQuestions = questions.length;
-  const isCompleted = currentQuestionIndex + 1 === totalQuestions;
+  const isCompleted = currentQuestionIndex + 1 === totalQuestions + 1;
 
   const showActionsButtons = () => {
     const _hasSomeChildInfoQuestion = (children = []) => {
@@ -361,16 +361,19 @@ export default () => {
     );
   };
   const _renderProfileQuestions = () => {
-    if (!currentQuestion) return "";
-
     return (
       <>
-        {_renderBreadcrumbs()}
+        {currentQuestion && _renderBreadcrumbs()}
         <Segment>
           <Grid verticalAlign="middle">
             <Grid.Row>
               <Grid.Column width={16}>
                 <QuestionContainer>
+                  {!currentQuestion && (
+                    <>
+                      <h3>Questionario Completo</h3>
+                    </>
+                  )}
                   {_renderQuestionWithChildren(currentQuestion)}
                 </QuestionContainer>
               </Grid.Column>
@@ -403,9 +406,7 @@ export default () => {
             <Grid.Column floated="right" mobile={16} tablet={8} computer={8}>
               {showActionsButtons(currentQuestionIndex, totalQuestions) && (
                 <Button
-                  disabled={
-                    !hasNextQuestion || !_hasValidAnswer(currentQuestion)
-                  }
+                  disabled={!_hasValidAnswer(currentQuestion)}
                   onClick={_nextQuestion}
                   floated="right"
                   style={{ margin: "5px" }}
