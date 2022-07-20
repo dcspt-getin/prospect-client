@@ -1,6 +1,5 @@
 import React from "react";
-import { useSelector } from "react-redux";
-import { Message, Image } from "semantic-ui-react";
+import { useSelector, useDispatch } from "react-redux";
 import styled from "styled-components";
 
 import GoogleStreetView from "components/GoogleStreetView";
@@ -9,12 +8,18 @@ import questionTypes from "helpers/questions/questionTypes";
 import { getActiveProfile } from "store/profiles/selectors";
 import { getQuestions } from "store/questions/selectors";
 import { PAIRWISE_COMBINATIONS_TYPES } from "helpers/questions";
+import { fetchTerritorialCoverages } from "store/urbanShapes/actions";
+
 import BinaryChoice from "./BinaryChoice/BinaryChoice";
 import WeightChoice from "./WeightChoice/WeightChoice";
 
 const ImagePairwiseCombinations = (props) => {
+  const dispatch = useDispatch();
   const { value, question } = props;
-  const { image_pairwise_type: pairWiseType } = question;
+  const {
+    image_pairwise_type: pairWiseType,
+    territorial_coverages: territorialCoveragesIds,
+  } = question;
 
   const [selectedTC, setSelectedTC] = React.useState(null);
   const [imagesSet, setImagesSet] = React.useState([]);
@@ -36,14 +41,24 @@ const ImagePairwiseCombinations = (props) => {
   );
 
   React.useEffect(() => {
-    if (!territorialCoverageQuestion) return;
+    dispatch(fetchTerritorialCoverages());
+  }, []);
 
+  React.useEffect(() => {
     let currentImagesCoordinates = imagesSet;
 
-    const territorialCoverage = territorialCoverages.find(
-      (tc) =>
-        tc.id === profile[territorialCoverageQuestion?.id]?.value?.selectedTC
-    );
+    let territorialCoverage;
+
+    if (territorialCoverageQuestion) {
+      territorialCoverage = territorialCoverages.find(
+        (tc) =>
+          tc.id === profile[territorialCoverageQuestion?.id]?.value?.selectedTC
+      );
+    } else if (territorialCoveragesIds) {
+      territorialCoverage = territorialCoverages.find((tc) =>
+        territorialCoveragesIds.split().includes(String(tc.id))
+      );
+    }
 
     if (!territorialCoverage) return;
 
@@ -65,7 +80,12 @@ const ImagePairwiseCombinations = (props) => {
       setImagesSet(currentImagesCoordinates);
     }
     setSelectedTC(territorialCoverage);
-  }, [value, territorialCoverageQuestion, profile]);
+  }, [
+    value,
+    territorialCoverageQuestion,
+    profile,
+    territorialCoverages.length,
+  ]);
 
   const _renderLocationImage = (option) => {
     if (option.image_url)
@@ -92,14 +112,16 @@ const ImagePairwiseCombinations = (props) => {
     renderLocationImage: _renderLocationImage,
   };
 
-  if (!territorialCoverageQuestion)
-    return (
-      <Message
-        warning
-        header="Not found any terriotorial coverage question!"
-        content="To show this question is required to have terriotorial coverage question on questionaire."
-      />
-    );
+  // if (!territorialCoverageQuestion)
+  //   return (
+  //     <Message
+  //       warning
+  //       header="Not found any terriotorial coverage question!"
+  //       content="To show this question is required to have terriotorial coverage question on questionaire."
+  //     />
+  //   );
+
+  if (!imagesSet.length) return "";
 
   switch (pairWiseType) {
     case PAIRWISE_COMBINATIONS_TYPES.BINARY_CHOICE:

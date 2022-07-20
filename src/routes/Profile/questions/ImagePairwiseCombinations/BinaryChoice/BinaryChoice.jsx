@@ -7,6 +7,7 @@ import isEqual from "lodash/isEqual";
 
 import { getAppConfiguration } from "store/app/selectors";
 import useTranslations from "hooks/useTranslations";
+import configurations from "helpers/configurations/index";
 
 import localReducer from "./localReducer";
 import QuestionInfo from "../../_shared/QuestionInfo";
@@ -35,6 +36,14 @@ export default ({
   const [imagesCoordinates, setImagesCoordinates] = React.useState([]);
 
   const questionRef = React.useRef(question);
+
+  const allowUserRepeatQuestion = useSelector(
+    (state) =>
+      getAppConfiguration(
+        state,
+        configurations.ALLOW_USER_REPEAT_BALANCE_QUESTION
+      ) === "true"
+  );
 
   const questionValue = value || {};
   const updateProfileData = (data, meta = {}) =>
@@ -204,10 +213,14 @@ export default ({
       <div className="p-4">
         {completed && (
           <>
-            <p>{t("COMPLETED")}!</p>
-            <Button size="small" onClick={_onClickResetButton}>
-              {t("RESET")}
-            </Button>
+            <p>
+              Terminou esta escolha par-a-par, passe para a questão seguinte
+            </p>
+            {allowUserRepeatQuestion && (
+              <Button onClick={_onClickResetButton} floated="left">
+                Voltar a Preencher
+              </Button>
+            )}
           </>
         )}
         {currentIterationStack && imagesCoordinates.length > 0 && (
