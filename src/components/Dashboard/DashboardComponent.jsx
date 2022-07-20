@@ -20,7 +20,18 @@ export default ({ children }) => {
           <Card.Description
             style={{ cursor: "pointer" }}
             onClick={() => (window.location = `${process.env.PUBLIC_URL}/`)}
-            content="GetProspect - Plataforma de recolha de preferências Grupo de Estudos em Território e Inovação da Universidade de Aveiro"
+            content={
+              <>
+                <b style={{ fontSize: 16 }}>
+                  GetProspect - Plataforma de recolha de preferências
+                </b>{" "}
+                <br />
+                <small>
+                  Grupo de Estudos em Território e Inovação da Universidade de
+                  Aveiro
+                </small>
+              </>
+            }
           />
         </Card.Content>
         <Menu />
