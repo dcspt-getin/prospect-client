@@ -146,9 +146,9 @@ const WeightPairwiseCombinations = ({
     setIteration(_next);
   };
   const _onRepeatQuestion = () => {
-    const { valuesByColumn, comparisionsMatrix, hasValidR2 } = meta;
+    const { valuesByColumn, comparisionsMatrix, hasValidR2, isValid } = meta;
 
-    if (!comparisionsMatrix || hasValidR2) {
+    if (!comparisionsMatrix || hasValidR2 || isValid) {
       setIteration(0);
       setIterationsToRepeat([]);
       return;
@@ -225,7 +225,7 @@ const WeightPairwiseCombinations = ({
             </Grid.Column>
           </Grid.Row>
 
-          {(allowUserRepeatQuestion || (meta && !meta.isValid)) && (
+          {allowUserRepeatQuestion && (
             <Grid.Row>
               <Grid.Column width={16}>
                 <Button onClick={_onRepeatQuestion} floated="left">
