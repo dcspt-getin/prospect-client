@@ -181,7 +181,7 @@ const WeightPairwiseCombinations = ({
       }
     }
 
-    const toRepeat = maxCoord.reduce((acc, cur) => {
+    let toRepeat = maxCoord.reduce((acc, cur) => {
       return [
         ...acc,
         value.findIndex(
@@ -191,6 +191,11 @@ const WeightPairwiseCombinations = ({
         ),
       ];
     }, []);
+
+    // if to repeat is empty, then we need to repeat all the questions again
+    if (!toRepeat.length) {
+      toRepeat = value.map((o, i) => i);
+    }
 
     setIterationsToRepeat(toRepeat);
   };

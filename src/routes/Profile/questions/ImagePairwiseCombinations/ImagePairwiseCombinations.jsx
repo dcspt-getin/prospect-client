@@ -1,6 +1,7 @@
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import styled from "styled-components";
+import { Loader, Segment, Dimmer } from "semantic-ui-react";
 
 import GoogleStreetView from "components/GoogleStreetView";
 import { getAppConfiguration } from "store/app/selectors";
@@ -41,6 +42,8 @@ const ImagePairwiseCombinations = (props) => {
   );
 
   React.useEffect(() => {
+    if (territorialCoverages.length) return;
+
     dispatch(fetchTerritorialCoverages());
   }, []);
 
@@ -88,6 +91,8 @@ const ImagePairwiseCombinations = (props) => {
   ]);
 
   const _renderLocationImage = (option) => {
+    if (!option) return "";
+
     if (option.image_url)
       return (
         <ImageContainer
@@ -121,6 +126,12 @@ const ImagePairwiseCombinations = (props) => {
   //     />
   //   );
 
+  if (!territorialCoverages.length)
+    return (
+      <Dimmer active inverted style={{ height: "300px", position: "relative" }}>
+        <Loader size="large">Loading</Loader>
+      </Dimmer>
+    );
   if (!imagesSet.length) return "";
 
   switch (pairWiseType) {
