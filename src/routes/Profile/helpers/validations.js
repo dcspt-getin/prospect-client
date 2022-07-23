@@ -11,6 +11,8 @@ const _multipleChoiceValitadion = (q, value) => {
       Array.isArray(value) && value.length >= parseInt(q.checkbox_min_options)
     );
   }
+
+  return true;
 };
 
 const _pairWiseCombinationsValidation = (q, value, userProfile) => {

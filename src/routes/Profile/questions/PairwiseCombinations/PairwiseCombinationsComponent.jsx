@@ -42,6 +42,7 @@ export default ({ question, value, meta, onChange, disabled }) => {
         showPreviousIteration={question.show_previous_iteration}
         allowUserRepeatQuestion={allowUserRepeatQuestion}
         correlationLimitValue={correlationLimitValue}
+        showBalance={question.show_balance}
       />
     </Wrapper>
   );

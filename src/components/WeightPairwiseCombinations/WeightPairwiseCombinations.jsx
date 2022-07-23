@@ -7,6 +7,7 @@ import { filterIterationsWithValue } from "helpers/questions/pairWiseCombination
 import calcEigenVector from "helpers/questions/calcEigenVector";
 import Balance from "components/WeightBalance/Balance";
 import { shuffleArray } from "utils";
+import { getQuestionEndTime } from "routes/Profile/helpers/helpers";
 
 const WeightPairwiseCombinations = ({
   id,
@@ -121,7 +122,9 @@ const WeightPairwiseCombinations = ({
       const egeinVectorData = await calcEigenVector(options, value, meta, {
         correlationLimitValue,
       });
-      const _meta = egeinVectorData;
+      const metaEndTime = getQuestionEndTime(meta);
+
+      const _meta = { ...metaEndTime, ...egeinVectorData };
       const _newValue = [
         ...value.filter(filterIterationsWithValue),
         {
@@ -181,13 +184,16 @@ const WeightPairwiseCombinations = ({
       }
     }
 
+    const _isOptionsEqual = (a, b) => isEqual(String(a), String(b));
     let toRepeat = maxCoord.reduce((acc, cur) => {
       return [
         ...acc,
         value.findIndex(
           (o) =>
-            (isEqual(o.option1, cur[0]) && isEqual(o.option2, cur[1])) ||
-            (isEqual(o.option2, cur[0]) && isEqual(o.option1, cur[1]))
+            (_isOptionsEqual(o.option1, cur[0]) &&
+              _isOptionsEqual(o.option2, cur[1])) ||
+            (_isOptionsEqual(o.option2, cur[0]) &&
+              _isOptionsEqual(o.option1, cur[1]))
         ),
       ];
     }, []);

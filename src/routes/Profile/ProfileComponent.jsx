@@ -31,6 +31,7 @@ import TerritorialCoverage from "./questions/TerritorialCoverage/TerritorialCove
 import ImagePairwiseCombinations from "./questions/ImagePairwiseCombinations/ImagePairwiseCombinations";
 import GeoLocation from "./questions/GeoLocation/GeoLocation";
 import { getValidationByQuestionType } from "./helpers/validations";
+import { getQuestionEndTime, getQuestionStartTime } from "./helpers/helpers";
 
 // Auxiliary functions
 const isArray = is(Array);
@@ -103,6 +104,27 @@ export default () => {
     );
   };
 
+  const _onChangeQuestion = React.useCallback(
+    (value, question, meta = {}, updateServer = true) => {
+      if (!question) question = currentQuestionRef.current;
+
+      updateUserProfile(
+        {
+          ...userProfile,
+          [question.id]: {
+            value,
+            meta: {
+              ...userProfile[question.id]?.meta,
+              ...meta,
+            },
+          },
+        },
+        updateServer
+      );
+    },
+    [currentQuestionRef.current, updateUserProfile]
+  );
+
   React.useEffect(() => {
     const _verifyAlert = () => {
       if (!userProfile) return;
@@ -115,28 +137,21 @@ export default () => {
     _verifyAlert();
   }, [questions, userProfile, showAlert, alreadyFilled]);
 
-  const _onChangeQuestion = (
-    value,
-    question,
-    meta = {},
-    updateServer = true
-  ) => {
-    if (!question) question = currentQuestionRef.current;
+  React.useEffect(() => {
+    if (!currentQuestion) return;
+    if (!userProfile) return;
+    const { meta } = userProfile[currentQuestion.id] || {};
+    const metaStartTime = getQuestionStartTime(meta);
 
-    updateUserProfile(
-      {
-        ...userProfile,
-        [question.id]: {
-          value,
-          meta: {
-            ...userProfile[question.id]?.meta,
-            ...meta,
-          },
-        },
-      },
-      updateServer
-    );
-  };
+    if (metaStartTime?.startTime) {
+      _onChangeQuestion(
+        userProfile[currentQuestion.id]?.value,
+        currentQuestion,
+        metaStartTime
+      );
+    }
+  }, [currentQuestion]);
+
   const _hasValidAnswer = (q, validateChildren = true) => {
     if (!q.is_required) return true;
 
@@ -173,13 +188,25 @@ export default () => {
   };
   const _nextQuestion = () => {
     gotoNextQuestion();
+    const { meta } = userProfile[currentQuestion.id] || {};
+    const metaEndTime = getQuestionEndTime(meta);
+
+    const newMeta = {
+      ...metaEndTime,
+      isValid: _hasValidAnswer(currentQuestion),
+    };
 
     if (currentQuestion?.default_value && !userProfile[currentQuestion.id]) {
-      _onChangeQuestion(currentQuestion.default_value, currentQuestion);
+      _onChangeQuestion(
+        currentQuestion.default_value,
+        currentQuestion,
+        newMeta
+      );
     } else {
       _onChangeQuestion(
         userProfile[currentQuestion.id]?.value,
-        currentQuestion
+        currentQuestion,
+        newMeta
       );
     }
   };
@@ -372,6 +399,8 @@ export default () => {
                   {!currentQuestion && (
                     <>
                       <h3>Questionario Completo</h3>
+                      <br />
+                      <p>Obrigado pela sua participação</p>
                     </>
                   )}
                   {_renderQuestionWithChildren(currentQuestion)}
@@ -401,7 +430,6 @@ export default () => {
                   </Grid.Row>
                 </Grid>
               )}
-              {isCompleted && <>Completo</>}
             </Grid.Column>
             <Grid.Column floated="right" mobile={16} tablet={8} computer={8}>
               {showActionsButtons(currentQuestionIndex, totalQuestions) && (
@@ -420,7 +448,7 @@ export default () => {
                   floated="right"
                   style={{ margin: "5px" }}
                 >
-                  Reiniciar
+                  Voltar ao inicio
                 </Button>
               )}
               {showPreviousQuestionButton && (
