@@ -93,20 +93,22 @@ const ImagePairwiseCombinations = (props) => {
   const _renderLocationImage = (option) => {
     if (!option) return "";
 
-    if (option.image_url)
+    const useGoogleStreetImages = questionRef.current.use_google_street_images;
+
+    if (useGoogleStreetImages)
       return (
-        <ImageContainer
-          style={{ backgroundImage: `url(${option.image_url})` }}
-        ></ImageContainer>
+        <GoogleStreetView
+          apiKey={googleMapsApiKey}
+          streetViewPanoramaOptions={{
+            position: option.geometry,
+          }}
+        />
       );
 
     return (
-      <GoogleStreetView
-        apiKey={googleMapsApiKey}
-        streetViewPanoramaOptions={{
-          position: option.geometry,
-        }}
-      />
+      <ImageContainer
+        style={{ backgroundImage: `url(${option.image_url})` }}
+      ></ImageContainer>
     );
   };
 

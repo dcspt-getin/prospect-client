@@ -178,7 +178,7 @@ export default ({
       {debugIterations && image2}
     </RightmageContainer>
   );
-  const _renderControls = () => (
+  const _renderControlsDesktop = () => (
     <ControlsContainer>
       <Button
         size="large"
@@ -188,6 +188,20 @@ export default ({
       <Button
         size="large"
         icon="right arrow"
+        onClick={() => setSelectedImage(image2)}
+      />
+    </ControlsContainer>
+  );
+  const _renderControlsMobile = () => (
+    <ControlsContainer>
+      <Button
+        size="large"
+        icon="up arrow"
+        onClick={() => setSelectedImage(image1)}
+      />
+      <Button
+        size="large"
+        icon="down arrow"
         onClick={() => setSelectedImage(image2)}
       />
     </ControlsContainer>
@@ -228,8 +242,15 @@ export default ({
                 <Grid.Column mobile={16} tablet={7} computer={7}>
                   {_renderLeftImage()}
                 </Grid.Column>
-                <Grid.Column mobile={16} tablet={2} computer={2}>
-                  {_renderControls()}
+                <Grid.Column
+                  only="tablet computer large"
+                  tablet={2}
+                  computer={2}
+                >
+                  {_renderControlsDesktop()}
+                </Grid.Column>
+                <Grid.Column only="mobile" mobile={16}>
+                  {_renderControlsMobile()}
                 </Grid.Column>
                 <Grid.Column mobile={16} tablet={7} computer={7}>
                   {_renderRightImage()}

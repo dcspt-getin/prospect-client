@@ -73,5 +73,18 @@ const MyMenu = styled(Menu)`
     border-bottom: 0;
     border-left: 0;
     border-right: 0;
+
+    @media only screen and (max-width: 768px) {
+      .languageSelector {
+        margin-top: 6px;
+        min-width: 80px;
+      }
+
+      .item,
+      .dropdown,
+      button {
+        font-size: 12px !important;
+      }
+    }
   }
 `;

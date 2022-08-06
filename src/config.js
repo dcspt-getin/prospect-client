@@ -1,4 +1,4 @@
-let apiBaseUrl = "https://thawing-wildwood-49356.herokuapp.com/api"; // "http://lvh.me:8000/api";
+let apiBaseUrl = "http://lvh.me:8000/api"; // "https://thawing-wildwood-49356.herokuapp.com/api";
 
 switch (process.env.REACT_APP_ENV) {
   case "staging":

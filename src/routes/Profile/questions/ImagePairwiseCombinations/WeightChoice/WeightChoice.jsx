@@ -66,6 +66,10 @@ const WeightChoice = ({
           correlationLimitValue={correlationLimitValue}
           renderOptionInfo={_renderOption}
           showBalance={question.show_balance}
+          styleProps={{
+            mobileBalanceHeight: 400,
+            mobileOptionsHeight: 700,
+          }}
         />
       </WeightPairwiseCombinationsWrapper>
     </Wrapper>

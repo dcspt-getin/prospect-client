@@ -21,6 +21,7 @@ const WeightPairwiseCombinations = ({
   allowUserRepeatQuestion,
   renderOptionInfo,
   showBalance,
+  styleProps = {},
 }) => {
   const [optionsMatrix, setOptionsMatrix] = React.useState([]);
   const [iterationsToRepeat, setIterationsToRepeat] = React.useState([]);
@@ -315,7 +316,7 @@ const WeightPairwiseCombinations = ({
   const _mobileBalance = (
     <>
       <Grid.Column mobile={12}>
-        <Grid style={{ height: 200 }}>
+        <Grid style={{ height: styleProps.mobileOptionsHeight || 200 }}>
           <Grid.Row>
             <Grid.Column width={16}>
               <QuestionOptionTitle style={{ justifyContent: "right" }}>
@@ -344,6 +345,7 @@ const WeightPairwiseCombinations = ({
           onChange={_onIterationValueChange}
           disabled={disabled}
           showBalance={showBalance}
+          height={styleProps.mobileBalanceHeight || 200}
         />
       </Grid.Column>
     </>

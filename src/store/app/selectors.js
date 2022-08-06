@@ -35,3 +35,17 @@ export const makeGetTranslationsGroup = () => {
 };
 
 export const getTranslationsGroup = makeGetTranslationsGroup();
+
+export const makeGetCurrentTranslation = () => {
+  return createSelector(getState, (state) => {
+    const { currentTranslation, translations } = state;
+
+    const curentTranslationEntity = translations.find(
+      (t) => t.language_code === currentTranslation
+    );
+
+    return curentTranslationEntity;
+  });
+};
+
+export const getCurrentTranslation = makeGetCurrentTranslation();

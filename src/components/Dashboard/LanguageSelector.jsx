@@ -16,7 +16,7 @@ export default () => {
   };
 
   return (
-    <Wrapper>
+    <Wrapper className="languageSelector">
       <Dropdown
         button
         className="icon"
@@ -39,6 +39,10 @@ const Wrapper = styled.div`
   margin-top: 8px;
   margin-right: 10px;
   font-size: 14px;
+
+  > div {
+    padding: 8px;
+  }
 
   .text {
     margin-right: 5px;

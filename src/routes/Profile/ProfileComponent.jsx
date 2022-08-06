@@ -382,7 +382,6 @@ export default () => {
 
     return (
       <Breadcrumb size="large">
-        <Breadcrumb.Divider icon="right chevron" />{" "}
         {_renderGroup(_getQuestionGroup(), false)}
       </Breadcrumb>
     );
@@ -470,9 +469,7 @@ export default () => {
 
   return (
     <Dashboard>
-      <PageHeader size="huge" as="h1">
-        {t("Questionario")}
-      </PageHeader>
+      <br />
       {userProfile &&
         questions &&
         questions.length > 0 &&
@@ -500,13 +497,6 @@ const QuestionContainer = styled.div`
 const ActionsRow = styled(Grid.Row)`
   &&&& {
     padding-top: 1.5rem;
-  }
-`;
-
-const PageHeader = styled(Header)`
-  &&&& {
-    margin-bottom: 2rem;
-    margin-top: 1rem;
   }
 `;
 

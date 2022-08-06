@@ -1,6 +1,7 @@
 /* eslint-disable import/no-anonymous-default-export */
 import React from "react";
 import { compose, withProps, lifecycle } from "recompose";
+import { Button } from "semantic-ui-react";
 import get from "lodash/get";
 import isEqual from "lodash/isEqual";
 import isFunction from "lodash/isFunction";
@@ -102,6 +103,44 @@ export default compose(
     props.value && props.value.location
   );
 
+  const askUserForLocation = () => {
+    const geolocation = navigator.geolocation;
+    const options = {
+      enableHighAccuracy: true,
+      timeout: 5000,
+      maximumAge: 0,
+    };
+    const _onGeoSuccess = (position) => {
+      const { latitude, longitude } = position.coords;
+      setLocation({
+        lat: latitude,
+        lng: longitude,
+      });
+    };
+
+    const _onGeoError = (error) => {
+      let detailError;
+
+      if (error.code === error.PERMISSION_DENIED) {
+        detailError = "User denied the request for Geolocation.";
+      } else if (error.code === error.POSITION_UNAVAILABLE) {
+        detailError = "Location information is unavailable.";
+      } else if (error.code === error.TIMEOUT) {
+        detailError = "The request to get user location timed out.";
+      } else if (error.code === error.UNKNOWN_ERROR) {
+        detailError = "An unknown error occurred.";
+      }
+
+      alert(`Error: ${detailError}`);
+    };
+
+    if (geolocation) {
+      geolocation.getCurrentPosition(_onGeoSuccess, _onGeoError, options);
+    } else {
+      console.log("Geolocation is not supported by this browser.");
+    }
+  };
+
   React.useEffect(() => {
     if (!props.onChange) return;
 
@@ -149,6 +188,11 @@ export default compose(
         ))}
       </GoogleMap>
       <AutocompleDiv>
+        <Button
+          size="large"
+          icon="map marker alternate"
+          onClick={askUserForLocation}
+        />
         <AutoComplete
           value={location}
           onChange={(e) => setLocation(e.target.value)}
@@ -166,10 +210,12 @@ export default compose(
 
 const AutocompleDiv = styled.div`
   margin-top: 12px;
+  display: flex;
 
   input {
     width: 100%;
     padding: 10px;
     border: 2px solid #333;
+    margin-left: 10px;
   }
 `;

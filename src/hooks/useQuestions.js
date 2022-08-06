@@ -4,11 +4,23 @@ import omit from "lodash/omit";
 
 import { fetchQuestions } from "src/store/questions/actions";
 import { getQuestions } from "store/questions/selectors";
+import { getCurrentTranslation } from "store/app/selectors";
 
 /* eslint-disable import/no-anonymous-default-export */
 export default (allQuestions) => {
   const dispatch = useDispatch();
   const questions = useSelector(getQuestions);
+  const currentTranslation = useSelector(getCurrentTranslation);
+
+  const questionsByTranslation = React.useMemo(
+    () =>
+      questions.filter(
+        (q) =>
+          !q.language ||
+          q.language?.language_code === currentTranslation?.language_code
+      ),
+    [questions, currentTranslation]
+  );
 
   React.useEffect(() => {
     dispatch(fetchQuestions(allQuestions));
@@ -17,7 +29,7 @@ export default (allQuestions) => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = React.useState(0);
 
   const groups = React.useMemo(() => {
-    const allGroups = questions.reduce((acc, curr) => {
+    const allGroups = questionsByTranslation.reduce((acc, curr) => {
       return {
         ...acc,
         ...curr.groups.reduce((accGroup, currGroup) => {
@@ -42,7 +54,7 @@ export default (allQuestions) => {
           group,
           level,
           parent: group.parent ? omit(acc[group.parent], ["questions"]) : null,
-          questions: questions
+          questions: questionsByTranslation
             .filter((q) => q.groups.some((g) => g.id === group.id))
             .sort((a, b) => a.row_order - b.row_order)
             .map((g) => g.id),
@@ -59,11 +71,13 @@ export default (allQuestions) => {
     const groupTree = Object.values(allGroups).reduce(_buildGroupTree(0), {});
 
     return groupTree;
-  }, [questions]);
+  }, [questionsByTranslation]);
 
   const currentQuestion =
-    questions.length > 0 && questions[currentQuestionIndex];
-  const hasNextQuestion = currentQuestionIndex < questions.length - 1;
+    questionsByTranslation.length > 0 &&
+    questionsByTranslation[currentQuestionIndex];
+  const hasNextQuestion =
+    currentQuestionIndex < questionsByTranslation.length - 1;
   const hasPrevQuestion = currentQuestionIndex > 0;
   const gotoNextQuestion = () => {
     setCurrentQuestionIndex(currentQuestionIndex + 1);
@@ -76,7 +90,7 @@ export default (allQuestions) => {
   };
 
   return {
-    questions,
+    questions: questionsByTranslation,
     groups,
     currentQuestion,
     hasPrevQuestion,

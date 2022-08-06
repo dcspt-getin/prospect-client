@@ -107,7 +107,7 @@ export default (props) => {
           </Grid.Column>
         </Grid.Row>
         <Grid.Row only="mobile">
-          <Grid.Column width={16} style={{ height: 200 }}>
+          <Grid.Column width={16} style={{ height: props.height || 200 }}>
             <VerticalSlider
               disabled={props.disabled}
               orientation="vertical"
