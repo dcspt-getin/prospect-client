@@ -112,9 +112,18 @@ export default compose(
     };
     const _onGeoSuccess = (position) => {
       const { latitude, longitude } = position.coords;
+      const point = {
+        lat: latitude,
+        lng: longitude,
+      };
       setLocation({
         lat: latitude,
         lng: longitude,
+      });
+      props.onChange({
+        location: "",
+        markers: [point],
+        center: point,
       });
     };
 
