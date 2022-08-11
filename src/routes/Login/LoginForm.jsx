@@ -66,7 +66,7 @@ export default () => {
           >
             <div className="w-full">
               <h1 className="mb-4 text-xl font-semibold text-gray-700 dark:text-gray-200">
-                {t("Entrar")}
+                {t("LOGIN_ENTRAR")}
               </h1>
               <form>
                 <label className="block text-sm">
@@ -100,7 +100,7 @@ export default () => {
                   onClick={_doLogin}
                   onChange={_changeFormField("username")}
                 >
-                  {t("Entrar")}
+                  {t("LOGIN_ENTRAR")}
                 </a>
                 {errors.global && (
                   <span className="text-xs text-red-700">{errors.global}</span>

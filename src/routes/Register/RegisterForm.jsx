@@ -71,7 +71,7 @@ export default () => {
           >
             <div className="w-full">
               <h1 className="mb-4 text-xl font-semibold text-gray-700 dark:text-gray-200">
-                {t("Criar Conta")}
+                {t("REGISTER_CRIAR_CONTA")}
               </h1>
               <label className="block text-sm">
                 <span className="text-gray-700 dark:text-gray-400">

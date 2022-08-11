@@ -22,14 +22,8 @@ export default ({ children }) => {
             onClick={() => (window.location = `${process.env.PUBLIC_URL}/`)}
             content={
               <>
-                <b style={{ fontSize: 16 }}>
-                  GetProspect - Plataforma de recolha de preferências
-                </b>{" "}
-                <br />
-                <small>
-                  Grupo de Estudos em Território e Inovação da Universidade de
-                  Aveiro
-                </small>
+                <b style={{ fontSize: 16 }}>{t("HEADER_TITLE")}</b> <br />
+                <small>{t("HEADER_SUB_TITLE")}</small>
               </>
             }
           />

@@ -22,6 +22,20 @@ export default compose(
     mapElement: <div style={{ height: `100%` }} />,
   })),
   lifecycle({
+    componentWillReceiveProps(nextProps) {
+      if (!isEqual(this.state.value?.center, nextProps.value?.center)) {
+        this.setState({
+          center: nextProps.value.center,
+        });
+      }
+      if (!isEqual(this.state.value?.markers, nextProps.value?.markers)) {
+        this.setState({
+          markers: nextProps.value.markers.map((m) => ({
+            position: m,
+          })),
+        });
+      }
+    },
     componentWillMount() {
       const refs = {};
 
@@ -112,14 +126,14 @@ export default compose(
     };
     const _onGeoSuccess = (position) => {
       const { latitude, longitude } = position.coords;
+
+      // const latitude = 40.6367517;
+      // const longitude = -8.197332;
       const point = {
         lat: latitude,
         lng: longitude,
       };
-      setLocation({
-        lat: latitude,
-        lng: longitude,
-      });
+      setLocation("");
       props.onChange({
         location: "",
         markers: [point],
@@ -151,31 +165,21 @@ export default compose(
   };
 
   React.useEffect(() => {
-    if (!props.onChange) return;
-
-    props.onChange({
-      location,
-      markers: props.markers.map((m) => ({
-        lat: isFunction(m.position.lat) ? m.position.lat() : m.position.lat,
-        lng: isFunction(m.position.lng) ? m.position.lng() : m.position.lng,
-      })),
-      center: {
-        lat: isFunction(props.center.lat)
-          ? props.center.lat()
-          : props.center.lat,
-        lng: isFunction(props.center.lng)
-          ? props.center.lng()
-          : props.center.lng,
-      },
-    });
-  }, [location, props.markers, props.center]);
-
-  React.useEffect(() => {
-    setLocation(props.value && props.value.location);
-  }, [props.value]);
+    setLocation(props.value?.location);
+  }, [props.value?.location]);
 
   const _onPlacesChanged = (place) => {
     setLocation(place.formatted_address);
+    const point = {
+      lat: place.geometry.location.lat(),
+      lng: place.geometry.location.lng(),
+    };
+
+    props.onChange({
+      location,
+      markers: [point],
+      center: point,
+    });
     props.onPlacesChanged(place);
   };
 
