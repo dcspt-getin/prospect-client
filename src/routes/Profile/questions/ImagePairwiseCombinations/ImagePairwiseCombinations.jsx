@@ -107,7 +107,7 @@ const ImagePairwiseCombinations = (props) => {
 
     return (
       <ImageContainer
-        style={{ backgroundImage: `url(${option.image_url})` }}
+        style={{ backgroundImage: `url(${option.image || option.image_url})` }}
       ></ImageContainer>
     );
   };

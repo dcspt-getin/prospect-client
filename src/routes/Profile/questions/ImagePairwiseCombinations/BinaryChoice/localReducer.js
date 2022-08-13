@@ -302,9 +302,10 @@ export default (defaultState) => {
   };
 
   React.useEffect(() => {
-    console.log("apply default state");
     if (!defaultState) return;
+    if (!!state) return;
 
+    console.log("apply default state");
     resetState(defaultState);
   }, [!defaultState]);
 

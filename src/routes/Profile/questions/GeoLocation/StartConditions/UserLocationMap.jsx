@@ -176,7 +176,7 @@ export default compose(
     };
 
     props.onChange({
-      location,
+      location: place.formatted_address,
       markers: [point],
       center: point,
     });
