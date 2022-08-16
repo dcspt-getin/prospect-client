@@ -82,6 +82,7 @@ const Wrapper = styled.div``;
 
 const ImageContainer = styled.div`
   border: 5px solid transparent;
+  width: 100%;
 
   > div {
     width: 100%;

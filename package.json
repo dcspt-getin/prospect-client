@@ -18,6 +18,7 @@
     "echarts-for-react": "^3.0.2",
     "lodash": "^4.17.21",
     "material-ui-slider": "^3.0.8",
+    "pannellum-react": "^1.2.4",
     "ramda": "^0.28.0",
     "react": "^17.0.2",
     "react-async-loader": "^0.1.2",

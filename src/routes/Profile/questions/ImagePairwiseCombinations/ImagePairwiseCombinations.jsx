@@ -2,6 +2,7 @@ import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import styled from "styled-components";
 import { Loader, Segment, Dimmer } from "semantic-ui-react";
+import { Pannellum, PannellumVideo } from "pannellum-react";
 
 import GoogleStreetView from "components/GoogleStreetView";
 import { getAppConfiguration } from "store/app/selectors";
@@ -107,8 +108,21 @@ const ImagePairwiseCombinations = (props) => {
 
     return (
       <ImageContainer
-        style={{ backgroundImage: `url(${option.image || option.image_url})` }}
-      ></ImageContainer>
+      // style={{ backgroundImage: `url(${option.image || option.image_url})` }}
+      >
+        <Pannellum
+          width="100%"
+          height="300px"
+          image={option.image || option.image_url}
+          pitch={10}
+          yaw={180}
+          hfov={110}
+          autoLoad
+          // onLoad={() => {
+          //   console.log("panorama loaded");
+          // }}
+        />
+      </ImageContainer>
     );
   };
 
