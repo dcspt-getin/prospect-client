@@ -95,8 +95,9 @@ const ImagePairwiseCombinations = (props) => {
     if (!option) return "";
 
     const useGoogleStreetImages = questionRef.current.use_google_street_images;
+    const use360Image = questionRef.current.use_360_image;
 
-    if (useGoogleStreetImages)
+    if (useGoogleStreetImages) {
       return (
         <GoogleStreetView
           apiKey={googleMapsApiKey}
@@ -105,24 +106,31 @@ const ImagePairwiseCombinations = (props) => {
           }}
         />
       );
+    }
+
+    if (use360Image) {
+      return (
+        <ImageContainer>
+          <Pannellum
+            width="100%"
+            height="300px"
+            image={option.image || option.image_url}
+            pitch={10}
+            yaw={180}
+            hfov={110}
+            autoLoad
+            // onLoad={() => {
+            //   console.log("panorama loaded");
+            // }}
+          />
+        </ImageContainer>
+      );
+    }
 
     return (
       <ImageContainer
-      // style={{ backgroundImage: `url(${option.image || option.image_url})` }}
-      >
-        <Pannellum
-          width="100%"
-          height="300px"
-          image={option.image || option.image_url}
-          pitch={10}
-          yaw={180}
-          hfov={110}
-          autoLoad
-          // onLoad={() => {
-          //   console.log("panorama loaded");
-          // }}
-        />
-      </ImageContainer>
+        style={{ backgroundImage: `url(${option.image || option.image_url})` }}
+      />
     );
   };
 
