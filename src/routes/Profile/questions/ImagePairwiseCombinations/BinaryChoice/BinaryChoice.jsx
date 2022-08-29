@@ -1,6 +1,6 @@
 /* eslint-disable import/no-anonymous-default-export */
 import React from "react";
-import { Button, Icon, Grid } from "semantic-ui-react";
+import { Button, Icon, Grid, Header } from "semantic-ui-react";
 import styled from "styled-components";
 import { useSelector } from "react-redux";
 import isEqual from "lodash/isEqual";
@@ -37,6 +37,8 @@ export default ({
 
   const questionRef = React.useRef(question);
 
+  questionRef.current = question;
+
   const allowUserRepeatQuestion = useSelector(
     (state) =>
       getAppConfiguration(
@@ -54,7 +56,7 @@ export default ({
   const [image1, setImage1] = React.useState();
   const [image2, setImage2] = React.useState();
   const [localState, localActions] = localReducer(
-    questionValue && questionValue.comparisionsModel
+    questionValue?.comparisionsModel
   );
 
   const {
@@ -78,6 +80,7 @@ export default ({
   const debugIterations = useSelector(
     (state) => getAppConfiguration(state, "DEBUG_COMPARISIONS_MODEL") === "true"
   );
+  const isCompleted = completed || meta.isValid;
 
   const images = React.useMemo(() => {
     if (!imagesSet) return {};
@@ -123,7 +126,7 @@ export default ({
       startNewIterationStack("1.1", initialStack);
     }
     setIsSelecting(true);
-  }, [questionValue && !questionValue.comparisionsModel, imagesSet]);
+  }, [questionValue?.comparisionsModel, imagesSet]);
 
   React.useEffect(() => {
     if (!questionValue) return;
@@ -210,9 +213,6 @@ export default ({
     await updateProfileData(
       {
         comparisionsModel: null,
-        calibrations: [],
-        calibrationIndex: 0,
-        calibrationsCompleted: false,
       },
       { isValid: false }
     );
@@ -225,9 +225,10 @@ export default ({
       <QuestionInfo question={question} />
 
       <div className="p-4">
-        {completed && (
+        {isCompleted && (
           <>
-            <p>Completo!</p>
+            <div />
+            <Header size="medium">Completo</Header>
             {allowUserRepeatQuestion && (
               <Button onClick={_onClickResetButton} floated="left">
                 Voltar a Preencher
@@ -235,7 +236,7 @@ export default ({
             )}
           </>
         )}
-        {currentIterationStack && imagesCoordinates.length > 0 && (
+        {!isCompleted && currentIterationStack && imagesCoordinates.length > 0 && (
           <>
             <PageContent>
               <Grid>
@@ -270,6 +271,7 @@ export default ({
             </Button>
           </>
         )}
+
         {debugIterations && (
           <IterationsDebugger
             iterations={iterations}
@@ -297,6 +299,7 @@ const LeftImageContainer = styled.div`
   border: 5px solid transparent;
   min-height: 300px;
   position: relative;
+  overflow: hidden;
 
   > div {
     width: 100%;
@@ -321,6 +324,7 @@ const RightmageContainer = styled.div`
   border: 5px solid transparent;
   min-height: 300px;
   position: relative;
+  overflow: hidden;
 
   > div {
     width: 100%;
