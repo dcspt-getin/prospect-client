@@ -175,6 +175,5 @@ const ImagePairwiseCombinations = (props) => {
 export default ImagePairwiseCombinations;
 
 const ImageContainer = styled.div`
-  background-size: cover;
-  background-position: center;
+  background-size: contain;
 `;

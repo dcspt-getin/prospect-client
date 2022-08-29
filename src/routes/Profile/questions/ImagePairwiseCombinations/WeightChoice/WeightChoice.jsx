@@ -83,11 +83,18 @@ const Wrapper = styled.div``;
 const ImageContainer = styled.div`
   border: 5px solid transparent;
   width: 100%;
+  position: relative;
+  min-height: 300px;
 
   > div {
+    position: absolute;
     width: 100%;
-    min-height: 300px;
-    position: inherit !important;
+    height: 100%;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    transform: translate(-50%, -50%);
+    background-repeat: no-repeat;
   }
 `;
 

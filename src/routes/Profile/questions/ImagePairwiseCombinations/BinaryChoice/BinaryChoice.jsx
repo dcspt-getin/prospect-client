@@ -295,10 +295,19 @@ const ControlsContainer = styled.div`
 
 const LeftImageContainer = styled.div`
   border: 5px solid transparent;
+  min-height: 300px;
+  position: relative;
 
   > div {
     width: 100%;
-    min-height: 300px;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    transform: translate(-50%, -50%);
+    background-repeat: no-repeat;
   }
 
   ${({ selected }) =>
@@ -310,10 +319,19 @@ const LeftImageContainer = styled.div`
 
 const RightmageContainer = styled.div`
   border: 5px solid transparent;
+  min-height: 300px;
+  position: relative;
 
   > div {
     width: 100%;
-    min-height: 300px;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    transform: translate(-50%, -50%);
+    background-repeat: no-repeat;
   }
 
   ${({ selected }) =>
