@@ -81,15 +81,31 @@ export default () => {
   const totalQuestions = questions.length;
   const isCompleted = currentQuestionIndex + 1 === totalQuestions + 1;
 
+  const _validateChildMatchWithConditionalValue = (q) => {
+    const parentValue = userProfile[q.parent_question?.id]?.value;
+    const parentValueMatch = q.show_only_on_parent_value.includes(parentValue);
+
+    return parentValueMatch;
+  };
+
+  const filterChildren = (q) => {
+    if (q.show_only_on_parent_value) {
+      return _validateChildMatchWithConditionalValue(q);
+    }
+
+    return true;
+  };
+
   const showActionsButtons = () => {
     const _hasSomeChildInfoQuestion = (children = []) => {
       const _hasInfoQuestion =
-        children.filter((q) => isInfoQuestion(q)).length > 0;
+        children.filter(filterChildren).filter((q) => isInfoQuestion(q))
+          .length > 0;
 
       if (!_hasInfoQuestion) {
-        return children.some((child) =>
-          _hasSomeChildInfoQuestion(child.children)
-        );
+        return children
+          .filter(filterChildren)
+          .some((child) => _hasSomeChildInfoQuestion(child.children));
       }
 
       return _hasInfoQuestion;
@@ -159,20 +175,21 @@ export default () => {
 
     const _validateChildrenFilled = (current) => {
       const _isValid = _hasValidAnswer(current);
+      const currentChildren = current.children?.filter(filterChildren);
 
-      if (current.children) {
+      if (currentChildren) {
         return (
           _isValid &&
-          current.children?.every((child) => _validateChildrenFilled(child))
+          currentChildren.every((child) => _validateChildrenFilled(child))
         );
       }
       return _isValid;
     };
+    const children = q?.children?.filter(filterChildren);
     const childrenHaveValue = () =>
-      q?.children?.every((child) => _validateChildrenFilled(child));
+      children.every((child) => _validateChildrenFilled(child));
 
-    if (hasChildren(q?.children) && validateChildren)
-      return childrenHaveValue();
+    if (hasChildren(children) && validateChildren) return childrenHaveValue();
     if (isInfoQuestion(q)) return true;
     if (!value) return !!q?.default_value;
 
@@ -321,8 +338,14 @@ export default () => {
         return "";
     }
   };
-  const _renderQuestionWithChildren = (q) => {
+  const _renderQuestionWithChildren = (q, isChild = false) => {
     if (!q) return "";
+
+    if (isChild && q.show_only_on_parent_value) {
+      if (!_validateChildMatchWithConditionalValue(q)) {
+        return "";
+      }
+    }
 
     return (
       <>
@@ -344,7 +367,11 @@ export default () => {
           hasChildren(q?.children) &&
           isQuestionFilledOrisOnlyInfo(userProfile, q) &&
           isSubmittedOrIsInfoQuestion(userProfile, q) && (
-            <>{q.children.map((child) => _renderQuestionWithChildren(child))}</>
+            <>
+              {q.children.map((child) =>
+                _renderQuestionWithChildren(child, true)
+              )}
+            </>
           )}
       </>
     );

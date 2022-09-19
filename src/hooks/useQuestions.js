@@ -12,15 +12,30 @@ export default (allQuestions) => {
   const questions = useSelector(getQuestions);
   const currentTranslation = useSelector(getCurrentTranslation);
 
-  const questionsByTranslation = React.useMemo(
-    () =>
-      questions.filter(
-        (q) =>
-          !q.language ||
-          q.language?.language_code === currentTranslation?.language_code
-      ),
-    [questions, currentTranslation]
-  );
+  const questionsByTranslation = React.useMemo(() => {
+    const filterQuestionByLanguage = (q) =>
+      !q.language ||
+      q.language?.language_code === currentTranslation?.language_code;
+
+    const parentQuestions = questions.filter(filterQuestionByLanguage);
+
+    const filterChildrenByTranslation = (questions) => {
+      return questions.map((q) => {
+        if (q.children?.length) {
+          const children = q.children.filter(filterQuestionByLanguage);
+
+          return {
+            ...q,
+            children: filterChildrenByTranslation(children),
+          };
+        }
+
+        return q;
+      });
+    };
+
+    return filterChildrenByTranslation(parentQuestions);
+  }, [questions, currentTranslation]);
 
   React.useEffect(() => {
     dispatch(fetchQuestions(allQuestions));
