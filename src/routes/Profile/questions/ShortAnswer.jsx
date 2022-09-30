@@ -81,6 +81,27 @@ export default ({ question, value, onChange, disabled }) => {
                   //     _onChange(_val);
                   //   },
                   // }}
+                  marks={[
+                    ...(question.slider_label.left
+                      ? [
+                          {
+                            value: (question.value_max || 100) * 0.02,
+                            label: question.slider_label.left,
+                          },
+                        ]
+                      : []),
+                    ...(question.slider_label.right
+                      ? [
+                          {
+                            value:
+                              (question.value_max || 100) -
+                              (question.value_max || 100) *
+                                (question.slider_label.right.length / 300),
+                            label: question.slider_label.right,
+                          },
+                        ]
+                      : []),
+                  ]}
                   color="primary"
                   value={inputVal}
                   min={parseFloat(question.value_min || 0)}
