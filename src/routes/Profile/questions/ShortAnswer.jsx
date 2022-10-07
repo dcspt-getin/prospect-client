@@ -85,7 +85,7 @@ export default ({ question, value, onChange, disabled }) => {
                     ...(question.slider_label.left
                       ? [
                           {
-                            value: (question.value_max || 100) * 0.02,
+                            value: question.value_min || 0,
                             label: question.slider_label.left,
                           },
                         ]
@@ -93,10 +93,7 @@ export default ({ question, value, onChange, disabled }) => {
                     ...(question.slider_label.right
                       ? [
                           {
-                            value:
-                              (question.value_max || 100) -
-                              (question.value_max || 100) *
-                                (question.slider_label.right.length / 300),
+                            value: question.value_max || 100,
                             label: question.slider_label.right,
                           },
                         ]
@@ -145,4 +142,21 @@ const Wrapper = styled.div``;
 
 const SliderContainer = styled.div`
   margin-top: 10px;
+
+  .MuiSlider-markLabel {
+    transform: inherit;
+
+    @media only screen and (max-width: 600px) {
+      font-size: 12px !important;
+    }
+
+    &:not(.MuiSlider-markLabelActive) {
+      right: 0;
+      left: auto !important;
+
+      @media only screen and (max-width: 600px) {
+        top: 48px;
+      }
+    }
+  }
 `;

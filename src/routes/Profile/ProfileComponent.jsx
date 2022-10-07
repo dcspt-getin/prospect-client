@@ -259,7 +259,10 @@ export default () => {
       question: q,
       value: userProfile[q.id]?.value,
       meta: userProfile[q.id]?.meta,
-      disabled: hasChildren(q.children) && userProfile[q.id]?.meta?.submitted,
+      disabled:
+        hasChildren(q.children) &&
+        userProfile[q.id]?.meta?.submitted &&
+        q.disabled_after_filled,
       onChange: _onChangeQuestion,
     };
 
