@@ -52,7 +52,7 @@ const isSubmittedOrIsInfoQuestion = (userProfile, question) =>
   );
 
 export default () => {
-  const [t] = useTranslations("profile");
+  const [t] = useTranslations("userProfile");
   const {
     questions,
     currentQuestion,
@@ -360,7 +360,7 @@ export default () => {
             <Grid>
               <Grid.Column width={16}>
                 <Button onClick={() => _submitParentQuestion(q)} floated="left">
-                  Submeter resposta
+                  {t("Submeter resposta")}
                 </Button>
               </Grid.Column>
             </Grid>
@@ -380,41 +380,7 @@ export default () => {
     );
   };
   const _renderBreadcrumbs = () => {
-    const _getQuestionGroup = () => {
-      return (currentQuestion?.groups || []).reduce((acc, group, i) => {
-        const g = groups[group.id];
-
-        if (i === currentQuestion.groups.length - 1) return g;
-        if (!g.parent) return acc;
-
-        return g;
-      }, null);
-    };
-    const _renderGroup = (g, divider = true) => {
-      if (!g) return "";
-      const breadcrumb = (
-        <>
-          <Breadcrumb.Section>{g.group.name}</Breadcrumb.Section>
-          {divider && <Breadcrumb.Divider icon="right chevron" />}
-        </>
-      );
-      if (g.parent) {
-        return (
-          <>
-            {_renderGroup(g.parent)}
-            {breadcrumb}
-          </>
-        );
-      }
-
-      return breadcrumb;
-    };
-
-    return (
-      <Breadcrumb size="large">
-        {_renderGroup(_getQuestionGroup(), false)}
-      </Breadcrumb>
-    );
+    return <Breadcrumb size="large">{t("Questionário")}</Breadcrumb>;
   };
   const _renderProfileQuestions = () => {
     return (
@@ -427,9 +393,9 @@ export default () => {
                 <QuestionContainer>
                   {!currentQuestion && (
                     <>
-                      <h3>Questionario Completo</h3>
+                      <h3>{t("Questionario Completo")}</h3>
                       <br />
-                      <p>Obrigado pela sua participação</p>
+                      <p>{t("Obrigado pela sua participação")}</p>
                     </>
                   )}
                   {_renderQuestionWithChildren(currentQuestion)}
@@ -453,7 +419,7 @@ export default () => {
                     </Grid.Column>
                     <Grid.Column floated="right" mobile={4}>
                       <MobileRightAligned>
-                        {currentQuestionIndex + 1} de {totalQuestions}
+                        {currentQuestionIndex + 1} / {totalQuestions}
                       </MobileRightAligned>
                     </Grid.Column>
                   </Grid.Row>
@@ -468,7 +434,7 @@ export default () => {
                   floated="right"
                   style={{ margin: "5px" }}
                 >
-                  Seguinte
+                  {t("Seguinte")}
                 </Button>
               )}
               {isCompleted && (
@@ -477,7 +443,7 @@ export default () => {
                   floated="right"
                   style={{ margin: "5px" }}
                 >
-                  Voltar ao inicio
+                  {t("Voltar ao inicio")}
                 </Button>
               )}
               {showPreviousQuestionButton && (
@@ -487,7 +453,7 @@ export default () => {
                   floated="right"
                   style={{ margin: "5px" }}
                 >
-                  Anterior
+                  {t("Anterior")}
                 </Button>
               )}
             </Grid.Column>

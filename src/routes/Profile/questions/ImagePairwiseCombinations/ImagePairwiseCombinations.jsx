@@ -1,10 +1,7 @@
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
-import styled from "styled-components";
-import { Loader, Segment, Dimmer } from "semantic-ui-react";
-import { Pannellum, PannellumVideo } from "pannellum-react";
+import { Loader, Dimmer } from "semantic-ui-react";
 
-import GoogleStreetView from "components/GoogleStreetView";
 import { getAppConfiguration } from "store/app/selectors";
 import questionTypes from "helpers/questions/questionTypes";
 import { getActiveProfile } from "store/profiles/selectors";
@@ -14,6 +11,7 @@ import { fetchTerritorialCoverages } from "store/urbanShapes/actions";
 
 import BinaryChoice from "./BinaryChoice/BinaryChoice";
 import WeightChoice from "./WeightChoice/WeightChoice";
+import TerritorialUnitImage from "components/TerritorialUnitImage/TerrritorialUnitImage";
 
 const ImagePairwiseCombinations = (props) => {
   const dispatch = useDispatch();
@@ -92,44 +90,15 @@ const ImagePairwiseCombinations = (props) => {
   ]);
 
   const _renderLocationImage = (option) => {
-    if (!option) return "";
-
     const useGoogleStreetImages = questionRef.current.use_google_street_images;
     const use360Image = questionRef.current.use_360_image;
 
-    if (useGoogleStreetImages) {
-      return (
-        <GoogleStreetView
-          apiKey={googleMapsApiKey}
-          streetViewPanoramaOptions={{
-            position: option.geometry,
-          }}
-        />
-      );
-    }
-
-    if (use360Image) {
-      return (
-        <ImageContainer>
-          <Pannellum
-            width="100%"
-            height="300px"
-            image={option.image || option.image_url}
-            pitch={10}
-            yaw={180}
-            hfov={110}
-            autoLoad
-            // onLoad={() => {
-            //   console.log("panorama loaded");
-            // }}
-          />
-        </ImageContainer>
-      );
-    }
-
     return (
-      <ImageContainer
-        style={{ backgroundImage: `url(${option.image || option.image_url})` }}
+      <TerritorialUnitImage
+        image={option}
+        useGoogleStreetImages={useGoogleStreetImages}
+        use360Image={use360Image}
+        googleMapsApiKey={googleMapsApiKey}
       />
     );
   };
@@ -173,7 +142,3 @@ const ImagePairwiseCombinations = (props) => {
 };
 
 export default ImagePairwiseCombinations;
-
-const ImageContainer = styled.div`
-  background-size: contain;
-`;

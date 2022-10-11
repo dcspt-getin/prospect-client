@@ -228,10 +228,10 @@ export default ({
         {isCompleted && (
           <>
             <div />
-            <Header size="medium">Completo</Header>
+            <Header size="medium">{t("Completo")}</Header>
             {allowUserRepeatQuestion && (
               <Button onClick={_onClickResetButton} floated="left">
-                Voltar a Preencher
+                {t("Voltar a Preencher")}
               </Button>
             )}
           </>

@@ -70,17 +70,6 @@ export default ({ question, value, onChange, disabled }) => {
               <SliderContainer>
                 <MuiSlider
                   disabled={disabled}
-                  // value={inputVal}
-                  // color="blue"
-                  // settings={{
-                  //   start: 0,
-                  //   min: parseFloat(question.value_min || 0),
-                  //   max: parseFloat(question.value_max || 100),
-                  //   step: parseFloat(question.value_interval || 1),
-                  //   onChange: (_val) => {
-                  //     _onChange(_val);
-                  //   },
-                  // }}
                   marks={[
                     ...(question.slider_label.left
                       ? [
@@ -143,19 +132,21 @@ const Wrapper = styled.div``;
 const SliderContainer = styled.div`
   margin-top: 10px;
 
-  .MuiSlider-markLabel {
-    transform: inherit;
+  .MuiSlider-root {
+    .MuiSlider-markLabel {
+      transform: inherit;
 
-    @media only screen and (max-width: 600px) {
-      font-size: 12px !important;
+      @media only screen and (max-width: 600px) {
+        font-size: 12px !important;
+      }
     }
 
-    &:not(.MuiSlider-markLabelActive) {
+    span:nth-child(7) {
       right: 0;
       left: auto !important;
 
       @media only screen and (max-width: 600px) {
-        top: 48px;
+        top: -15px;
       }
     }
   }

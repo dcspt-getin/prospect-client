@@ -8,6 +8,7 @@ import calcEigenVector from "helpers/questions/calcEigenVector";
 import Balance from "components/WeightBalance/Balance";
 import { shuffleArray } from "utils";
 import { getQuestionEndTime } from "routes/Profile/helpers/helpers";
+import useTranslations from "hooks/useTranslations";
 
 const WeightPairwiseCombinations = ({
   id,
@@ -23,6 +24,7 @@ const WeightPairwiseCombinations = ({
   showBalance,
   styleProps = {},
 }) => {
+  const [t] = useTranslations("profile");
   const [optionsMatrix, setOptionsMatrix] = React.useState([]);
   const [iterationsToRepeat, setIterationsToRepeat] = React.useState([]);
   const [iteration, setIteration] = React.useState(null);
@@ -223,12 +225,13 @@ const WeightPairwiseCombinations = ({
               <b>
                 <Header size="medium">
                   {meta?.isValid ? (
-                    "Completo"
+                    t("Completo")
                   ) : (
                     <>
                       <strong style={{ color: "darkred" }}>
-                        As suas respostas têm problemas de transitividade. Para
-                        resolver, reconsidere as seguintes respostas.
+                        {t(
+                          "As suas respostas têm problemas de transitividade. Para resolver, reconsidere as seguintes respostas."
+                        )}
                       </strong>
                     </>
                   )}
@@ -241,7 +244,7 @@ const WeightPairwiseCombinations = ({
             <Grid.Row>
               <Grid.Column width={16}>
                 <Button onClick={_onRepeatQuestion} floated="left">
-                  Voltar a Preencher
+                  {t("Voltar a Preencher")}
                 </Button>
               </Grid.Column>
             </Grid.Row>
@@ -255,7 +258,7 @@ const WeightPairwiseCombinations = ({
     <>
       <Grid.Column mobile={16} tablet={8} computer={8}>
         <strong>
-          comparação {iteration + 1} de {optionsMatrix.length}
+          {t("comparação")} {iteration + 1} {t("de")} {optionsMatrix.length}
         </strong>
       </Grid.Column>
       <Grid.Column floated="right" mobile={16} tablet={8} computer={8}>
@@ -264,7 +267,7 @@ const WeightPairwiseCombinations = ({
           onClick={_onClickNextIteration}
           floated="right"
         >
-          Seguinte
+          {t("Seguinte")}
         </Button>
         {showPreviousIteration && (
           <Button
@@ -276,7 +279,7 @@ const WeightPairwiseCombinations = ({
             }
             floated="right"
           >
-            Anterior
+            {t("Anterior")}
           </Button>
         )}
       </Grid.Column>
@@ -286,7 +289,7 @@ const WeightPairwiseCombinations = ({
     <>
       <CenteredColumn width={16}>
         <strong>
-          comparação {iteration + 1} de {optionsMatrix.length}
+          {t("comparação")} {iteration + 1} {t("de")} {optionsMatrix.length}
         </strong>
       </CenteredColumn>
       <CenteredColumn width={16}>
@@ -300,14 +303,14 @@ const WeightPairwiseCombinations = ({
                 )
               }
             >
-              Anterior
+              {t("Anterior")}
             </Button>
           )}
           <Button
             disabled={currentIteratonValue === undefined}
             onClick={_onClickNextIteration}
           >
-            Seguinte
+            {t("Seguinte")}
           </Button>
         </div>
       </CenteredColumn>

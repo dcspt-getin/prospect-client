@@ -33,7 +33,13 @@ export default () => {
 
   return (
     <MyMenu size="large">
-      <Menu.Menu position="left"></Menu.Menu>
+      <Menu.Menu position="left">
+        <Menu.Item
+          name={t("Acerca de")}
+          active={history.location === "/terms-conditions"}
+          onClick={() => history.push("/terms-conditions")}
+        />
+      </Menu.Menu>
 
       <Menu.Menu position="right">
         {isAuthenticated && showResults && (
@@ -43,11 +49,6 @@ export default () => {
             onClick={() => history.push("/results")}
           />
         )}
-        <Menu.Item
-          name={t("Acerca de")}
-          active={history.location === "/terms-conditions"}
-          onClick={() => history.push("/terms-conditions")}
-        />
         <Menu.Item>
           {!isAuthenticated && (
             <Button primary onClick={() => history.push("/login")}>

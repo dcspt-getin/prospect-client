@@ -1,11 +1,34 @@
 /* eslint-disable import/no-anonymous-default-export */
 import React from "react";
 import { Grid, Header, Image } from "semantic-ui-react";
-import HTMLContent from "src/components/HTMLContent";
 import styled from "styled-components";
+import { useSelector } from "react-redux";
+
+import HTMLContent from "src/components/HTMLContent";
+import TerritorialUnitImage from "components/TerritorialUnitImage/TerrritorialUnitImage";
+import { getAppConfiguration } from "store/app/selectors";
 
 export default ({ question, renderDescription, hideDescription }) => {
-  const _renderDescriptionImage = () => {
+  const googleMapsApiKey = useSelector((state) =>
+    getAppConfiguration(state, "GOOGLE_API_KEY")
+  );
+
+  const _renderQuestionImage = () => {
+    if (question.territorial_unit_image) {
+      const useGoogleStreetImages = question.use_google_street_images;
+      const use360Image = question.use_360_image;
+
+      return (
+        <TerritorialUniImageContainer>
+          <TerritorialUnitImage
+            image={question.territorial_unit_image}
+            use360Image={use360Image}
+            useGoogleStreetImages={useGoogleStreetImages}
+            googleMapsApiKey={googleMapsApiKey}
+          />
+        </TerritorialUniImageContainer>
+      );
+    }
     const image = question.description_image || question.image_url;
 
     if (!image) return "";
@@ -49,7 +72,7 @@ export default ({ question, renderDescription, hideDescription }) => {
       </Grid.Row>
       {!hideDescription && (
         <>
-          {_renderDescriptionImage(question)}
+          {_renderQuestionImage(question)}
           {question.description && (
             <Grid.Row style={{ paddingBottom: 0 }}>
               <Grid.Column width={16}>
@@ -77,6 +100,28 @@ export default ({ question, renderDescription, hideDescription }) => {
 };
 
 const ImageContainer = styled.div``;
+
+const TerritorialUniImageContainer = styled.div`
+  border: 5px solid transparent;
+  min-height: 300px;
+  position: relative;
+  overflow: hidden;
+  max-width: 460px;
+  width: 100%;
+  margin: 0 auto;
+
+  > div {
+    width: 100%;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    transform: translate(-50%, -50%);
+    background-repeat: no-repeat;
+  }
+`;
 
 const Title = styled(Header)`
   &&& {
