@@ -11,7 +11,7 @@ const INPUT_TYPES = {
   TEXT: "text",
 };
 
-export default ({ question, value, onChange, disabled }) => {
+export default ({ question, value, parentValue, onChange, disabled }) => {
   const questionRef = React.useRef(question);
 
   questionRef.current = question;
@@ -74,7 +74,7 @@ export default ({ question, value, onChange, disabled }) => {
                     ...(question.slider_label.left
                       ? [
                           {
-                            value: question.value_min || 0,
+                            // value: question.value_min || 0,
                             label: question.slider_label.left,
                           },
                         ]
@@ -82,7 +82,7 @@ export default ({ question, value, onChange, disabled }) => {
                     ...(question.slider_label.right
                       ? [
                           {
-                            value: question.value_max || 100,
+                            // value: question.value_max || 100,
                             label: question.slider_label.right,
                           },
                         ]
@@ -107,13 +107,11 @@ export default ({ question, value, onChange, disabled }) => {
 
   return (
     <Wrapper>
-      <QuestionInfo question={question} />
+      <QuestionInfo parentValue={parentValue} question={question} />
       <Grid>
         <Grid.Row>
           <Grid.Column
-            mobile={
-              question.input_size ? parseInt(question.input_size) + 3 : 16
-            }
+            mobile={16}
             tablet={
               question.input_size ? parseInt(question.input_size) + 2 : 16
             }
@@ -130,7 +128,7 @@ export default ({ question, value, onChange, disabled }) => {
 const Wrapper = styled.div``;
 
 const SliderContainer = styled.div`
-  margin-top: 10px;
+  /* margin-top: 10px; */
 
   .MuiSlider-root {
     .MuiSlider-markLabel {
@@ -146,7 +144,7 @@ const SliderContainer = styled.div`
       left: auto !important;
 
       @media only screen and (max-width: 600px) {
-        top: -15px;
+        top: -20px;
       }
     }
   }

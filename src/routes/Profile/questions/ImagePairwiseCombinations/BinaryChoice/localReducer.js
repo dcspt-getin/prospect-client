@@ -38,8 +38,6 @@ const sortIntermediateOrder = (state) => {
       ? currentIteration.stacks.length === 0
       : state.completed;
 
-  console.log({ completed, state });
-
   if (!currentIterationStack) return { ...state, completed };
 
   let currentStackOrder = [

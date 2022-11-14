@@ -8,7 +8,7 @@ import { getAppConfiguration } from "store/app/selectors";
 import QuestionInfo from "../_shared/QuestionInfo";
 import WeightPairwiseCombinations from "components/WeightPairwiseCombinations/WeightPairwiseCombinations";
 
-export default ({ question, value, meta, onChange, disabled }) => {
+export default ({ question, value, parentValue, meta, onChange, disabled }) => {
   const { options } = question;
 
   const allowUserRepeatQuestion = useSelector(
@@ -31,7 +31,7 @@ export default ({ question, value, meta, onChange, disabled }) => {
 
   return (
     <Wrapper>
-      <QuestionInfo question={question} />
+      <QuestionInfo parentValue={parentValue} question={question} />
       <WeightPairwiseCombinations
         key={question.id}
         options={options}

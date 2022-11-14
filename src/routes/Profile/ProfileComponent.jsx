@@ -260,6 +260,7 @@ export default () => {
     const questionProps = {
       question: q,
       value: userProfile[q.id]?.value,
+      parentValue: userProfile[q.parent_question?.id]?.value,
       meta: userProfile[q.id]?.meta,
       disabled:
         hasChildren(q.children) &&

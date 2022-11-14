@@ -10,6 +10,7 @@ import WeightPairwiseCombinations from "components/WeightPairwiseCombinations/We
 const WeightChoice = ({
   question,
   value,
+  parentValue,
   meta,
   onChange,
   disabled,
@@ -52,7 +53,7 @@ const WeightChoice = ({
 
   return (
     <Wrapper>
-      <QuestionInfo question={question} />
+      <QuestionInfo parentValue={parentValue} question={question} />
       <WeightPairwiseCombinationsWrapper>
         <WeightPairwiseCombinations
           id={question.id}

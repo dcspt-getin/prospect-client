@@ -26,6 +26,7 @@ const _getRandomImageFromStack = (stack, exclude = []) => {
 export default ({
   question,
   value,
+  parentValue,
   onChange,
   meta,
   disabled,
@@ -222,7 +223,7 @@ export default ({
 
   return (
     <>
-      <QuestionInfo question={question} />
+      <QuestionInfo parentValue={parentValue} question={question} />
 
       <div className="p-4">
         {isCompleted && (

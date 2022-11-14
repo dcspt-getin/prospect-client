@@ -8,12 +8,19 @@ import HTMLContent from "src/components/HTMLContent";
 import TerritorialUnitImage from "components/TerritorialUnitImage/TerrritorialUnitImage";
 import { getAppConfiguration } from "store/app/selectors";
 import InfoModal from "components/InfoModal";
+import getQuestionValueText from "helpers/questions/getQuestionValueText";
 
-export default ({ question, renderDescription, hideDescription }) => {
+export default ({
+  question,
+  renderDescription,
+  parentValue,
+  hideDescription,
+}) => {
   const [showHelpModel, setShowHelpModel] = useState(false);
   const googleMapsApiKey = useSelector((state) =>
     getAppConfiguration(state, "GOOGLE_API_KEY")
   );
+  const { help } = question;
 
   const _renderQuestionImage = () => {
     if (question.territorial_unit_image) {
@@ -58,6 +65,11 @@ export default ({ question, renderDescription, hideDescription }) => {
           parent_question[key]
         );
       });
+
+      result = result.replace(
+        `{parent_question.value}`,
+        getQuestionValueText(parent_question, parentValue)
+      );
     }
 
     if (renderDescription) return renderDescription(result);
@@ -65,8 +77,6 @@ export default ({ question, renderDescription, hideDescription }) => {
     return result;
   };
   const _renderQuestionHelp = () => {
-    const { help } = question;
-
     if (!help) return "";
 
     return (
@@ -86,7 +96,9 @@ export default ({ question, renderDescription, hideDescription }) => {
     <Grid>
       <Grid.Row>
         <Grid.Column width={16}>
-          <Title size="medium">{question.title}</Title>
+          <Title size="medium" hasHelp={Boolean(help)}>
+            {question.title}
+          </Title>
           {_renderQuestionHelp()}
         </Grid.Column>
       </Grid.Row>
@@ -146,6 +158,12 @@ const TerritorialUniImageContainer = styled.div`
 const Title = styled(Header)`
   &&& {
     margin-top: -20px;
+
+    ${({ hasHelp }) =>
+      hasHelp &&
+      `
+        padding-right: 50px;
+    `}
   }
 `;
 
