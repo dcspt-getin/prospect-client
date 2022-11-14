@@ -1,8 +1,10 @@
-import { SET_TERRITORIAL_COVERAGES } from "./types";
+import {
+  SET_TERRITORIAL_COVERAGES,
+  SET_TERRITORIAL_COVERAGES_LOADING,
+} from "./types";
 
 const initialState = {
-  isCreating: false,
-  isLoading: true,
+  loading: true,
   territorialCoverages: [],
 };
 
@@ -13,9 +15,15 @@ export default function urbanShapesReducer(state = initialState, action) {
 
       return {
         ...state,
+        loading: false,
         territorialCoverages: payload,
       };
     }
+    case SET_TERRITORIAL_COVERAGES_LOADING:
+      return {
+        ...state,
+        loading: true,
+      };
     default:
       return state;
   }

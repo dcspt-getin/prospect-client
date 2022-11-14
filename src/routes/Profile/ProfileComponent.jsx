@@ -1,7 +1,8 @@
 /* eslint-disable import/no-anonymous-default-export */
 import React from "react";
 import {
-  Header,
+  Loader,
+  Dimmer,
   Grid,
   Button,
   Segment,
@@ -63,6 +64,7 @@ export default () => {
     goToPrevQuestion,
     goToQuestionIndex,
     currentQuestionIndex,
+    loading: loadingQuestions,
   } = useQuestions();
   const [showAlert, setShowAlert] = React.useState(null);
   const [userProfile, updateUserProfile] = useUserProfile();
@@ -462,6 +464,20 @@ export default () => {
       </>
     );
   };
+
+  if (loadingQuestions) {
+    return (
+      <Dashboard>
+        <Dimmer
+          active
+          inverted
+          style={{ background: "transparent", position: "relative" }}
+        >
+          <Loader size="large">Loading</Loader>
+        </Dimmer>
+      </Dashboard>
+    );
+  }
 
   return (
     <Dashboard>

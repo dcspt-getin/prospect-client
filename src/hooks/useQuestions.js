@@ -3,12 +3,13 @@ import { useDispatch, useSelector } from "react-redux";
 import omit from "lodash/omit";
 
 import { fetchQuestions } from "src/store/questions/actions";
-import { getQuestions } from "store/questions/selectors";
+import { getQuestions, getQuestionsLoading } from "store/questions/selectors";
 import { getCurrentTranslation } from "store/app/selectors";
 
 /* eslint-disable import/no-anonymous-default-export */
 export default (allQuestions) => {
   const dispatch = useDispatch();
+  const questionsLoading = useSelector(getQuestionsLoading);
   const questions = useSelector(getQuestions);
   const currentTranslation = useSelector(getCurrentTranslation);
 
@@ -106,6 +107,7 @@ export default (allQuestions) => {
 
   return {
     questions: questionsByTranslation,
+    loading: questionsLoading,
     groups,
     currentQuestion,
     hasPrevQuestion,

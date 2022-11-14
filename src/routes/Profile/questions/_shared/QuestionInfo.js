@@ -1,14 +1,16 @@
 /* eslint-disable import/no-anonymous-default-export */
-import React from "react";
-import { Grid, Header, Image } from "semantic-ui-react";
+import React, { useState } from "react";
+import { Grid, Header, Image, Button } from "semantic-ui-react";
 import styled from "styled-components";
 import { useSelector } from "react-redux";
 
 import HTMLContent from "src/components/HTMLContent";
 import TerritorialUnitImage from "components/TerritorialUnitImage/TerrritorialUnitImage";
 import { getAppConfiguration } from "store/app/selectors";
+import InfoModal from "components/InfoModal";
 
 export default ({ question, renderDescription, hideDescription }) => {
+  const [showHelpModel, setShowHelpModel] = useState(false);
   const googleMapsApiKey = useSelector((state) =>
     getAppConfiguration(state, "GOOGLE_API_KEY")
   );
@@ -62,12 +64,30 @@ export default ({ question, renderDescription, hideDescription }) => {
 
     return result;
   };
+  const _renderQuestionHelp = () => {
+    const { help } = question;
+
+    if (!help) return "";
+
+    return (
+      <InfoModal
+        open={showHelpModel}
+        onOpen={() => setShowHelpModel(true)}
+        onClose={() => setShowHelpModel(false)}
+        content={<HTMLContent html={help} />}
+        trigger={
+          <HelpButton size="big" circular icon="question circle outline" />
+        }
+      />
+    );
+  };
 
   return (
     <Grid>
       <Grid.Row>
         <Grid.Column width={16}>
           <Title size="medium">{question.title}</Title>
+          {_renderQuestionHelp()}
         </Grid.Column>
       </Grid.Row>
       {!hideDescription && (
@@ -141,5 +161,13 @@ const Description = styled.div`
       border: 1px solid #333;
       padding: 6px;
     }
+  }
+`;
+
+const HelpButton = styled(Button)`
+  &&&& {
+    position: absolute;
+    right: 14px;
+    top: -26px;
   }
 `;

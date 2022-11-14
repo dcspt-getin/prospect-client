@@ -1,9 +1,10 @@
 import normalizeArray from "utils/normalizeArray";
 
-import { SET_QUESTIONS } from "./types";
+import { SET_QUESTIONS, SET_QUESTIONS_LOADING } from "./types";
 
 const initialState = {
   data: {},
+  loading: false,
 };
 
 export default function appReducer(state = initialState, action) {
@@ -16,7 +17,13 @@ export default function appReducer(state = initialState, action) {
 
       return {
         ...state,
+        loading: false,
         data: normalizeArray(questions, "id"),
+      };
+    case SET_QUESTIONS_LOADING:
+      return {
+        ...state,
+        loading: true,
       };
     default:
       return state;

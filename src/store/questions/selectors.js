@@ -29,4 +29,9 @@ export const makeGetQuestions = () => {
   });
 };
 
+export const getQuestionsLoading = createSelector(
+  getState,
+  (state) => state.loading
+);
+
 export const getQuestions = makeGetQuestions();

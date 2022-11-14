@@ -1,5 +1,5 @@
 import React from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import { Loader, Dimmer } from "semantic-ui-react";
 
 import { getAppConfiguration } from "store/app/selectors";
@@ -7,14 +7,13 @@ import questionTypes from "helpers/questions/questionTypes";
 import { getActiveProfile } from "store/profiles/selectors";
 import { getQuestions } from "store/questions/selectors";
 import { PAIRWISE_COMBINATIONS_TYPES } from "helpers/questions";
-import { fetchTerritorialCoverages } from "store/urbanShapes/actions";
 
 import BinaryChoice from "./BinaryChoice/BinaryChoice";
 import WeightChoice from "./WeightChoice/WeightChoice";
 import TerritorialUnitImage from "components/TerritorialUnitImage/TerrritorialUnitImage";
+import useTerritorialCoverages from "hooks/useTerritorialCoverages";
 
 const ImagePairwiseCombinations = (props) => {
-  const dispatch = useDispatch();
   const { value, question } = props;
   const {
     image_pairwise_type: pairWiseType,
@@ -30,9 +29,12 @@ const ImagePairwiseCombinations = (props) => {
   const activeProfile = useSelector(getActiveProfile);
   const questions = useSelector(getQuestions);
   const profile = activeProfile?.profile_data || {};
-  const territorialCoverages = useSelector(
-    (state) => state.urbanShapes.territorialCoverages
-  );
+  const {
+    territorialCoverages,
+    loading: territorialCoveragesLoading,
+    loadTerritorialCoverages,
+  } = useTerritorialCoverages();
+
   const territorialCoverageQuestion = questions.find(
     (q) => q.question_type === questionTypes.TERRITORIAL_COVERAGE
   );
@@ -43,7 +45,7 @@ const ImagePairwiseCombinations = (props) => {
   React.useEffect(() => {
     if (territorialCoverages.length) return;
 
-    dispatch(fetchTerritorialCoverages());
+    loadTerritorialCoverages();
   }, []);
 
   React.useEffect(() => {
@@ -119,7 +121,7 @@ const ImagePairwiseCombinations = (props) => {
   //     />
   //   );
 
-  if (!territorialCoverages.length)
+  if (territorialCoveragesLoading)
     return (
       <Dimmer active inverted style={{ height: "300px", position: "relative" }}>
         <Loader size="large">Loading</Loader>

@@ -1,11 +1,11 @@
 /* eslint-disable import/no-anonymous-default-export */
 import React from "react";
-import { List, Segment, Grid } from "semantic-ui-react";
+import { List, Segment, Grid, Dimmer, Loader } from "semantic-ui-react";
 import styled from "styled-components";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 
 import { getAppConfiguration } from "store/app/selectors";
-import { fetchTerritorialCoverages } from "store/urbanShapes/actions";
+import useTerritorialCoverages from "hooks/useTerritorialCoverages";
 import TerritorialMap from "./TerritorialMap";
 import QuestionInfo from "../_shared/QuestionInfo";
 
@@ -13,10 +13,11 @@ export default ({ question, value, onChange, disabled }) => {
   const [geoJson, setGeoJson] = React.useState();
   const [regions, setRegions] = React.useState();
   const [selectedRegion, _setSelectedRegion] = React.useState();
-  const dispatch = useDispatch();
-  const territorialCoverages = useSelector(
-    (state) => state.urbanShapes.territorialCoverages
-  );
+  const {
+    territorialCoverages,
+    loading: territorialCoveragesLoading,
+    loadTerritorialCoverages,
+  } = useTerritorialCoverages();
   const questionRef = React.useRef(question);
 
   questionRef.current = question;
@@ -67,7 +68,7 @@ export default ({ question, value, onChange, disabled }) => {
   }, [regions, !profile]);
 
   React.useEffect(() => {
-    dispatch(fetchTerritorialCoverages());
+    loadTerritorialCoverages();
   }, []);
   React.useEffect(() => {
     if (!territorialCoverages.length) return;
@@ -137,6 +138,18 @@ export default ({ question, value, onChange, disabled }) => {
       </Segment>
     </ListDiv>
   );
+
+  if (territorialCoveragesLoading) {
+    return (
+      <Dimmer
+        active
+        inverted
+        style={{ background: "transparent", position: "relative" }}
+      >
+        <Loader size="large">Loading</Loader>
+      </Dimmer>
+    );
+  }
 
   return (
     <>
