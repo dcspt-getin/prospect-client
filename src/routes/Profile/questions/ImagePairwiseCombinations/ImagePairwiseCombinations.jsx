@@ -43,8 +43,6 @@ const ImagePairwiseCombinations = (props) => {
   );
 
   React.useEffect(() => {
-    if (territorialCoverages.length) return;
-
     loadTerritorialCoverages();
   }, []);
 

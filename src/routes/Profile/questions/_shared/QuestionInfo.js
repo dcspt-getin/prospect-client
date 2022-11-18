@@ -1,6 +1,6 @@
 /* eslint-disable import/no-anonymous-default-export */
 import React, { useState } from "react";
-import { Grid, Header, Image, Button } from "semantic-ui-react";
+import { Grid, Header, Image, Button, Dimmer, Loader } from "semantic-ui-react";
 import styled from "styled-components";
 import { useSelector } from "react-redux";
 
@@ -8,9 +8,11 @@ import HTMLContent from "src/components/HTMLContent";
 import TerritorialUnitImage from "components/TerritorialUnitImage/TerrritorialUnitImage";
 import { getAppConfiguration } from "store/app/selectors";
 import InfoModal from "components/InfoModal";
-import getQuestionValueText from "helpers/questions/getQuestionValueText";
+import { getQuestionValueText } from "helpers/questions/questionValueUtils";
 import { getQuestions } from "store/questions/selectors";
 import { getActiveProfile } from "store/profiles/selectors";
+import questionTypes from "helpers/questions/questionTypes";
+import useTerritorialCoverages from "hooks/useTerritorialCoverages";
 
 export default ({ question, renderDescription, hideDescription }) => {
   const questions = useSelector(getQuestions);
@@ -19,7 +21,16 @@ export default ({ question, renderDescription, hideDescription }) => {
   const googleMapsApiKey = useSelector((state) =>
     getAppConfiguration(state, "GOOGLE_API_KEY")
   );
+  const {
+    allImages,
+    loadTerritorialCoverages,
+    loading: territorialCoveragesLoading,
+  } = useTerritorialCoverages();
   const { help } = question;
+
+  React.useEffect(() => {
+    loadTerritorialCoverages();
+  }, []);
 
   const _renderQuestionImage = () => {
     if (question.territorial_unit_image) {
@@ -51,9 +62,17 @@ export default ({ question, renderDescription, hideDescription }) => {
       </Grid.Row>
     );
   };
-  const _getDescription = (desc) => {
+  const _getDescription = (desc = "") => {
     const { parent_question } = question;
-    let result = desc;
+    let result = {
+      content: desc,
+      images: [],
+    };
+
+    if (!desc) {
+      return result;
+    }
+
     const allQuestionsIdsIncludingParentQuestion = {
       parent_question,
       ...questions.reduce(
@@ -63,9 +82,9 @@ export default ({ question, renderDescription, hideDescription }) => {
     };
 
     Object.keys(allQuestionsIdsIncludingParentQuestion).forEach((key) => {
-      const regexString = `{${key}.([^)]+)}`;
+      const regexString = `{${key}.(.*?)}`;
       const regex = new RegExp(regexString);
-      const matches = result.match(regex);
+      const matches = result.content.match(regex);
 
       if (matches) {
         const [keyFound, property] = matches;
@@ -76,19 +95,38 @@ export default ({ question, renderDescription, hideDescription }) => {
           (property.includes("value") || property.includes("meta")) &&
           activeProfile
         ) {
+          const isImageQuestion =
+            currQuestion?.question_type ===
+            questionTypes.IMAGE_PAIRWISE_COMBINATIONS;
           const value = activeProfile?.profile_data[currQuestion.id];
 
-          result = result.replace(
-            keyFound,
-            getQuestionValueText(currQuestion, value, property)
-          );
+          if (isImageQuestion) {
+            result.images = [
+              ...result.images,
+              {
+                question: currQuestion,
+                name: getQuestionValueText(currQuestion, value, property),
+              },
+            ];
+            result.content = result.content.replace(keyFound, "");
+          } else {
+            result.content = result.content.replace(
+              keyFound,
+              getQuestionValueText(currQuestion, value, property)
+            );
+          }
         } else {
-          result = result.replace(keyFound, currQuestion[property]);
+          result.content = result.content.replace(
+            keyFound,
+            currQuestion[property]
+          );
         }
       }
     });
 
-    if (renderDescription) return renderDescription(result);
+    if (renderDescription) {
+      result.content = renderDescription(result.content);
+    }
 
     return result;
   };
@@ -107,6 +145,38 @@ export default ({ question, renderDescription, hideDescription }) => {
       />
     );
   };
+  const _renderDescriptionImage = (image) => {
+    const useGoogleStreetImages = image.question.use_google_street_images;
+    const use360Image = image.question.use_360_image;
+
+    const tuImage = allImages.find((i) => i.unit.name === image.name);
+
+    return (
+      <TerritorialUniImageContainer>
+        <TerritorialUnitImage
+          image={tuImage}
+          use360Image={use360Image}
+          useGoogleStreetImages={useGoogleStreetImages}
+          googleMapsApiKey={googleMapsApiKey}
+        />
+      </TerritorialUniImageContainer>
+    );
+  };
+
+  const description = _getDescription(question.description);
+  const descriptionHTML = _getDescription(question.description_html);
+
+  if (territorialCoveragesLoading) {
+    return (
+      <Dimmer
+        active
+        inverted
+        style={{ background: "transparent", position: "relative" }}
+      >
+        <Loader size="large">Loading</Loader>
+      </Dimmer>
+    );
+  }
 
   return (
     <Grid>
@@ -125,7 +195,9 @@ export default ({ question, renderDescription, hideDescription }) => {
             <Grid.Row style={{ paddingBottom: 0 }}>
               <Grid.Column width={16}>
                 <Description>
-                  <p>{_getDescription(question.description)}</p>
+                  <p>{description.content}</p>
+                  {description.images &&
+                    description.images.map(_renderDescriptionImage)}
                 </Description>
               </Grid.Column>
             </Grid.Row>
@@ -134,9 +206,9 @@ export default ({ question, renderDescription, hideDescription }) => {
             <Grid.Row style={{ paddingBottom: 0 }}>
               <Grid.Column width={16}>
                 <Description>
-                  <HTMLContent
-                    html={_getDescription(question.description_html)}
-                  />
+                  <HTMLContent html={descriptionHTML.content} />
+                  {descriptionHTML.images &&
+                    descriptionHTML.images.map(_renderDescriptionImage)}
                 </Description>
               </Grid.Column>
             </Grid.Row>

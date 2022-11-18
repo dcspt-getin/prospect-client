@@ -10,6 +10,8 @@ const TerritorialUnitImage = ({
   use360Image,
   googleMapsApiKey,
 }) => {
+  if (!image) return "image not available";
+
   if (useGoogleStreetImages) {
     return (
       <GoogleStreetView

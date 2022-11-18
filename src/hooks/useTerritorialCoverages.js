@@ -1,4 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
+import { flatten } from "ramda";
+import { useMemo } from "react";
 
 import {
   getTerritorialCoverages,
@@ -13,13 +15,36 @@ const useTerritorialCoverages = () => {
   const loading = useSelector(getTerritorialCoveragesLoading);
 
   const loadTerritorialCoverages = () => {
+    if (territorialCoverages.length > 0) {
+      return;
+    }
+
     dispatch(fetchTerritorialCoverages());
   };
+
+  const allImages = useMemo(
+    () =>
+      territorialCoverages.reduce((acc, cur) => {
+        return [
+          ...acc,
+          ...flatten(
+            cur.units.map((tu) =>
+              tu.images.map((i) => ({
+                ...i,
+                unit: tu,
+              }))
+            )
+          ),
+        ];
+      }, []),
+    [territorialCoverages]
+  );
 
   return {
     territorialCoverages,
     loadTerritorialCoverages,
     loading,
+    allImages,
   };
 };
 
