@@ -169,7 +169,7 @@ const Question = ({
   return renderQuestion(questionLabel, { ...props, key: questionKey });
 };
 
-export default ({ question, onChange, value, parentValue }) => {
+export default ({ question, onChange, value }) => {
   const [t] = useTranslations("userProfile");
   const dispatch = useDispatch();
   const [submited, setSubmited] = React.useState(false);
@@ -537,7 +537,7 @@ export default ({ question, onChange, value, parentValue }) => {
 
   return (
     <Wrapper>
-      <QuestionInfo parentValue={parentValue} question={question} />
+      <QuestionInfo question={question} />
       <div className="p-4">
         <Form>
           {visibleQuestions.map((q, i) => (

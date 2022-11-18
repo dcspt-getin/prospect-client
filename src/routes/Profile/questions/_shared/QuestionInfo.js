@@ -9,13 +9,12 @@ import TerritorialUnitImage from "components/TerritorialUnitImage/TerrritorialUn
 import { getAppConfiguration } from "store/app/selectors";
 import InfoModal from "components/InfoModal";
 import getQuestionValueText from "helpers/questions/getQuestionValueText";
+import { getQuestions } from "store/questions/selectors";
+import { getActiveProfile } from "store/profiles/selectors";
 
-export default ({
-  question,
-  renderDescription,
-  parentValue,
-  hideDescription,
-}) => {
+export default ({ question, renderDescription, hideDescription }) => {
+  const questions = useSelector(getQuestions);
+  const activeProfile = useSelector(getActiveProfile);
   const [showHelpModel, setShowHelpModel] = useState(false);
   const googleMapsApiKey = useSelector((state) =>
     getAppConfiguration(state, "GOOGLE_API_KEY")
@@ -55,22 +54,39 @@ export default ({
   const _getDescription = (desc) => {
     const { parent_question } = question;
     let result = desc;
+    const allQuestionsIdsIncludingParentQuestion = {
+      parent_question,
+      ...questions.reduce(
+        (acc, q) => ({ ...acc, [`question_${q.id}`]: q }),
+        {}
+      ),
+    };
 
-    if (parent_question) {
-      const parentKeys = Object.keys(parent_question);
+    Object.keys(allQuestionsIdsIncludingParentQuestion).forEach((key) => {
+      const regexString = `{${key}.([^)]+)}`;
+      const regex = new RegExp(regexString);
+      const matches = result.match(regex);
 
-      parentKeys.forEach((key) => {
-        result = result.replace(
-          `{parent_question.${key}}`,
-          parent_question[key]
-        );
-      });
+      if (matches) {
+        const [keyFound, property] = matches;
+        const currQuestion = allQuestionsIdsIncludingParentQuestion[key];
 
-      result = result.replace(
-        `{parent_question.value}`,
-        getQuestionValueText(parent_question, parentValue)
-      );
-    }
+        if (
+          property &&
+          (property.includes("value") || property.includes("meta")) &&
+          activeProfile
+        ) {
+          const value = activeProfile?.profile_data[currQuestion.id];
+
+          result = result.replace(
+            keyFound,
+            getQuestionValueText(currQuestion, value, property)
+          );
+        } else {
+          result = result.replace(keyFound, currQuestion[property]);
+        }
+      }
+    });
 
     if (renderDescription) return renderDescription(result);
 

@@ -214,8 +214,18 @@ export default async (options, value, meta, config = {}) => {
   //   comparisionsMatrix,
   // });
 
+  const optAscOrder = Object.entries(eigenvector)
+    .sort()
+    .reduce((acc, pair, index) => {
+      return {
+        ...acc,
+        [index]: pair[0],
+      };
+    }, {});
+
   return {
     eigenVector: eigenvector,
+    optAscOrder,
     currentValueMatrix,
     perfectConsistencyMatrix: inversedPerfectConsistencyMatrix,
     r2,

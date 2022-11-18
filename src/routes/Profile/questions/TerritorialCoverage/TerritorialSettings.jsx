@@ -9,7 +9,7 @@ import useTerritorialCoverages from "hooks/useTerritorialCoverages";
 import TerritorialMap from "./TerritorialMap";
 import QuestionInfo from "../_shared/QuestionInfo";
 
-export default ({ question, value, parentValue, onChange, disabled }) => {
+export default ({ question, value, onChange, disabled }) => {
   const [geoJson, setGeoJson] = React.useState();
   const [regions, setRegions] = React.useState();
   const [selectedRegion, _setSelectedRegion] = React.useState();
@@ -153,7 +153,7 @@ export default ({ question, value, parentValue, onChange, disabled }) => {
 
   return (
     <>
-      <QuestionInfo parentValue={parentValue} question={question} />
+      <QuestionInfo question={question} />
       <PageContent>
         <Grid>
           <Grid.Column only="tablet computer" tablet={8} computer={10}>

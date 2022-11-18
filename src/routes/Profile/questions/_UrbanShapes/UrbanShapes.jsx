@@ -24,14 +24,14 @@ const stepsMapper = {
   [RESULTS]: UrbanShapesResults,
 };
 
-const UrbanShapesComponent = ({ question, parentValue }) => {
+const UrbanShapesComponent = ({ question }) => {
   const [currentStep, setCurrentStep] = React.useState(TERRITORIAL_SETTINGS);
 
   const Component = stepsMapper[currentStep];
 
   return (
     <Wrapper>
-      <QuestionInfo parentValue={parentValue} question={question} />
+      <QuestionInfo question={question} />
       <Component />
     </Wrapper>
   );

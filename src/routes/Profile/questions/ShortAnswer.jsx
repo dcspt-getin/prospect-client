@@ -11,7 +11,7 @@ const INPUT_TYPES = {
   TEXT: "text",
 };
 
-export default ({ question, value, parentValue, onChange, disabled }) => {
+export default ({ question, value, onChange, disabled }) => {
   const questionRef = React.useRef(question);
 
   questionRef.current = question;
@@ -107,7 +107,7 @@ export default ({ question, value, parentValue, onChange, disabled }) => {
 
   return (
     <Wrapper>
-      <QuestionInfo parentValue={parentValue} question={question} />
+      <QuestionInfo question={question} />
       <Grid>
         <Grid.Row>
           <Grid.Column

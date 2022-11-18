@@ -1,4 +1,4 @@
-let apiBaseUrl = "https://dcspt-getin.ua.pt/prospect/api"; // "https://dcspt-drivitup.ua.pt/housepref/api";
+let apiBaseUrl = "http://localhost:8000/api"; // "https://dcspt-drivitup.ua.pt/housepref/api";
 
 switch (process.env.REACT_APP_ENV) {
   case "staging":

@@ -9,7 +9,7 @@ import { getAppConfiguration } from "store/app/selectors";
 import UserLocationMap from "./UserLocationMap";
 import QuestionInfo from "../../_shared/QuestionInfo";
 
-export default ({ question, value, parentValue, onChange, disabled }) => {
+export default ({ question, value, onChange, disabled }) => {
   const questionRef = React.useRef(question);
   const [rerender, setRerender] = React.useState(false);
 
@@ -35,7 +35,7 @@ export default ({ question, value, parentValue, onChange, disabled }) => {
 
   return (
     <Wrapper>
-      <QuestionInfo parentValue={parentValue} question={question} />
+      <QuestionInfo question={question} />
       <Grid>
         <Grid.Row>
           <Grid.Column>
