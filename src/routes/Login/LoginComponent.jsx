@@ -5,11 +5,13 @@ import { useHistory } from "react-router-dom";
 
 import Dashboard from "components/Dashboard";
 import usePasswordlessLogin from "hooks/usePasswordlessLogin";
+import useSessionLogin from "hooks/useSessionLogin";
 
 import LoginForm from "./LoginForm";
 
 export default () => {
   const history = useHistory();
+  useSessionLogin();
   usePasswordlessLogin();
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
 

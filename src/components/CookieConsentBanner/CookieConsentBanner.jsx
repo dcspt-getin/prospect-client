@@ -38,11 +38,11 @@ const CookieConsentBanner = () => {
 const Wrapper = styled.div`
   span {
     color: #fff;
-    text-decoration: underline;
     margin-left: 8px;
 
     a {
       color: #fff;
+      text-decoration: underline;
     }
   }
 `;
