@@ -82,6 +82,42 @@ export const passwordlessLogin =
     }
   };
 
+export const sessionLogin =
+  (type, sessionId, userGroup, data = {}) =>
+  async (dispatch) => {
+    try {
+      const { data: tokenData } = await axios.post(
+        `${API_BASE_URL}/user-integrations/session/token`,
+        {
+          type,
+          session_id: sessionId,
+          user_group: userGroup,
+          data,
+        }
+      );
+
+      axios.defaults.headers.common[
+        "Authorization"
+      ] = `Bearer ${tokenData.access}`;
+      localStorage.setItem("jwtToken", tokenData.access);
+
+      dispatch({
+        type: AUTHENTICATE_USER,
+        payload: tokenData,
+      });
+
+      await dispatch(getCurrentUser());
+
+      return [true];
+    } catch (err) {
+      dispatch({
+        type: AUTHENTICATE_USER_FAILED,
+      });
+
+      return [false];
+    }
+  };
+
 export const verifyCurrentToken = (token) => async (dispatch) => {
   try {
     dispatch({

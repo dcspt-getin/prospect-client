@@ -11,6 +11,7 @@ import Results from "routes/Results";
 import Profile from "routes/Profile";
 import TriggerError from "components/TriggerError";
 import TermsAndConditions from "routes/TermsAndConditions";
+import AnonymousLogin from "routes/AnonymousLogin/AnonymousLogin";
 
 import PrivateRoute from "./PrivateRoute";
 
@@ -34,6 +35,9 @@ export default () => {
       </Route>
       <Route path="/login">
         <Login />
+      </Route>
+      <Route path="/anonymous-login">
+        <AnonymousLogin />
       </Route>
       <Route path="/register">
         <Register />

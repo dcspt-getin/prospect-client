@@ -5,13 +5,13 @@ import { useHistory } from "react-router-dom";
 
 import Dashboard from "components/Dashboard";
 import usePasswordlessLogin from "hooks/usePasswordlessLogin";
-import useSessionLogin from "hooks/useSessionLogin";
+import useProlificSessionLogin from "hooks/useProlificSessionLogin";
 
 import LoginForm from "./LoginForm";
 
 export default () => {
   const history = useHistory();
-  useSessionLogin();
+  useProlificSessionLogin();
   usePasswordlessLogin();
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
 
