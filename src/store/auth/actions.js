@@ -169,13 +169,15 @@ export const logOutUser = () => {
 };
 
 export const registerUser = (userData) => async (dispatch) => {
+  let err;
+
   try {
     await axios.post(`${API_BASE_URL}/users/`, userData);
 
     return true;
-  } catch (err) {
-    console.log({ err });
+  } catch (e) {
+    err = e?.response?.data;
   }
 
-  return false;
+  return [false, err];
 };

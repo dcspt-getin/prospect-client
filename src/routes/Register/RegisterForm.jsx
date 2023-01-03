@@ -30,22 +30,44 @@ export default () => {
   const _onSubmit = async () => {
     let valid = {};
 
-    if (!form.terms) valid["terms"] = t("ERROR_ACCEPT_TERMS");
+    if (!form.terms) valid["terms"] = "ERROR_ACCEPT_TERMS";
     if (!form.email && !validator.isEmail(form.email))
-      valid["email"] = t("ERROR_INVALID_EMAIL");
-    if (!form.username) valid["username"] = t("ERROR_INSERT_USERNAME");
+      valid["email"] = "ERROR_INVALID_EMAIL";
+    if (!form.username) valid["username"] = "ERROR_INSERT_USERNAME";
     if (!form.password || !form.confirmPassword)
-      valid["password"] = t("ERROR_INSERT_PASSWORD");
+      valid["password"] = "ERROR_INSERT_PASSWORD";
     if (form.password !== form.confirmPassword)
-      valid["password"] = t("ERROR_INVALID_PASSWORDS");
+      valid["password"] = "ERROR_INVALID_PASSWORDS";
 
     if (!Object.keys(valid).length) {
-      const created = await dispatch(registerUser(form));
+      const [created, error] = await dispatch(registerUser(form));
+
+      if (error) {
+        setErrors(error);
+      }
 
       if (created) history.push("/login");
     } else {
       setErrors(valid);
     }
+  };
+
+  const _renderErrors = (field) => {
+    const error = errors[field];
+
+    const _renderError = (e) => (
+      <span className="text-xs text-red-700" style={{ display: "block" }}>
+        {t(e)}
+      </span>
+    );
+
+    if (!error) return "";
+
+    if (Array.isArray(error)) {
+      return error.map(_renderError);
+    }
+
+    return _renderError(error);
   };
 
   return (
@@ -84,9 +106,7 @@ export default () => {
                   value={form.email}
                   onChange={_onChangeField("email")}
                 />
-                {errors.email && (
-                  <span className="text-xs text-red-700">{errors.email}</span>
-                )}
+                {_renderErrors("email")}
               </label>
               <label className="block text-sm">
                 <span className="text-gray-700 dark:text-gray-400">
@@ -99,11 +119,7 @@ export default () => {
                   value={form.username}
                   onChange={_onChangeField("username")}
                 />
-                {errors.username && (
-                  <span className="text-xs text-red-700">
-                    {errors.username}
-                  </span>
-                )}
+                {_renderErrors("username")}
               </label>
               <label className="block mt-4 text-sm">
                 <span className="text-gray-700 dark:text-gray-400">
@@ -116,11 +132,7 @@ export default () => {
                   value={form.password}
                   onChange={_onChangeField("password")}
                 />
-                {errors.password && (
-                  <span className="text-xs text-red-700">
-                    {errors.password}
-                  </span>
-                )}
+                {_renderErrors("password")}
               </label>
               <label className="block mt-4 text-sm">
                 <span className="text-gray-700 dark:text-gray-400">
@@ -159,11 +171,7 @@ export default () => {
                   </span>
                 </label>
               </div>
-              <div>
-                {errors.terms && (
-                  <span className="text-xs text-red-700">{errors.terms}</span>
-                )}
-              </div>
+              <div>{_renderErrors("terms")}</div>
 
               <a
                 className="block w-full px-4 py-2 mt-4 text-sm font-medium leading-5 text-center text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple"
