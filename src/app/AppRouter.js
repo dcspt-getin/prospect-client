@@ -10,8 +10,8 @@ import Register from "routes/Register";
 import Results from "routes/Results";
 import Profile from "routes/Profile";
 import TriggerError from "components/TriggerError";
-import TermsAndConditions from "routes/TermsAndConditions";
 import AnonymousLogin from "routes/AnonymousLogin/AnonymousLogin";
+import Pages from "routes/Pages";
 
 import PrivateRoute from "./PrivateRoute";
 
@@ -42,15 +42,15 @@ export default () => {
       <Route path="/register">
         <Register />
       </Route>
-      <Route path="/terms-conditions">
-        <TermsAndConditions />
-      </Route>
       <PrivateRoute path="/questionario">
         <Profile />
       </PrivateRoute>
       <PrivateRoute path="/results">
         <Results />
       </PrivateRoute>
+      <Route path="/:pageId">
+        <Pages />
+      </Route>
       <Route path="/">
         <Login />
       </Route>

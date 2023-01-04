@@ -1,15 +1,20 @@
 /* eslint-disable import/no-anonymous-default-export */
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Button, Menu } from "semantic-ui-react";
 import { useSelector, useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
+import axios from "axios";
 
 import { logOutUser } from "store/auth/actions";
 import styled from "styled-components";
 import LanguageSelector from "./LanguageSelector";
 import useTranslations from "src/hooks/useTranslations";
 import configurations from "helpers/configurations";
-import { getAppConfiguration } from "store/app/selectors";
+import {
+  getAppConfiguration,
+  getCurrentTranslation,
+} from "store/app/selectors";
+import { API_BASE_URL } from "config";
 
 export default () => {
   const history = useHistory();
@@ -24,6 +29,25 @@ export default () => {
   const showResultsBefore = useSelector((state) =>
     getAppConfiguration(state, configurations.SHOW_RESULTS_BEFORE)
   );
+  const currentTranslation = useSelector(getCurrentTranslation);
+
+  const [menuPages, setMenuPages] = useState([]);
+
+  useEffect(() => {
+    axios.get(`${API_BASE_URL}/pages/`).then((res) => {
+      const {
+        data: { results },
+      } = res;
+
+      const pages = results.filter(
+        (r) =>
+          r.language.language_code === currentTranslation?.language_code &&
+          r.header_menu === true
+      );
+
+      setMenuPages(pages);
+    });
+  }, [currentTranslation?.language_code]);
 
   const isTodayBetewweenResultsBeforeAndAfter =
     new Date() > new Date(showResultsAfter) &&
@@ -34,11 +58,13 @@ export default () => {
   return (
     <MyMenu size="large">
       <Menu.Menu position="left">
-        <Menu.Item
-          name={t("Acerca de")}
-          active={history.location === "/terms-conditions"}
-          onClick={() => history.push("/terms-conditions")}
-        />
+        {menuPages.map((p) => (
+          <Menu.Item
+            name={p.title}
+            active={history.location === `/${p.slug}`}
+            onClick={() => history.push(`/${p.slug}`)}
+          />
+        ))}
       </Menu.Menu>
 
       <Menu.Menu position="right">
