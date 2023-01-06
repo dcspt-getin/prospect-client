@@ -4,9 +4,13 @@ import useLocalSessionLogin from "hooks/useLocalSessionLogin";
 import LoginComponent from "../Login/LoginComponent";
 
 const AnonymousLogin = () => {
-  useLocalSessionLogin();
+  const [error] = useLocalSessionLogin();
 
-  return <LoginComponent />;
+  if (error) {
+    return <LoginComponent />;
+  }
+
+  return "";
 };
 
 export default AnonymousLogin;

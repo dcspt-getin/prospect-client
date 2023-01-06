@@ -6,6 +6,7 @@ import { useHistory } from "react-router-dom";
 import Dashboard from "components/Dashboard";
 import usePasswordlessLogin from "hooks/usePasswordlessLogin";
 import useProlificSessionLogin from "hooks/useProlificSessionLogin";
+import CookieConsentBanner from "components/CookieConsentBanner/CookieConsentBanner";
 
 import LoginForm from "./LoginForm";
 
@@ -26,8 +27,11 @@ export default () => {
   }
 
   return (
-    <Dashboard hideLeftMenu>
-      <LoginForm />
-    </Dashboard>
+    <>
+      <Dashboard hideLeftMenu>
+        <LoginForm />
+      </Dashboard>
+      <CookieConsentBanner />
+    </>
   );
 };

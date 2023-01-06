@@ -11,8 +11,9 @@ import {
   Divider,
 } from "semantic-ui-react";
 import styled from "styled-components";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { is, pipe, isEmpty, not, both, has, propEq, or } from "ramda";
+import Cookies from "js-cookie";
 
 import Dashboard from "components/Dashboard";
 import useTranslations from "hooks/useTranslations";
@@ -21,6 +22,7 @@ import useUserProfile from "hooks/useUserProfile";
 import configurations from "helpers/configurations/index";
 import questionTypes from "helpers/questions/questionTypes";
 import { getAppConfiguration } from "store/app/selectors";
+import { logOutUser } from "store/auth/actions";
 
 import MultipleChoice from "./questions/MultipleChoice";
 import ShortAnswer from "./questions/ShortAnswer";
@@ -53,6 +55,7 @@ const isSubmittedOrIsInfoQuestion = (userProfile, question) =>
   );
 
 export default () => {
+  const dispatch = useDispatch();
   const [t] = useTranslations("userProfile");
   const {
     questions,
@@ -72,6 +75,9 @@ export default () => {
     (state) =>
       getAppConfiguration(state, configurations.SHOW_PREVIOUS_QUESTION) ===
       "true"
+  );
+  const prolificCompletionUrl = useSelector((state) =>
+    getAppConfiguration(state, configurations.PROLIFIC_COMPLETION_URL)
   );
   const currentQuestionRef = React.useRef(currentQuestion);
 
@@ -398,6 +404,19 @@ export default () => {
                       <h3>{t("Questionario Completo")}</h3>
                       <br />
                       <p>{t("Obrigado pela sua participação")}</p>
+                      <br />
+                      {Cookies.get("prolificPid") && prolificCompletionUrl && (
+                        <Button
+                          onClick={() => {
+                            dispatch(logOutUser());
+
+                            window.location = prolificCompletionUrl;
+                          }}
+                          floated="left"
+                        >
+                          {t("Terminar Questionário")}
+                        </Button>
+                      )}
                     </>
                   )}
                   {_renderQuestionWithChildren(currentQuestion)}

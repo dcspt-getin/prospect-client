@@ -6,7 +6,6 @@ import "styles/tailwind.output.css";
 import "semantic-ui-css/semantic.min.css";
 
 import configureStore from "store";
-import CookieConsentBanner from "components/CookieConsentBanner/CookieConsentBanner";
 
 import AppRouter from "./AppRouter";
 
@@ -19,7 +18,6 @@ function App() {
       <Router basename={process.env.PUBLIC_URL}>
         <Provider store={store}>
           <AppRouter />
-          <CookieConsentBanner />
         </Provider>
       </Router>
     </div>

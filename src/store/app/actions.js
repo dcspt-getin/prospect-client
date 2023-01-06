@@ -10,11 +10,14 @@ import {
 
 export const getAppConfigurations = () => async (dispatch) => {
   try {
-    const { data } = await axios.get(`${API_BASE_URL}/configurations/`, {
-      headers: {
-        Authorization: "",
-      },
-    });
+    const { data } = await axios.get(
+      `${API_BASE_URL}/configurations/?limit=100`,
+      {
+        headers: {
+          Authorization: "",
+        },
+      }
+    );
 
     dispatch({
       type: SET_APP_CONFIGURATIONS,

@@ -1,4 +1,5 @@
 import axios from "axios";
+import Cookies from "js-cookie";
 
 import { API_BASE_URL } from "config";
 import { getUserProfiles } from "store/profiles/actions";
@@ -161,6 +162,10 @@ export const getCurrentUser = () => async (dispatch) => {
 
 export const logOutUser = () => {
   localStorage.removeItem("jwtToken");
+
+  // delete cookies
+  Cookies.remove("localSessionId");
+  Cookies.remove("prolificPid");
 
   return {
     type: LOGOUT_USER,
