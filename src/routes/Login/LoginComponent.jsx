@@ -12,7 +12,7 @@ import LoginForm from "./LoginForm";
 
 export default () => {
   const history = useHistory();
-  useProlificSessionLogin();
+  const [processingProlificLogin] = useProlificSessionLogin();
   usePasswordlessLogin();
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
 
@@ -24,6 +24,10 @@ export default () => {
     } else {
       history.push("/questionario");
     }
+  }
+
+  if (processingProlificLogin) {
+    return "";
   }
 
   return (

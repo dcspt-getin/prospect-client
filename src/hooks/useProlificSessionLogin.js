@@ -1,4 +1,4 @@
-import { useMemo, useEffect } from "react";
+import { useMemo, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
 import Cookies from "js-cookie";
@@ -9,6 +9,7 @@ const useProlificSessionLogin = () => {
   const dispatch = useDispatch();
   const { search } = useLocation();
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+  const [processing, setProcessing] = useState(false);
 
   const query = useMemo(() => new URLSearchParams(search), [search]);
 
@@ -25,21 +26,23 @@ const useProlificSessionLogin = () => {
     }
 
     const prolificPid = query.get("PROLIFIC_PID");
+    setProcessing(true);
 
     try {
       dispatch(
         sessionLogin("PROLIFIC", sessionId, userGroup, {
-          prolific_pid: prolificPid,
+          ...Object.fromEntries(query),
         })
       );
 
       Cookies.set("prolificPid", prolificPid);
     } catch (e) {
       console.log({ e });
+      setProcessing(false);
     }
   }, [query]);
 
-  return [];
+  return [processing];
 };
 
 export default useProlificSessionLogin;

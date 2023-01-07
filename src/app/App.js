@@ -4,7 +4,6 @@ import { Provider } from "react-redux";
 import "./App.css";
 import "styles/tailwind.output.css";
 import "semantic-ui-css/semantic.min.css";
-
 import configureStore from "store";
 
 import AppRouter from "./AppRouter";

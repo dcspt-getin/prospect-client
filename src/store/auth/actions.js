@@ -101,6 +101,7 @@ export const sessionLogin =
         "Authorization"
       ] = `Bearer ${tokenData.access}`;
       localStorage.setItem("jwtToken", tokenData.access);
+      Cookies.set("cookieBanner", true);
 
       dispatch({
         type: AUTHENTICATE_USER,

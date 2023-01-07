@@ -212,7 +212,6 @@ export default () => {
     return !!userProfile[q?.id];
   };
   const _nextQuestion = () => {
-    gotoNextQuestion();
     const { meta } = userProfile[currentQuestion.id] || {};
     const metaEndTime = getQuestionEndTime(meta);
 
@@ -228,12 +227,17 @@ export default () => {
         newMeta
       );
     } else {
-      _onChangeQuestion(
-        userProfile[currentQuestion.id]?.value,
-        currentQuestion,
-        newMeta
-      );
+      const val = userProfile[currentQuestion.id]?.value;
+
+      _onChangeQuestion(val, currentQuestion, newMeta);
+
+      if (+currentQuestion.option_to_finish === +val) {
+        goToQuestionIndex(totalQuestions);
+
+        return;
+      }
     }
+    gotoNextQuestion();
   };
   const _onContinueProfile = () => {
     setShowAlert(false);

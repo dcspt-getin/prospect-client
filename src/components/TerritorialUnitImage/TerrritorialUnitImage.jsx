@@ -1,7 +1,6 @@
 import React from "react";
 import styled from "styled-components";
 import { Pannellum } from "pannellum-react";
-
 import GoogleStreetView from "components/GoogleStreetView";
 
 const TerritorialUnitImage = ({
