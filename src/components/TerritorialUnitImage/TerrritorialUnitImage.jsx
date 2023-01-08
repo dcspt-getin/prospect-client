@@ -1,6 +1,8 @@
 import React from "react";
 import styled from "styled-components";
 import { Pannellum } from "pannellum-react";
+import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
+
 import GoogleStreetView from "components/GoogleStreetView";
 
 const TerritorialUnitImage = ({
@@ -42,9 +44,26 @@ const TerritorialUnitImage = ({
   }
 
   return (
-    <ImageContainer
-      style={{ backgroundImage: `url(${image.image || image.image_url})` }}
-    />
+    // <ImageContainer
+    //   style={{ backgroundImage: `url(${image.image || image.image_url})` }}
+    // />
+    <TransformWrapper
+      initialScale={1}
+      initialPositionX={0}
+      initialPositionY={0}
+    >
+      {({ zoomIn, zoomOut, resetTransform, ...rest }) => (
+        <React.Fragment>
+          <Tools>
+            <button onClick={() => zoomIn()}>+</button>
+            <button onClick={() => zoomOut()}>-</button>
+          </Tools>
+          <TransformComponent>
+            <img src={image.image || image.image_url} alt="test" />
+          </TransformComponent>
+        </React.Fragment>
+      )}
+    </TransformWrapper>
   );
 };
 
@@ -52,4 +71,20 @@ export default TerritorialUnitImage;
 
 const ImageContainer = styled.div`
   background-size: contain;
+`;
+
+const Tools = styled.div`
+  z-index: 1000;
+  display: block;
+  height: 20px !important;
+  top: 10px !important;
+
+  button {
+    margin: 6px 4px;
+    background: #3f3d3d;
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: #fff;
+    font-size: 16px;
+  }
 `;
