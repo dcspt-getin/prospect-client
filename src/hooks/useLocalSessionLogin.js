@@ -23,32 +23,36 @@ const useLocalSessionLogin = () => {
       return;
     }
 
-    const userGroup = query.get("GROUP");
-    let sessionId = Cookies.get("localSessionId");
+    const _start = async () => {
+      const userGroup = query.get("GROUP");
+      let sessionId = Cookies.get("localSessionId");
 
-    if (!userGroup) {
-      return;
-    }
+      if (!userGroup) {
+        return;
+      }
 
-    setProcessing(true);
+      setProcessing(true);
 
-    if (!sessionId) {
-      sessionId = generateSessionId();
+      if (!sessionId) {
+        sessionId = generateSessionId();
 
-      Cookies.set("localSessionId", sessionId);
-    }
+        Cookies.set("localSessionId", sessionId);
+      }
 
-    try {
-      dispatch(
-        sessionLogin("LOCAL_SESSION", sessionId, userGroup, {
-          ...Object.fromEntries(query),
-        })
-      );
+      try {
+        await dispatch(
+          sessionLogin("LOCAL_SESSION", sessionId, userGroup, {
+            ...Object.fromEntries(query),
+          })
+        );
 
-      history.push(process.env.PUBLIC_URL);
-    } catch (e) {
-      setProcessing(false);
-    }
+        window.location.reload();
+      } catch (e) {
+        setProcessing(false);
+      }
+    };
+
+    _start();
   }, [query]);
 
   return [processing];
