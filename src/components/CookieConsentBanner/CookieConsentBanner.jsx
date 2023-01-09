@@ -30,10 +30,9 @@ const CookieConsentBanner = () => {
         overlayClasses="overlayclass"
       >
         <Wrapper>
-          {t("COOKIE_TEXT")}
-          <span
+          <div
             style={{ fontSize: 12 }}
-            dangerouslySetInnerHTML={{ __html: t("COOKIE_TEXT_WITH_LINK") }}
+            dangerouslySetInnerHTML={{ __html: t("COOKIE_TEXT") }}
           />
         </Wrapper>
       </CookieConsent>
@@ -70,14 +69,9 @@ const Popup = styled.div`
 const Wrapper = styled.div`
   margin-bottom: 20px;
 
-  span {
+  a {
     /* color: #fff; */
-    margin-left: 8px;
-
-    a {
-      /* color: #fff; */
-      text-decoration: underline;
-    }
+    text-decoration: underline;
   }
 `;
 

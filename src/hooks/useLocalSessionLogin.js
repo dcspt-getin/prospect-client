@@ -45,7 +45,7 @@ const useLocalSessionLogin = () => {
         })
       );
 
-      history.push("/questionario");
+      history.push(process.env.PUBLIC_URL);
     } catch (e) {
       setProcessing(false);
     }
