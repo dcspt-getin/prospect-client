@@ -4,6 +4,7 @@ import { useDispatch } from "react-redux";
 import { useHistory } from "react-router";
 import validator from "validator";
 import styled from "styled-components";
+import Cookies from "js-cookie";
 
 import { registerUser } from "store/auth/actions";
 import useTranslations from "hooks/useTranslations";
@@ -38,6 +39,16 @@ export default () => {
       valid["password"] = "ERROR_INSERT_PASSWORD";
     if (form.password !== form.confirmPassword)
       valid["password"] = "ERROR_INVALID_PASSWORDS";
+
+    if (Cookies.get("cookieBanner") !== "true") {
+      setErrors({
+        global: t(
+          "Aceite a politica de cookies para poder entrar na aplicação"
+        ),
+      });
+
+      return;
+    }
 
     if (!Object.keys(valid).length) {
       const [created, error] = await dispatch(registerUser(form));
@@ -162,7 +173,9 @@ export default () => {
                     {t("Aceito os ")}
                     <a
                       className="underline"
-                      href={`${process.env.PUBLIC_URL}/terms-conditions`}
+                      href={`${process.env.PUBLIC_URL}/${t(
+                        "TERMS_CONDITIONS_LINK"
+                      )}`}
                       target="_blank"
                     >
                       {" "}
@@ -179,6 +192,7 @@ export default () => {
               >
                 {t("Registar Conta")}
               </a>
+              <div>{_renderErrors("global")}</div>
 
               <hr className="my-8" />
 

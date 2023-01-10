@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import CookieConsent from "react-cookie-consent";
 import styled from "styled-components";
+import Cookies from "js-cookie";
 
 import useTranslations from "src/hooks/useTranslations";
 
@@ -11,10 +12,21 @@ const buttonStyles = {
   fontSize: "14px",
   padding: "6px 20px",
 };
+const declineButtonStyles = {
+  borderRadius: 4,
+  background: "rgb(193, 42, 42)",
+  color: "#fff",
+  fontSize: "14px",
+  padding: "6px 20px",
+  marginLeft: 10,
+};
 const bannerStyles = {};
 
 const CookieConsentBanner = () => {
   const [t] = useTranslations("cookiesConsent");
+  const [visible, setVisible] = useState(
+    Cookies.get("cookieBanner") !== "true"
+  );
 
   return (
     <Popup>
@@ -22,18 +34,26 @@ const CookieConsentBanner = () => {
         disableStyles
         location="none"
         buttonText={t("ACCEPT")}
+        declineButtonText={t("REJECT")}
         cookieName="cookieBanner"
         overlay
         buttonStyle={buttonStyles}
+        declineButtonStyle={declineButtonStyles}
         // expires={150}
         style={bannerStyles}
         overlayClasses="overlayclass"
+        enableDeclineButton
+        flipButtons
+        onAccept={() => {
+          setVisible(false);
+        }}
+        onDecline={() => {
+          setVisible(false);
+        }}
+        visible={visible ? "show" : "hidden"}
       >
         <Wrapper>
-          <div
-            style={{ fontSize: 12 }}
-            dangerouslySetInnerHTML={{ __html: t("COOKIE_TEXT") }}
-          />
+          <div dangerouslySetInnerHTML={{ __html: t("COOKIE_TEXT") }} />
         </Wrapper>
       </CookieConsent>
     </Popup>

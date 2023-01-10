@@ -2,10 +2,11 @@
 import React from "react";
 import { useDispatch } from "react-redux";
 import styled from "styled-components";
+import Cookies from "js-cookie";
 
 import { login } from "store/auth/actions";
 import useTranslations from "hooks/useTranslations";
-import loginOffice from "./login-office.jpeg";
+// import loginOffice from "./login-office.jpeg";
 
 export default () => {
   const dispatch = useDispatch();
@@ -21,6 +22,16 @@ export default () => {
     setForm({ [field]: e.target.value });
   };
   const _doLogin = async () => {
+    if (Cookies.get("cookieBanner") !== "true") {
+      setErrors({
+        global: t(
+          "Aceite a politica de cookies para poder entrar na aplicação"
+        ),
+      });
+
+      return;
+    }
+
     const [success, error] = await dispatch(login(form));
 
     if (!success) {
