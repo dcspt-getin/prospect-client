@@ -180,7 +180,7 @@ export const registerUser = (userData) => async (dispatch) => {
   try {
     await axios.post(`${API_BASE_URL}/users/`, userData);
 
-    return true;
+    return [true];
   } catch (e) {
     err = e?.response?.data;
   }
