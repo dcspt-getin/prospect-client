@@ -37,7 +37,7 @@ const useAnonymousSessionTime = (showSessionAlert, closeUserSession) => {
 
   const checkUserSessionTime = () => {
     // only for anonymous sessions
-    if (!isAnonymousUser) {
+    if (!currentUser || !isAnonymousUser) {
       return;
     }
 
@@ -46,7 +46,7 @@ const useAnonymousSessionTime = (showSessionAlert, closeUserSession) => {
       return;
     }
 
-    const lastLoginDate = moment(currentUser.last_login);
+    const lastLoginDate = moment(currentUser?.last_login);
 
     const limitSessionTime = moment(lastLoginDate).add(
       parseInt(anonymousSessionMaxTime),
