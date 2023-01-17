@@ -1,6 +1,6 @@
 /* eslint-disable import/no-anonymous-default-export */
 import React from "react";
-import { Grid, Input } from "semantic-ui-react";
+import { Grid, Input, TextArea, Form } from "semantic-ui-react";
 import styled from "styled-components";
 // import { Slider } from "react-semantic-ui-range";
 import QuestionInfo from "./_shared/QuestionInfo";
@@ -99,6 +99,17 @@ export default ({ question, value, onChange, disabled }) => {
             </Grid.Column>
           </Grid.Row>
         </Grid>
+      );
+    } else if (type === "TEXT") {
+      return (
+        <Form>
+          <TextArea
+            onChange={(e) => _onChange(e.target.value, questionRef.current)}
+            value={value}
+            placeholder="Valor"
+            style={{ minHeight: 100 }}
+          />
+        </Form>
       );
     }
 

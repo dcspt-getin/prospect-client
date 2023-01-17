@@ -5,6 +5,7 @@ import "./App.css";
 import "styles/tailwind.output.css";
 import "semantic-ui-css/semantic.min.css";
 import configureStore from "store";
+import AnonymousSessionAlert from "components/AnonymousSessionAlert/AnonymousSessionAlert";
 
 import AppRouter from "./AppRouter";
 
@@ -16,6 +17,7 @@ function App() {
     <div className="App bg-gray-50">
       <Router basename={process.env.PUBLIC_URL}>
         <Provider store={store}>
+          <AnonymousSessionAlert />
           <AppRouter />
         </Provider>
       </Router>

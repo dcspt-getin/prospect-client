@@ -15,6 +15,8 @@ const getQuestionValueText = (question, profileQuestion, key = "value") => {
     const selectedoption = question.options.find((o) => o.id === +optionId);
 
     return selectedoption?.title;
+  } else if (question?.question_type === questionTypes.SHORT_ANSWER) {
+    return profileQuestion?.value;
   }
 
   return get(profileQuestion, key);

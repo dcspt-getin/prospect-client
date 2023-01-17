@@ -2,7 +2,6 @@ import { useMemo, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
 import Cookies from "js-cookie";
-import { useHistory } from "react-router-dom";
 
 import { sessionLogin } from "store/auth/actions";
 
@@ -14,7 +13,6 @@ const useLocalSessionLogin = () => {
   const { search } = useLocation();
   const [processing, setProcessing] = useState(false);
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
-  const history = useHistory();
 
   const query = useMemo(() => new URLSearchParams(search), [search]);
 

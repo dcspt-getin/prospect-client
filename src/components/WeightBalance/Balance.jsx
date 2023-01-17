@@ -53,6 +53,8 @@ export default (props) => {
     if (props.onChange) props.onChange(_convertValueFromSlider(val));
   };
 
+  const hasValue = !(props.value === undefined || props.value === null);
+
   return (
     <Wrapper>
       <Grid>
@@ -96,6 +98,7 @@ export default (props) => {
                     disabled={props.disabled}
                     color="primary"
                     value={balanceValue}
+                    hasValue={hasValue}
                     min={0}
                     max={6}
                     step={1}
@@ -113,6 +116,7 @@ export default (props) => {
               orientation="vertical"
               color="primary"
               value={value}
+              hasValue={hasValue}
               min={0}
               max={6}
               step={1}
@@ -205,6 +209,19 @@ const HorizSlider = styled(MuiSlider)`
       height: 16px;
       margin-top: -8px;
       margin-left: -8px;
+
+      ${({ hasValue }) =>
+        hasValue === false &&
+        `
+      animation: mymove 1.5s infinite;
+
+      `}
+
+      @keyframes mymove {
+        50% {
+          box-shadow: 0px 0px 0px 14px rgb(63 81 181 / 16%);
+        }
+      }
     }
   }
 `;
@@ -213,6 +230,21 @@ const VerticalSlider = styled(MuiSlider)`
   &&& {
     .MuiSlider-track {
       display: none;
+    }
+
+    .MuiSlider-thumb {
+      ${({ hasValue }) =>
+        hasValue === false &&
+        `
+      animation: mymove 1.5s infinite;
+
+      `}
+
+      @keyframes mymove {
+        50% {
+          box-shadow: 0px 0px 0px 14px rgb(63 81 181 / 16%);
+        }
+      }
     }
 
     .MuiSlider-thumb > span {

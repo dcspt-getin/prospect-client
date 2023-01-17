@@ -60,7 +60,7 @@ export default () => {
   const {
     questions,
     currentQuestion,
-    groups,
+    // groups,
     hasPrevQuestion,
     // hasNextQuestion,
     gotoNextQuestion,
