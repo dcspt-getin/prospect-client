@@ -13,6 +13,7 @@ const TerritorialUnitImage = ({
   use360Image,
   googleMapsApiKey,
   fullscreen = false,
+  closeFullScreen,
 }) => {
   const [showFullScreen, setShowFullScreen] = useState(false);
 
@@ -20,24 +21,18 @@ const TerritorialUnitImage = ({
 
   if (showFullScreen) {
     return (
-      <Modal
-        closeIcon
-        size="fullscreen"
-        open
-        onClose={() => setShowFullScreen(false)}
-      >
-        <Modal.Content>
-          <FullScreenImage>
-            <TerritorialUnitImage
-              image={image}
-              useGoogleStreetImages={useGoogleStreetImages}
-              use360Image={use360Image}
-              googleMapsApiKey={googleMapsApiKey}
-              fullscreen
-            />
-          </FullScreenImage>
-        </Modal.Content>
-      </Modal>
+      <MyModal size="fullscreen" open>
+        <FullScreenImage>
+          <TerritorialUnitImage
+            image={image}
+            useGoogleStreetImages={useGoogleStreetImages}
+            use360Image={use360Image}
+            googleMapsApiKey={googleMapsApiKey}
+            fullscreen
+            closeFullScreen={() => setShowFullScreen(false)}
+          />
+        </FullScreenImage>
+      </MyModal>
     );
   }
 
@@ -63,9 +58,6 @@ const TerritorialUnitImage = ({
           yaw={180}
           hfov={110}
           autoLoad
-          // onLoad={() => {
-          //   console.log("panorama loaded");
-          // }}
         />
       </ImageContainer>
     );
@@ -76,9 +68,9 @@ const TerritorialUnitImage = ({
     //   style={{ backgroundImage: `url(${image.image || image.image_url})` }}
     // />
     <TransformWrapper
-      initialScale={fullscreen ? 2 : 2}
-      initialPositionX={0}
-      initialPositionY={0}
+      initialScale={4}
+      initialPositionX={-150}
+      initialPositionY={-150}
     >
       {({ zoomIn, zoomOut, resetTransform, ...rest }) => (
         <React.Fragment>
@@ -87,6 +79,9 @@ const TerritorialUnitImage = ({
             <ZoomOutButton onClick={() => zoomOut()} />
             {!fullscreen && (
               <FullscreenButton onClick={() => setShowFullScreen(true)} />
+            )}
+            {fullscreen && (
+              <FullscreenButton close onClick={() => closeFullScreen()} />
             )}
           </Tools>
           <TransformComponent
@@ -167,6 +162,18 @@ const FullscreenButton = styled.div`
   border-color: rgba(0, 0, 0, 0.4);
   border-radius: 3px;
   background-size: 25px;
+
+  ${({ close }) =>
+    close &&
+    `
+    background-position: 0 -76px;
+  `}
+`;
+
+const MyModal = styled(Modal)`
+  &&&& {
+    width: 100% !important;
+  }
 `;
 
 const FullScreenImage = styled.div``;

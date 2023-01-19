@@ -29,9 +29,17 @@ export const makeGetQuestions = () => {
   });
 };
 
+export const makeGetAllQuestions = () => {
+  return createSelector(getState, (state) => {
+    return sortBy(Object.values(state.data), ["rank", "id"]);
+  });
+};
+
 export const getQuestionsLoading = createSelector(
   getState,
   (state) => state.loading
 );
 
 export const getQuestions = makeGetQuestions();
+
+export const getAllQuestions = makeGetAllQuestions();

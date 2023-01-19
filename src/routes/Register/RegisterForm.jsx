@@ -1,5 +1,5 @@
 /* eslint-disable import/no-anonymous-default-export */
-import React from "react";
+import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useHistory } from "react-router";
 import validator from "validator";
@@ -11,6 +11,8 @@ import useTranslations from "hooks/useTranslations";
 
 // import createAccountOffice from "./create-account-office.jpeg";
 
+let checkCookieBannerChangedInterval;
+
 export default () => {
   const [t] = useTranslations("register");
   const [form, setForm] = React.useState({
@@ -20,6 +22,19 @@ export default () => {
   const [errors, setErrors] = React.useState({});
   const dispatch = useDispatch();
   const history = useHistory();
+
+  useEffect(() => {
+    if (Cookies.get("cookieBanner") === "true") {
+      return;
+    }
+
+    checkCookieBannerChangedInterval = setInterval(() => {
+      if (Cookies.get("cookieBanner") === "true") {
+        clearInterval(checkCookieBannerChangedInterval);
+        setErrors({});
+      }
+    }, 1000);
+  }, []);
 
   const _onChangeField =
     (field) =>
@@ -43,9 +58,7 @@ export default () => {
 
     if (Cookies.get("cookieBanner") !== "true") {
       setErrors({
-        global: t(
-          "Aceite a politica de cookies para poder entrar na aplicação"
-        ),
+        global: t("Please accept cookies policy to enter on the application"),
       });
 
       return;

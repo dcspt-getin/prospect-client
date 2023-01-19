@@ -19,7 +19,7 @@ export const fetchQuestions = (allQuestions) => async (dispatch) => {
 
     dispatch({
       type: SET_QUESTIONS,
-      payload: data.results,
+      payload: { allQuestions, data: data.results },
     });
 
     return data;

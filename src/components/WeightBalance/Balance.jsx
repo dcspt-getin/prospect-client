@@ -53,7 +53,10 @@ export default (props) => {
     if (props.onChange) props.onChange(_convertValueFromSlider(val));
   };
 
-  const hasValue = !(props.value === undefined || props.value === null);
+  // should have some value and should be a number
+  const hasValue =
+    !(props.value === undefined || props.value === null) &&
+    typeof props.value === "number";
 
   return (
     <Wrapper>
