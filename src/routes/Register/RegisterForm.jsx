@@ -9,7 +9,7 @@ import Cookies from "js-cookie";
 import { registerUser } from "store/auth/actions";
 import useTranslations from "hooks/useTranslations";
 
-import createAccountOffice from "./create-account-office.jpeg";
+// import createAccountOffice from "./create-account-office.jpeg";
 
 export default () => {
   const [t] = useTranslations("register");
@@ -32,7 +32,6 @@ export default () => {
   const _onSubmit = async () => {
     let valid = {};
 
-    if (!clickedOnTerms) valid["terms"] = "ERROR_USER_SHOULD_SEE_TERMS";
     if (!form.terms && clickedOnTerms) valid["terms"] = "ERROR_ACCEPT_TERMS";
     if (!form.email && !validator.isEmail(form.email))
       valid["email"] = "ERROR_INVALID_EMAIL";
@@ -162,15 +161,22 @@ export default () => {
               <div className="flex mt-6 text-sm">
                 <label className="flex items-center dark:text-gray-400">
                   <input
-                    disabled={!clickedOnTerms}
                     type="checkbox"
+                    checked={!!form.terms}
                     className="text-purple-600 form-checkbox focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray"
-                    onChange={() =>
+                    onChange={() => {
+                      if (!clickedOnTerms) {
+                        setErrors({ terms: "ERROR_USER_SHOULD_SEE_TERMS" });
+                        return;
+                      } else if (errors.terms) {
+                        setErrors({ ...errors, terms: null });
+                      }
+
                       setForm({
                         ...form,
                         terms: !form.terms,
-                      })
-                    }
+                      });
+                    }}
                   />
                   <span className="ml-2">
                     {t("Aceito os ")}

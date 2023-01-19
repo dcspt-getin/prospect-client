@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 
 import Dashboard from "components/Dashboard";
+import CookieConsentBanner from "components/CookieConsentBanner/CookieConsentBanner";
 
 import RegisterForm from "./RegisterForm";
 
@@ -14,8 +15,11 @@ export default () => {
   if (isAuthenticated) history.push("/");
 
   return (
-    <Dashboard hideLeftMenu>
-      <RegisterForm />
-    </Dashboard>
+    <>
+      <Dashboard hideLeftMenu>
+        <RegisterForm />
+      </Dashboard>
+      <CookieConsentBanner />
+    </>
   );
 };
