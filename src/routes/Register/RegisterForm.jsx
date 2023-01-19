@@ -32,7 +32,7 @@ export default () => {
   const _onSubmit = async () => {
     let valid = {};
 
-    if (!form.terms && clickedOnTerms) valid["terms"] = "ERROR_ACCEPT_TERMS";
+    if (!form.terms) valid["terms"] = "ERROR_ACCEPT_TERMS";
     if (!form.email && !validator.isEmail(form.email))
       valid["email"] = "ERROR_INVALID_EMAIL";
     if (!form.username) valid["username"] = "ERROR_INSERT_USERNAME";
