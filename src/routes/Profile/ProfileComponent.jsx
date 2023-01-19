@@ -23,6 +23,7 @@ import configurations from "helpers/configurations/index";
 import questionTypes from "helpers/questions/questionTypes";
 import { getAppConfiguration } from "store/app/selectors";
 import { logOutUser } from "store/auth/actions";
+import CookieConsentBanner from "components/CookieConsentBanner/CookieConsentBanner";
 
 import MultipleChoice from "./questions/MultipleChoice";
 import ShortAnswer from "./questions/ShortAnswer";
@@ -520,6 +521,7 @@ export default () => {
             )}
           </>
         )}
+      <CookieConsentBanner />
     </Dashboard>
   );
 };

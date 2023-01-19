@@ -16,6 +16,7 @@ export default () => {
   const [form, setForm] = React.useState({
     email: "",
   });
+  const [clickedOnTerms, setClickedOnTerms] = React.useState(false);
   const [errors, setErrors] = React.useState({});
   const dispatch = useDispatch();
   const history = useHistory();
@@ -31,7 +32,8 @@ export default () => {
   const _onSubmit = async () => {
     let valid = {};
 
-    if (!form.terms) valid["terms"] = "ERROR_ACCEPT_TERMS";
+    if (!clickedOnTerms) valid["terms"] = "ERROR_USER_SHOULD_SEE_TERMS";
+    if (!form.terms && clickedOnTerms) valid["terms"] = "ERROR_ACCEPT_TERMS";
     if (!form.email && !validator.isEmail(form.email))
       valid["email"] = "ERROR_INVALID_EMAIL";
     if (!form.username) valid["username"] = "ERROR_INSERT_USERNAME";
@@ -160,6 +162,7 @@ export default () => {
               <div className="flex mt-6 text-sm">
                 <label className="flex items-center dark:text-gray-400">
                   <input
+                    disabled={!clickedOnTerms}
                     type="checkbox"
                     className="text-purple-600 form-checkbox focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray"
                     onChange={() =>
@@ -173,6 +176,7 @@ export default () => {
                     {t("Aceito os ")}
                     <a
                       className="underline"
+                      onClick={() => setClickedOnTerms(true)}
                       href={`${process.env.PUBLIC_URL}/${t(
                         "TERMS_CONDITIONS_LINK"
                       )}`}

@@ -2,8 +2,11 @@ import React, { useState } from "react";
 import { Modal } from "semantic-ui-react";
 
 import useAnonymousSessionTime from "hooks/useAnonymousSessionTime";
+import useTranslations from "hooks/useTranslations";
 
 const AnonymousSessionAlert = () => {
+  const [t] = useTranslations("sessionTimeoutAlert");
+
   const [sessionEndAlert, setSessionEndAlert] = useState(false);
   const [closedSessionAlert, setClosedSessionAlert] = useState(false);
 
@@ -33,12 +36,14 @@ const AnonymousSessionAlert = () => {
       <Modal
         open
         onClose={onClose}
-        header="Session timeout!"
-        content={`Your session will be closed in ${timeLeft} minute(s).`}
+        header={t("Session timeout!")}
+        content={`${t("Your session will be closed in")} ${timeLeft} ${t(
+          "minute(s)."
+        )}`}
         actions={[
           {
             key: "done",
-            content: "Close",
+            content: t("Close"),
             positive: true,
             onClick: onClose,
           },
@@ -51,8 +56,8 @@ const AnonymousSessionAlert = () => {
     return (
       <Modal
         open
-        header="Session closed!"
-        content={`Your session is ended. You will be logged out.`}
+        header={t("Session closed!")}
+        content={t(`Your session is ended. You will be logged out.`)}
       />
     );
   }

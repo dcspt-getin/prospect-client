@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import CookieConsent from "react-cookie-consent";
 import styled from "styled-components";
 import Cookies from "js-cookie";
+import { useSelector } from "react-redux";
+import { Modal } from "semantic-ui-react";
 
 import useTranslations from "src/hooks/useTranslations";
 
@@ -27,6 +29,7 @@ const CookieConsentBanner = () => {
   const [visible, setVisible] = useState(
     Cookies.get("cookieBanner") !== "true"
   );
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
 
   return (
     <Popup>
@@ -56,6 +59,32 @@ const CookieConsentBanner = () => {
           <div dangerouslySetInnerHTML={{ __html: t("COOKIE_TEXT") }} />
         </Wrapper>
       </CookieConsent>
+
+      {!isAuthenticated && !visible && Cookies.get("cookieBanner") !== "true" && (
+        <OpenCookieBanner>
+          {t(
+            "To accept our cookies policy please open the cookies dialog again"
+          )}{" "}
+          <a onClick={() => setVisible(true)}>{t("here")}</a>
+        </OpenCookieBanner>
+      )}
+      {isAuthenticated && !visible && Cookies.get("cookieBanner") !== "true" && (
+        <Modal
+          open
+          header={t("Cookie Consent")}
+          content={t(
+            "To use this app you should accept the cookies, if you dont want to accept please close the window"
+          )}
+          actions={[
+            {
+              key: "done",
+              content: t("Accept Cookies"),
+              positive: true,
+              onClick: () => setVisible(true),
+            },
+          ]}
+        />
+      )}
     </Popup>
   );
 };
@@ -92,6 +121,25 @@ const Wrapper = styled.div`
   a {
     /* color: #fff; */
     text-decoration: underline;
+  }
+`;
+
+const OpenCookieBanner = styled.div`
+  position: fixed;
+  height 70px;
+  width: 100%;
+  background-color: #333;
+  bottom: 0;
+  left: 0;
+  color: #fff;
+  padding: 20px;
+  font-size: 16px;
+  z-index: 1000;
+
+  a {
+    color: #fff;
+    text-decoration: underline;
+    cursor: pointer;
   }
 `;
 
