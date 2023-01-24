@@ -1,5 +1,5 @@
 /* eslint-disable import/no-anonymous-default-export */
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Header,
   Segment,
@@ -10,6 +10,7 @@ import {
 } from "semantic-ui-react";
 import ReactECharts from "echarts-for-react";
 import ceil from "lodash/ceil";
+import styled from "styled-components";
 
 import Dashboard from "components/Dashboard";
 import useTranslations from "hooks/useTranslations";
@@ -29,6 +30,22 @@ export default () => {
   const [showGlobalResults, setShowGlobalResults] = React.useState(true);
   const [showUserResults, setShowUserResults] = React.useState(false);
   const results = useResultsData(selectedGroup);
+
+  useEffect(() => {
+    const handleClick = (event) => {
+      const { target } = event;
+
+      if (target.nodeName !== "CANVAS") {
+        document.getElementById("label-popper").style.display = "none";
+      }
+    };
+
+    document.addEventListener("click", handleClick);
+
+    return () => {
+      document.removeEventListener("click", handleClick);
+    };
+  }, []);
 
   const totals = React.useMemo(() => {
     const questionsOnGroup = questions.filter((q) =>
@@ -143,7 +160,6 @@ export default () => {
                         .join("<br/>");
                     },
                   },
-                  legend: {},
                   grid: {
                     left: "35%",
                     right: "4%",
@@ -154,7 +170,7 @@ export default () => {
                     interval: 0,
                     width:
                       document.querySelector(".App > div").offsetWidth * 0.3, //fixed number of pixels
-                    overflow: "break", // or 'break' to continue in a new line
+                    overflow: "truncate", // or 'break' to continue in a new line
                   },
                   xAxis: {
                     type: "value",
@@ -165,6 +181,8 @@ export default () => {
                   yAxis: {
                     type: "category",
                     data: data.map((o) => o.title),
+                    silent: false,
+                    triggerEvent: true,
                     axisLabel: {
                       fontSize:
                         document.querySelector(".App > div").offsetWidth > 600
@@ -199,7 +217,22 @@ export default () => {
                 lazyUpdate={true}
                 // theme={"theme_name"}
                 // onChartReady={this.onChartReadyCallback}
-                // onEvents={EventsDict}
+                onEvents={{
+                  click: (params) => {
+                    if (
+                      params.componentType === "yAxis" &&
+                      params.yAxisIndex === 0
+                    ) {
+                      const labelPopper =
+                        document.getElementById("label-popper");
+
+                      labelPopper.style.top = `${params.event.event.clientY}px`;
+                      labelPopper.style.left = `${params.event.event.clientX}px`;
+                      labelPopper.style.display = "block";
+                      labelPopper.innerHTML = params.value;
+                    }
+                  },
+                }}
                 // opts={}
               />
               <Divider />
@@ -271,6 +304,23 @@ export default () => {
         </Grid>
       )}
       {selectedGroup && _renderQuestions()}
+
+      <LabelPopper id="label-popper">asfdsfdsfs</LabelPopper>
     </Dashboard>
   );
 };
+
+const LabelPopper = styled.div`
+  box-shadow: 0 2px 4px 0 rgb(34 36 38 / 12%), 0 2px 10px 0 rgb(34 36 38 / 15%);
+  min-width: min-content;
+  z-index: 1900;
+  border: 1px solid #d4d4d5;
+  line-height: 1.4285em;
+  max-width: 250px;
+  background: #fff;
+  padding: 0.833em 1em;
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: none;
+`;
