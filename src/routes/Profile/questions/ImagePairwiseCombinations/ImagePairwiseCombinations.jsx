@@ -47,6 +47,10 @@ const ImagePairwiseCombinations = (props) => {
   }, []);
 
   React.useEffect(() => {
+    setImagesSet([]);
+  }, [question?.id]);
+
+  React.useEffect(() => {
     let currentImagesCoordinates = imagesSet;
 
     let territorialCoverage;
@@ -83,6 +87,7 @@ const ImagePairwiseCombinations = (props) => {
     }
     setSelectedTC(territorialCoverage);
   }, [
+    imagesSet?.length,
     value,
     territorialCoverageQuestion,
     profile,

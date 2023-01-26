@@ -97,6 +97,7 @@ const WeightPairwiseCombinations = ({
         v.option1 === currentIteration?.option1?.id &&
         v.option2 === currentIteration?.option2?.id
     )?.value;
+
   const _onIterationValueChange = async (val) => {
     let _newValue = [
       ...(value || []).filter(
@@ -263,7 +264,11 @@ const WeightPairwiseCombinations = ({
       </Grid.Column>
       <Grid.Column floated="right" mobile={16} tablet={8} computer={8}>
         <Button
-          disabled={currentIteratonValue === undefined}
+          disabled={
+            currentIteratonValue === undefined ||
+            currentIteratonValue === false ||
+            currentIteratonValue === null
+          }
           onClick={_onClickNextIteration}
           floated="right"
         >
