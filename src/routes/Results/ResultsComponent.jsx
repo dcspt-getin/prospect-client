@@ -169,7 +169,10 @@ export default () => {
                   axisLabel: {
                     interval: 0,
                     width:
-                      document.querySelector(".App > div").offsetWidth * 0.3, //fixed number of pixels
+                      document.querySelector(".App > div").offsetWidth *
+                      (document.querySelector(".App > div").offsetWidth < 600
+                        ? 0.2
+                        : 0.3), //fixed number of pixels
                     overflow: "truncate", // or 'break' to continue in a new line
                   },
                   xAxis: {
