@@ -4,6 +4,7 @@ import { Button, Menu } from "semantic-ui-react";
 import { useSelector, useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
 import axios from "axios";
+import Cookies from "js-cookie";
 
 import { logOutUser } from "store/auth/actions";
 import styled from "styled-components";
@@ -30,6 +31,11 @@ export default () => {
     getAppConfiguration(state, configurations.SHOW_RESULTS_BEFORE)
   );
   const currentTranslation = useSelector(getCurrentTranslation);
+  const isProlificOrAnonymousSession =
+    Cookies.get("prolificPid") || Cookies.get("localSessionId");
+
+  // prolific or anonymous sessions should not show logout button
+  const showLogoutButton = isAuthenticated && !isProlificOrAnonymousSession;
 
   const [menuPages, setMenuPages] = useState([]);
 
@@ -75,13 +81,13 @@ export default () => {
             onClick={() => history.push("/results")}
           />
         )}
-        <Menu.Item>
+        <Menu.Item style={{ minHeight: 52 }}>
           {!isAuthenticated && (
             <Button primary onClick={() => history.push("/login")}>
               {t("Entrar")}
             </Button>
           )}
-          {isAuthenticated && (
+          {showLogoutButton && (
             <Button primary onClick={_onLogout}>
               {t("Sair")}
             </Button>
