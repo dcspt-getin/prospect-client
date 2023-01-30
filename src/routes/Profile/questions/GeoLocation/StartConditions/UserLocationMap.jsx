@@ -106,6 +106,10 @@ export default compose(
             };
             return { markers };
           });
+          this.props.onChange({
+            markers: [{ lat, lng }],
+            center: { lat, lng },
+          });
         },
       });
     },

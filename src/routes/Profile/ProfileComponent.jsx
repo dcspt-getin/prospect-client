@@ -77,6 +77,13 @@ export default () => {
       getAppConfiguration(state, configurations.SHOW_PREVIOUS_QUESTION) ===
       "true"
   );
+  const showRestartQuestionsButton = useSelector(
+    (state) =>
+      getAppConfiguration(
+        state,
+        configurations.SHOW_RESTART_QUESTIONS_BUTTON
+      ) === "true"
+  );
   const prolificCompletionUrl = useSelector((state) =>
     getAppConfiguration(state, configurations.PROLIFIC_COMPLETION_URL)
   );
@@ -463,7 +470,7 @@ export default () => {
                   {t("Seguinte")}
                 </Button>
               )}
-              {isCompleted && (
+              {showRestartQuestionsButton && isCompleted && (
                 <Button
                   onClick={() => goToQuestionIndex(0)}
                   floated="right"
