@@ -241,7 +241,7 @@ const WeightPairwiseCombinations = ({
             </Grid.Column>
           </Grid.Row>
 
-          {allowUserRepeatQuestion && (
+          {(allowUserRepeatQuestion || !meta?.isValid) && (
             <Grid.Row>
               <Grid.Column width={16}>
                 <Button onClick={_onRepeatQuestion} floated="left">
