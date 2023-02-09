@@ -68,7 +68,7 @@ const WeightChoice = ({
           showBalance={question.show_balance}
           styleProps={{
             mobileBalanceHeight: 400,
-            mobileOptionsHeight: 700,
+            mobileOptionsHeight: "auto",
           }}
         />
       </WeightPairwiseCombinationsWrapper>
@@ -85,6 +85,10 @@ const ImageContainer = styled.div`
   width: 100%;
   position: relative;
   min-height: 300px;
+
+  @media (max-width: 600px) {
+    min-height: 240px;
+  }
 
   > div {
     position: absolute;

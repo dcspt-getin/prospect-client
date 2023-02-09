@@ -225,6 +225,7 @@ export default () => {
 
     const newMeta = {
       ...metaEndTime,
+      userAgent: navigator.userAgent,
       isValid: _hasValidAnswer(currentQuestion),
     };
 
