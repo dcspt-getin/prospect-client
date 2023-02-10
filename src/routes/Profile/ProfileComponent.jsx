@@ -240,7 +240,7 @@ export default () => {
 
       _onChangeQuestion(val, currentQuestion, newMeta);
 
-      if (+currentQuestion.option_to_finish === +val) {
+      if (String(currentQuestion.option_to_finish) === String(val)) {
         goToQuestionIndex(totalQuestions);
 
         return;

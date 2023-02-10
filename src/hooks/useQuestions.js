@@ -17,6 +17,8 @@ export default (allQuestions) => {
   const questions = useSelector((state) =>
     allQuestions ? getAllQuestions(state) : getQuestions(state)
   );
+  // debug proposes
+  // .filter((q) => [299, 300, 285, 293].includes(q.id));
   const currentTranslation = useSelector(getCurrentTranslation);
 
   const questionsByTranslation = React.useMemo(() => {

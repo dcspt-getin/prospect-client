@@ -52,7 +52,7 @@ const TerritorialUnitImage = ({
       <ImageContainer>
         <Pannellum
           width="100%"
-          height="300px"
+          height={window.innerWidth > 600 ? "300px" : "240px"}
           image={image.image || image.image_url}
           pitch={10}
           yaw={180}
