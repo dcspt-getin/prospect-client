@@ -1,5 +1,5 @@
-// let apiBaseUrl = "http://localhost:8000/api";
-let apiBaseUrl = "https://dcspt-getin.ua.pt/prospect/api";
+let apiBaseUrl = "http://localhost:8000/api";
+// let apiBaseUrl = "https://dcspt-getin.ua.pt/prospect/api";
 // let apiBaseUrl = "https://dcspt-drivitup.ua.pt/housepref/api";
 
 switch (process.env.REACT_APP_ENV) {

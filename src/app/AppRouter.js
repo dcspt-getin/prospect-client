@@ -5,7 +5,7 @@ import { Dimmer, Loader, Segment } from "semantic-ui-react";
 
 import Login from "routes/Login";
 import Register from "routes/Register";
-// import Home from "routes/Home";
+import Home from "routes/Home";
 // import About from "routes/About";
 import Results from "routes/Results";
 import Profile from "routes/Profile";
@@ -52,7 +52,7 @@ export default () => {
         <Pages />
       </Route>
       <Route path="/">
-        <Login />
+        <Home />
       </Route>
     </Switch>
   );
