@@ -7,6 +7,7 @@ import axios from "axios";
 import Dashboard from "components/Dashboard";
 import { getCurrentTranslation } from "store/app/selectors";
 import { API_BASE_URL } from "config";
+import CookieConsentBanner from "components/CookieConsentBanner/CookieConsentBanner";
 import LoginComponent from "../Login/LoginComponent";
 
 export default () => {
@@ -54,6 +55,7 @@ export default () => {
           }}
         />
       </div>
+      <CookieConsentBanner />
     </Dashboard>
   );
 };
