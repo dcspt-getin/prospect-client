@@ -215,7 +215,7 @@ export default async (options, value, meta, config = {}) => {
   // });
 
   const optAscOrder = Object.entries(eigenvector)
-    .sort()
+    .sort((a, b) => a[1] - b[1])
     .reduce((acc, pair, index) => {
       return {
         ...acc,
