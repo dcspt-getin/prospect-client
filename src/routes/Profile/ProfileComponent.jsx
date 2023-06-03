@@ -308,7 +308,7 @@ export default () => {
         return (
           <>
             {_renderDivider()}
-            <ShortAnswer {...questionProps} />
+            <ShortAnswer {...questionProps} placeholder={t("Valor")} />
           </>
         );
 

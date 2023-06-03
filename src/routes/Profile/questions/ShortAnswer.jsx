@@ -11,7 +11,7 @@ const INPUT_TYPES = {
   TEXT: "text",
 };
 
-export default ({ question, value, onChange, disabled }) => {
+export default ({ question, value, onChange, disabled, placeholder }) => {
   const questionRef = React.useRef(question);
 
   questionRef.current = question;
@@ -53,7 +53,7 @@ export default ({ question, value, onChange, disabled }) => {
         max={parseFloat(question.value_max)}
         step={parseFloat(question.value_interval)}
         type={INPUT_TYPES[type] || INPUT_TYPES.NUMBER}
-        placeholder="Valor"
+        placeholder={placeholder}
         disabled={disabled}
         onChange={(e) => _onChange(e.target.value, questionRef.current)}
       />
@@ -105,8 +105,8 @@ export default ({ question, value, onChange, disabled }) => {
         <Form>
           <TextArea
             onChange={(e) => _onChange(e.target.value, questionRef.current)}
-            value={value}
-            placeholder="Valor"
+            value={inputVal}
+            placeholder={placeholder}
             style={{ minHeight: 100 }}
           />
         </Form>

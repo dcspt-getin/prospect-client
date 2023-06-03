@@ -24,7 +24,7 @@ const WeightPairwiseCombinations = ({
   showBalance,
   styleProps = {},
 }) => {
-  const [t] = useTranslations("profile");
+  const [t] = useTranslations("urbanShapes");
   const [optionsMatrix, setOptionsMatrix] = React.useState([]);
   const [iterationsToRepeat, setIterationsToRepeat] = React.useState([]);
   const [iteration, setIteration] = React.useState(null);
