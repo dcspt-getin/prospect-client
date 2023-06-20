@@ -60,13 +60,21 @@ export default ({ question, value, onChange, disabled, placeholder }) => {
     );
 
     if (type === "SLIDER") {
+      const includeInput = parseInt(question.input_size) !== 0;
+
       return (
         <Grid>
           <Grid.Row>
-            <Grid.Column mobile={8} tablet={6} computer={4}>
-              {_inputField}
-            </Grid.Column>
-            <Grid.Column mobile={8} tablet={10} computer={12}>
+            {includeInput && (
+              <Grid.Column mobile={8} tablet={6} computer={4}>
+                {_inputField}
+              </Grid.Column>
+            )}
+            <Grid.Column
+              mobile={includeInput ? 8 : 16}
+              tablet={includeInput ? 10 : 16}
+              computer={includeInput ? 12 : 16}
+            >
               <SliderContainer>
                 <MuiSlider
                   disabled={disabled}
