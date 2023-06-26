@@ -6,6 +6,7 @@ import {
   CREATE_USER_PROFILE,
   CREATE_USER_PROFILE_FULFILLED,
   UPDATE_USER_PROFILE,
+  SET_USER_PROFILE_QUESTION_INFO,
 } from "./types";
 
 const initialState = {
@@ -55,6 +56,25 @@ export default function urbanShapesReducer(state = initialState, action) {
         profiles: {
           ...state.profiles,
           [payload.id]: payload,
+        },
+      };
+    }
+    case SET_USER_PROFILE_QUESTION_INFO: {
+      const { payload, meta } = action;
+
+      const { profileId, questionId } = meta;
+
+      return {
+        ...state,
+        profiles: {
+          ...state.profiles,
+          [profileId]: {
+            ...(state.profiles[profileId] || {}),
+            profile_data: {
+              ...((state.profiles[profileId] || {})?.profile_data || {}),
+              [questionId]: payload,
+            },
+          },
         },
       };
     }

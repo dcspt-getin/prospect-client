@@ -43,10 +43,15 @@ const _shortAnswerValidation = (q, value, userProfile) => {
     return false;
   }
 
-  return value.length > 0;
+  return !!value;
+};
+
+const _embeddedQuestionValidation = (q, value, userProfile) => {
+  return userProfile[q?.id]?.meta?.isValid;
 };
 
 const validationsByQuestionType = {
+  [questionTypes.EMBEDDED_QUESTION]: _embeddedQuestionValidation,
   [questionTypes.SHORT_ANSWER]: _shortAnswerValidation,
   [questionTypes.MULTIPLE_CHOICE]: _multipleChoiceValidation,
   [questionTypes.PAIRWISE_COMBINATIONS]: _pairWiseCombinationsValidation,

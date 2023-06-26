@@ -64,5 +64,10 @@ export default () => {
     setActiveProfileData(newProfileData);
   }, [isLoading, activeProfile?.profile_data]);
 
-  return [activeProfileData, _updateProfile, _debouncedSaveProfile];
+  return [
+    activeProfileData,
+    _updateProfile,
+    _debouncedSaveProfile,
+    activeProfile,
+  ];
 };

@@ -36,6 +36,7 @@ import ImagePairwiseCombinations from "./questions/ImagePairwiseCombinations/Ima
 import GeoLocation from "./questions/GeoLocation/GeoLocation";
 import { getValidationByQuestionType } from "./helpers/validations";
 import { getQuestionEndTime, getQuestionStartTime } from "./helpers/helpers";
+import Embedded from "./questions/Embedded/Embedded";
 
 // Auxiliary functions
 const isArray = is(Array);
@@ -220,6 +221,10 @@ export default () => {
     return !!userProfile[q?.id];
   };
   const _nextQuestion = () => {
+    if (currentQuestion?.question_type === questionTypes.EMBEDDED_QUESTION) {
+      return gotoNextQuestion();
+    }
+
     const { meta } = userProfile[currentQuestion.id] || {};
     const metaEndTime = getQuestionEndTime(meta);
 
@@ -355,6 +360,13 @@ export default () => {
           <>
             {_renderDivider()}
             <GeoLocation {...questionProps} />
+          </>
+        );
+      case questionTypes.EMBEDDED_QUESTION:
+        return (
+          <>
+            {_renderDivider()}
+            <Embedded {...questionProps} />
           </>
         );
 

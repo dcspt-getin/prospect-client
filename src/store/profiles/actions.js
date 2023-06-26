@@ -7,6 +7,8 @@ import {
   CREATE_USER_PROFILE,
   CREATE_USER_PROFILE_FULFILLED,
   UPDATE_USER_PROFILE,
+  GET_USER_PROFILE_QUESTION_INFO,
+  SET_USER_PROFILE_QUESTION_INFO,
 } from "./types";
 
 export const getUserProfiles = () => async (dispatch) => {
@@ -25,6 +27,27 @@ export const getUserProfiles = () => async (dispatch) => {
     return data;
   } catch (err) {}
 };
+
+export const getUserProfileQuestionInfo =
+  (profileId, questionId) => async (dispatch) => {
+    try {
+      dispatch({
+        type: GET_USER_PROFILE_QUESTION_INFO,
+      });
+
+      const { data } = await axios.get(
+        `${API_BASE_URL}/profiles/${profileId}/question_info/?id=${questionId}`
+      );
+
+      dispatch({
+        type: SET_USER_PROFILE_QUESTION_INFO,
+        payload: data,
+        meta: { profileId, questionId },
+      });
+
+      return data;
+    } catch (err) {}
+  };
 
 export const createNewUserProfile = (profile) => async (dispatch, getState) => {
   try {
