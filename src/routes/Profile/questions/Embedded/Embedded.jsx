@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import usePollingEffect from "hooks/usePollingEffect";
@@ -11,13 +11,37 @@ const Embedded = ({ question }) => {
 
   const { embedded_question_url, id, embedded_size: embeddedSize } = question;
 
+  const refereshQuestionData = () =>
+    dispatch(getUserProfileQuestionInfo(activeProfile?.id, id));
+
   usePollingEffect(
     async () => {
-      dispatch(getUserProfileQuestionInfo(activeProfile?.id, id));
+      refereshQuestionData();
     },
     [],
-    { interval: 10000 }
+    { interval: 20000 }
   );
+
+  useEffect(() => {
+    const handleMessageReceived = function (event) {
+      const iframe = document.getElementById("embedded-iframe");
+
+      // Make sure the message is from the correct iframe (optional)
+      if (event.source === iframe.contentWindow) {
+        // Log the received message
+        if (event.data === "questionChanged") {
+          refereshQuestionData();
+        }
+      }
+    };
+
+    // Listen for messages from the iframe
+    window.addEventListener("message", handleMessageReceived);
+
+    return () => {
+      window.removeEventListener("message", handleMessageReceived);
+    };
+  }, []);
 
   if (!embedded_question_url) {
     return "Embeded url is required";
@@ -31,7 +55,8 @@ const Embedded = ({ question }) => {
 
   return (
     <iframe
-      src={`${embedded_question_url}?embedded=true&width=${width}&height=${height}&question=${id}&token=${token}`}
+      id="embedded-iframe"
+      src={`${embedded_question_url}?token=${token}&embedded=true&width=${width}&height=${height}&question=${id}`}
       width={iframeWidth}
       height={iframHeight}
     />
