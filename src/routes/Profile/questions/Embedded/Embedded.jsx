@@ -52,11 +52,12 @@ const Embedded = ({ question }) => {
 
   const iframeWidth = width || "100%";
   const iframHeight = height || "100%";
+  const iframeUrl = `${embedded_question_url}?token=${token}&profileId=${activeProfile?.id}&question=${id}&embedded=true&width=${width}&height=${height}`;
 
   return (
     <iframe
       id="embedded-iframe"
-      src={`${embedded_question_url}?token=${token}&embedded=true&width=${width}&height=${height}&question=${id}`}
+      src={iframeUrl}
       width={iframeWidth}
       height={iframHeight}
     />
