@@ -30,6 +30,12 @@ REACT_APP_API_BASE_URL=https://dcspt-drivitup.ua.pt/housepref/api
 PUBLIC_URL=/housepref/app/
 ```
 
+`REACT_APP_ENV` This variable indicates the environment in which the React application is running. In this case, it's set to "production," suggesting that the application is configured for a production environment.
+
+`REACT_APP_API_BASE_URL` This variable specifies the base URL for the API that the React application communicates with. It's set to "https://dcspt-drivitup.ua.pt/housepref/api."
+
+`PUBLIC_URL` This variable defines the public URL for the React application. It's set to "/housepref/app/," indicating the base URL path where the application is hosted publicly.
+
 Build the app with:
 
 ```bash
