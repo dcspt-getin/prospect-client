@@ -1,3 +1,5 @@
+# Require Nodejs v16
+
 export REACT_APP_ENV=production
 export REACT_APP_API_BASE_URL=https://dcspt-getin.ua.pt/prospect/api
 export PUBLIC_URL=/prospect/
